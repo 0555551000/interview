@@ -1,0 +1,2846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>富邦华一银行普惠信贷管理系统 · 项目详情</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface-2: #1f2630;
+    --text: #e6edf3;
+    --text-dim: #8b95a7;
+    --primary: #f0b429;       /* 金融金 */
+    --primary-soft: #d4a017;
+    --accent: #ff7b72;
+    --success: #56d364;
+    --warning: #e3b341;
+    --info: #79c0ff;
+    --border: #30363d;
+    --gold-grad: linear-gradient(135deg, #f0b429 0%, #d4a017 100%);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+/* 背景 */
+.bg-animation {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(240, 180, 41, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(212, 160, 23, 0.06) 0%, transparent 50%),
+        var(--bg);
+}
+
+/* 导航 */
+nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(13, 17, 23, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 16px 0;
+}
+
+nav .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav .logo {
+    font-weight: 700;
+    font-size: 18px;
+    background: var(--gold-grad);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 32px;
+}
+
+nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+nav a:hover { color: var(--primary); }
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+section {
+    padding: 100px 0 60px;
+}
+
+/* Hero */
+#hero {
+    padding-top: 140px;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content { animation: fadeInUp 1s ease-out; }
+
+.hero-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(240, 180, 41, 0.12);
+    color: var(--primary);
+    border-radius: 100px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(240, 180, 41, 0.3);
+}
+
+.hero-title {
+    font-size: 52px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 0%, #f0b429 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    font-weight: 400;
+}
+
+.hero-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    margin-bottom: 32px;
+}
+
+.hero-meta .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-dim);
+    font-size: 14px;
+}
+
+.hero-meta .meta-item::before {
+    content: "■";
+    color: var(--primary);
+    font-size: 8px;
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 36px;
+}
+
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+    transition: all 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 40px rgba(240, 180, 41, 0.15);
+}
+
+.stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+/* Section header */
+.section-header {
+    margin-bottom: 40px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s;
+}
+
+.section-header.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section-number {
+    color: var(--primary);
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.section-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.section-desc {
+    color: var(--text-dim);
+    font-size: 15px;
+    max-width: 700px;
+}
+
+/* 项目总览 */
+.project-overview {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    margin-bottom: 40px;
+}
+
+.project-overview h3 {
+    font-size: 22px;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+.project-overview p {
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    font-size: 14.5px;
+}
+
+.project-overview .gold {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* 业务流程图 */
+.flow-diagram {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+    position: relative;
+}
+
+.flow-step {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 12px;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.flow-step:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.flow-step .step-num {
+    color: var(--primary);
+    font-family: "SF Mono", monospace;
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+
+.flow-step .step-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.flow-step .step-desc {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.flow-step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+    font-size: 16px;
+    z-index: 1;
+}
+
+/* 模块卡片 */
+.modules-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 32px;
+}
+
+.module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 26px;
+    transition: all 0.3s;
+}
+
+.module-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(240, 180, 41, 0.1);
+}
+
+.module-card .module-icon {
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+
+.module-card h4 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: var(--text);
+}
+
+.module-card p {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    line-height: 1.65;
+}
+
+.module-card .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(240, 180, 41, 0.12);
+    color: var(--primary);
+    border-radius: 4px;
+    font-size: 11px;
+    margin-right: 6px;
+    margin-top: 8px;
+}
+
+/* 核心产出 */
+.highlights-timeline {
+    position: relative;
+    padding-left: 40px;
+    margin-top: 32px;
+}
+
+.highlights-timeline::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--primary), transparent);
+}
+
+.highlight-item {
+    position: relative;
+    margin-bottom: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    transition: all 0.3s;
+}
+
+.highlight-item:hover {
+    border-color: var(--primary);
+    transform: translateX(4px);
+}
+
+.highlight-item::before {
+    content: "";
+    position: absolute;
+    left: -32px;
+    top: 24px;
+    width: 14px;
+    height: 14px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(240, 180, 41, 0.2);
+}
+
+.highlight-item h4 {
+    font-size: 17px;
+    margin-bottom: 12px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.highlight-item h4 .badge {
+    font-size: 11px;
+    padding: 2px 8px;
+    background: rgba(240, 180, 41, 0.12);
+    color: var(--primary);
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.highlight-block {
+    margin: 10px 0;
+}
+
+.highlight-block .label {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.highlight-block .content {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.highlight-block .content code {
+    background: var(--surface-2);
+    color: var(--info);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 12.5px;
+}
+
+.highlight-block .content strong {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* 可展开详情面板 */
+.detail-tabs {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.detail-tab {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.detail-tab:hover {
+    border-color: var(--primary);
+    color: var(--text);
+}
+
+.detail-tab.active {
+    background: rgba(240, 180, 41, 0.12);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.detail-tab .arrow {
+    transition: transform 0.25s;
+    font-size: 10px;
+}
+
+.detail-tab.active .arrow {
+    transform: rotate(180deg);
+}
+
+.detail-panels {
+    margin-top: 12px;
+}
+
+.detail-panel {
+    display: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-top: 8px;
+    animation: slideDown 0.3s ease-out;
+}
+
+.detail-panel.active {
+    display: block;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.detail-panel h5 {
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    margin-top: 14px;
+}
+
+.detail-panel h5:first-child { margin-top: 0; }
+
+.detail-panel p {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    line-height: 1.75;
+    margin-bottom: 10px;
+}
+
+.detail-panel ul, .detail-panel ol {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    padding-left: 22px;
+    margin-bottom: 10px;
+    line-height: 1.75;
+}
+
+.detail-panel li { margin-bottom: 4px; }
+
+.detail-panel strong { color: var(--primary); }
+
+.detail-panel table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13px;
+}
+
+.detail-panel th, .detail-panel td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+    color: var(--text-dim);
+}
+
+.detail-panel th {
+    background: var(--surface-2);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+/* 代码块 */
+.code-block {
+    background: #0a0e14;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 10px 0;
+    overflow-x: auto;
+    font-family: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+}
+
+.code-block .lang-tag {
+    display: inline-block;
+    padding: 1px 8px;
+    background: var(--surface-2);
+    color: var(--primary);
+    border-radius: 4px;
+    font-size: 11px;
+    margin-bottom: 10px;
+    font-family: -apple-system, sans-serif;
+}
+
+.code-block pre {
+    color: #c9d1d9;
+    white-space: pre;
+}
+
+/* 简易语法高亮 */
+.code-block .kw   { color: #ff7b72; }    /* 关键字 红 */
+.code-block .ano  { color: #d2a8ff; }    /* 注解 紫 */
+.code-block .typ  { color: #79c0ff; }    /* 类型 蓝 */
+.code-block .str  { color: #a5d6ff; }    /* 字符串 浅蓝 */
+.code-block .num  { color: #79c0ff; }    /* 数字 蓝 */
+.code-block .com  { color: #8b949e; font-style: italic; } /* 注释 灰 */
+.code-block .fn   { color: #d2a8ff; }    /* 函数 紫 */
+.code-block .var  { color: #ffa657; }    /* 变量 橙 */
+.code-block .tag  { color: #7ee787; }    /* xml 标签 绿 */
+
+/* ==================== 业务术语 Tooltip ==================== */
+.term-tip {
+    position: relative;
+    display: inline-block;
+    color: var(--primary);
+    border-bottom: 1px dashed var(--primary);
+    cursor: help;
+    font-weight: 500;
+}
+
+.term-tip::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%) translateY(6px);
+    background: #1a1f2e;
+    color: var(--text);
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+    width: 320px;
+    border: 1px solid var(--primary);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s;
+    font-weight: 400;
+    text-align: left;
+    white-space: normal;
+    pointer-events: none;
+}
+
+.term-tip::before {
+    content: "";
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%) translateY(15px);
+    border: 6px solid transparent;
+    border-top-color: var(--primary);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s;
+    z-index: 1001;
+    pointer-events: none;
+}
+
+.term-tip:hover::after,
+.term-tip:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ==================== 能力迁移对照（银行 → 漫剧） ==================== */
+.transfer-section {
+    background: linear-gradient(180deg, transparent, rgba(240, 180, 41, 0.04), transparent);
+}
+
+.transfer-intro {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.transfer-intro::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(240, 180, 41, 0.06), transparent 60%);
+    pointer-events: none;
+}
+
+.transfer-intro h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--text);
+    position: relative;
+}
+
+.transfer-intro p {
+    color: var(--text-dim);
+    font-size: 14.5px;
+    line-height: 1.75;
+    position: relative;
+}
+
+.transfer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.transfer-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 26px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.transfer-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 40px rgba(240, 180, 41, 0.12);
+}
+
+.transfer-card .pair {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.transfer-card .side {
+    flex: 1;
+    min-width: 130px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: var(--surface-2);
+}
+
+.transfer-card .side .domain {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.transfer-card .side.bank { border-left: 3px solid var(--primary); }
+.transfer-card .side.bank .domain { color: var(--primary); }
+
+.transfer-card .side.manga { border-left: 3px solid #5b9fff; }
+.transfer-card .side.manga .domain { color: #5b9fff; }
+
+.transfer-card .side .tech {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.transfer-card .side .desc {
+    font-size: 12.5px;
+    color: var(--text-dim);
+    line-height: 1.55;
+}
+
+.transfer-card .arrow-icon {
+    color: var(--primary);
+    font-size: 22px;
+    font-weight: 700;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.transfer-card .insight {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border);
+    color: var(--text-dim);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.transfer-card .insight strong {
+    color: var(--primary);
+}
+
+.transfer-summary {
+    background: linear-gradient(135deg, rgba(240, 180, 41, 0.08), rgba(91, 159, 255, 0.04));
+    border: 1px solid var(--primary);
+    border-radius: 14px;
+    padding: 28px;
+    margin-top: 36px;
+}
+
+.transfer-summary h4 {
+    color: var(--primary);
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+.transfer-summary p {
+    color: var(--text-dim);
+    font-size: 14px;
+    line-height: 1.75;
+    margin-bottom: 8px;
+}
+
+.transfer-summary p strong {
+    color: var(--text);
+}
+
+@media (max-width: 768px) {
+    .transfer-grid { grid-template-columns: 1fr; }
+}
+
+/* 业务术语解释 */
+.glossary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.glossary-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: all 0.3s;
+}
+
+.glossary-item:hover {
+    border-color: var(--primary);
+}
+
+.glossary-item .term {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.glossary-item .def {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    line-height: 1.6;
+}
+
+/* 技术栈 */
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 32px;
+}
+
+.tech-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    transition: all 0.3s;
+}
+
+.tech-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.tech-card .tech-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.tech-card .tech-role {
+    color: var(--text-dim);
+    font-size: 12px;
+}
+
+/* 工作内容 */
+.work-summary {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 32px;
+}
+
+.work-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s;
+}
+
+.work-card:hover { border-color: var(--primary); }
+
+.work-card h4 {
+    font-size: 16px;
+    color: var(--primary);
+    margin-bottom: 12px;
+}
+
+.work-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.work-card li {
+    color: var(--text-dim);
+    font-size: 13.5px;
+    padding-left: 16px;
+    position: relative;
+    margin-bottom: 6px;
+    line-height: 1.6;
+}
+
+.work-card li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+}
+
+/* footer */
+footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+}
+
+footer a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    nav ul { display: none; }
+    .hero-title { font-size: 36px; }
+    .hero-subtitle { font-size: 16px; }
+    .hero-stats, .modules-grid, .tech-grid { grid-template-columns: repeat(2, 1fr); }
+    .flow-diagram { grid-template-columns: repeat(2, 1fr); }
+    .flow-step:not(:last-child)::after { display: none; }
+    .glossary-grid, .work-summary { grid-template-columns: 1fr; }
+    .section-title { font-size: 26px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-animation"></div>
+
+<nav>
+    <div class="container">
+        <div class="logo">PC · 富邦华一</div>
+        <ul>
+            <li><a href="#hero">概览</a></li>
+            <li><a href="#project">项目</a></li>
+            <li><a href="#modules">模块</a></li>
+            <li><a href="#highlights">核心产出</a></li>
+            <li><a href="#glossary">业务术语</a></li>
+            <li><a href="#tech">技术栈</a></li>
+            <li><a href="#transfer">能力迁移</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-tag">Java 后端开发 · 银行金融系统 · 1.5 年</span>
+            <h1 class="hero-title">富邦华一银行<br>普惠信贷管理系统</h1>
+            <p class="hero-subtitle">覆盖授信 · 客户 · 合同 · 贷后 · 还款的核心业务系统</p>
+            <div class="hero-meta">
+                <span class="meta-item">2021.09 - 2023.02 · 1 年 6 个月</span>
+                <span class="meta-item">宇信科技上海分公司 · 外派</span>
+                <span class="meta-item">Java 开发工程师</span>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">核心业务模块</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8+</div>
+                    <div class="stat-label">岗位审批流</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">资金流水准确率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7×24</div>
+                    <div class="stat-label">系统可用性要求</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 项目总览 -->
+<section id="project">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">/ 01</div>
+            <h2 class="section-title">项目背景</h2>
+            <p class="section-desc">富邦华一银行（台资银行，富邦金控大陆子行）的普惠信贷条线核心业务系统，承载小微企业、个人经营贷的全生命周期管理</p>
+        </div>
+
+        <div class="project-overview">
+            <h3>业务定位</h3>
+            <p>
+                <span class="term-tip" data-tip="国家政策导向的金融服务，主要服务小微企业、农户、个体工商户。银行有专门的普惠条线 KPI。">普惠信贷</span>是银行服务<span class="gold">小微企业、个体工商户、农户</span>的政策性贷款业务。本系统是富邦华一银行普惠条线的<span class="gold">核心业务支撑系统</span>，覆盖客户从申请、审批、放款到还款、贷后管理的<span class="gold">完整生命周期</span>。
+            </p>
+            <p>
+                系统对接行内多个外围系统（核心账务系统、客户信息系统、信审系统、押品估值系统），是银行内部<span class="gold">资金流转的关键节点</span>，对一致性、审计追溯、合规性要求极高。
+            </p>
+
+            <h3 style="margin-top:28px;">核心业务流程（信贷生命周期）</h3>
+            <div class="flow-diagram">
+                <div class="flow-step">
+                    <div class="step-num">01</div>
+                    <div class="step-name">客户准入</div>
+                    <div class="step-desc">资质核查 · KYC</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">02</div>
+                    <div class="step-name">授信申请</div>
+                    <div class="step-desc">押品评估 · 多岗审批</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">03</div>
+                    <div class="step-name">合同签订</div>
+                    <div class="step-desc">额度引用 · 文本生成</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">04</div>
+                    <div class="step-name">放款</div>
+                    <div class="step-desc">核心账务 · 资金划付</div>
+                </div>
+                <div class="flow-step">
+                    <div class="step-num">05</div>
+                    <div class="step-name">贷后还款</div>
+                    <div class="step-desc">利息计算 · 逾期判定</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 核心模块 -->
+<section id="modules">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">/ 02</div>
+            <h2 class="section-title">核心业务模块</h2>
+            <p class="section-desc">5 大核心模块串联起信贷业务的完整闭环，每个模块对应一个特定的业务领域</p>
+        </div>
+
+        <div class="modules-grid">
+            <div class="module-card">
+                <div class="module-icon">🏢</div>
+                <h4>授信管理模块</h4>
+                <p><span class="term-tip" data-tip="对私 = 给个人客户的业务（个人经营贷、按揭）；对公 = 给企业客户的业务（流动资金贷款、项目贷款）。">对私 / 对公</span>客户<span class="term-tip" data-tip="银行同意给客户的最高可借款额度。授信 100 万 ≠ 借了 100 万，是个上限。比如信用卡的额度就是一种授信。">授信</span>申请、<span class="term-tip" data-tip="客户拿来抵押的资产，比如房产、股权、应收账款。银行评估其价值，按一定折扣率给出可贷金额。">押品</span>录入与估值、<span class="term-tip" data-tip="押品价值 × 抵质押率 = 可贷金额。不动产 70%，股权 30~50%，应收账款 60~80%。等于银行的&quot;风险折扣&quot;。">抵质押率</span>计算、多岗位审批流。每笔授信必须配套抵质押物或担保品，审批通过后方可关联合同。</p>
+                <span class="tag">押品估值</span>
+                <span class="tag">抵质押率</span>
+                <span class="tag">多岗审批</span>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">👥</div>
+                <h4>客户管理模块</h4>
+                <p>对私客户（个人经营贷）+ 对公客户（小微企业）双轨客户体系。整合 KYC、征信查询、关系图谱（关联人/担保人）、客户分级。</p>
+                <span class="tag">KYC</span>
+                <span class="tag">征信</span>
+                <span class="tag">关系图谱</span>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">📄</div>
+                <h4>合同管理模块</h4>
+                <p>合同生成必须引用授信和额度，合同金额必须在授信总额范围内。多岗位审批（客户经理/风控/法务/支行长）通过后才能放款。</p>
+                <span class="tag">额度校验</span>
+                <span class="tag">文本生成</span>
+                <span class="tag">流程编排</span>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">📊</div>
+                <h4>贷后管理模块</h4>
+                <p>贷款发放后的全生命周期监控：分期还款计划、利息计提、逾期判定、催收提醒、<span class="term-tip" data-tip="监管要求把贷款按风险分为：正常 / 关注 / 次级 / 可疑 / 损失。后三类合称&quot;不良贷款&quot;，是银行考核的关键指标。">五级分类</span>（正常/关注/次级/可疑/损失）。</p>
+                <span class="tag">利息计算</span>
+                <span class="tag">逾期判定</span>
+                <span class="tag">五级分类</span>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">💰</div>
+                <h4>还款管理模块</h4>
+                <p>支持<span class="term-tip" data-tip="两种主流还款方式。等额本息每月还的总额相同（房贷常用）；等额本金每月还的本金相同，利息递减。">等额本息、等额本金</span>、按月付息到期还本等多种还款方式。对接核心账务系统完成扣款、记账、利息分摊、罚息计算。</p>
+                <span class="tag">还款计划</span>
+                <span class="tag">罚息计算</span>
+                <span class="tag">账务对接</span>
+            </div>
+            <div class="module-card">
+                <div class="module-icon">⚙️</div>
+                <h4>批量任务调度</h4>
+                <p>基于 XXL-Job 实现<span class="term-tip" data-tip="银行核心系统在每天营业结束后（通常 0:30~5:00）执行的批量任务窗口，完成账务结转、利息计提、报表生成等。">日终批量</span>：还款计划生成、利息计提、逾期扫描、五级分类调整、报表生成。每天凌晨跑批，结果对接报表系统。</p>
+                <span class="tag">XXL-Job</span>
+                <span class="tag">日终跑批</span>
+                <span class="tag">幂等保障</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 核心产出 -->
+<section id="highlights">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">/ 03</div>
+            <h2 class="section-title">个人核心产出</h2>
+            <p class="section-desc">在团队中的具体贡献：聚焦授信、批量任务、流程编排三个方向</p>
+        </div>
+
+        <div class="highlights-timeline">
+
+            <div class="highlight-item">
+                <h4>1. 授信模块 · 员工持股融资业务开发 <span class="badge">核心需求</span></h4>
+                <div class="highlight-block">
+                    <div class="label">业务场景</div>
+                    <div class="content">
+                        员工持股融资是银行普惠信贷下的<strong>专项产品</strong>，针对企业员工通过股权激励持股的<strong>融资场景</strong>。区别于普通经营贷的核心点：押品是<strong>员工持有的股权</strong>，估值需对接行内股权估值系统，且授信审批要叠加企业关联方风险评估。
+                    </div>
+                </div>
+                <div class="highlight-block">
+                    <div class="label">我做了什么</div>
+                    <div class="content">
+                        从需求评审 → 设计 → 编码 → 上线<strong>全程负责该业务</strong>：
+                        实现授信申请录入 → 股权押品估值对接 → 抵质押率计算（股权类押品折扣率与不动产不同）→ 多岗位审批流（客户经理 → 风险审查 → 信贷审批委员会）→ 合同额度联动校验 → 放款指令下发的<strong>完整链路</strong>。
+                    </div>
+                </div>
+                <div class="highlight-block">
+                    <div class="label">技术亮点</div>
+                    <div class="content">
+                        基于 <code>Liteflow</code> 抽象审批流的节点定义（<code>NodeComponent</code>），不同岗位的审批逻辑通过 SPI 注册；
+                        使用 <code>策略模式</code> 区分股权 / 不动产 / 应收账款等不同押品类型的估值算法；
+                        授信额度的<strong>幂等校验</strong>用 Redis 分布式锁 + DB 唯一索引双保险，防止并发申请导致超额。
+                    </div>
+                </div>
+
+                <!-- 展开详情 -->
+                <div class="detail-tabs">
+                    <button class="detail-tab" data-target="esop-req">📋 业务需求详情 <span class="arrow">▼</span></button>
+                    <button class="detail-tab" data-target="esop-db">🗄️ 数据库设计 <span class="arrow">▼</span></button>
+                    <button class="detail-tab" data-target="esop-code">💻 核心代码实现 <span class="arrow">▼</span></button>
+                </div>
+                <div class="detail-panels">
+
+                    <div class="detail-panel" id="esop-req">
+                        <h5>需求背景</h5>
+                        <p>2022 年 Q3，富邦华一银行普惠条线接到总行战略需求：响应国家"共同富裕"政策，推出<strong>面向中小企业员工的持股融资产品</strong>。员工拿自己持有的公司股权作为押品，向银行申请授信用于个人消费、改善生活、子女教育等。</p>
+
+                        <h5>业务规则（PRD 摘录）</h5>
+                        <ul>
+                            <li><strong>客户准入</strong>：必须为标的企业在职 1 年以上员工，标的企业需为银行合作 ESOP 名单内企业</li>
+                            <li><strong>押品要求</strong>：员工实名持有的限制性股票或期权，禁售期内股权折扣率更低</li>
+                            <li><strong>授信额度</strong>：员工持股估值 × 抵质押率，单笔上限 200 万元</li>
+                            <li><strong>抵质押率</strong>：上市公司股票 50%、未上市公司股票 30%、禁售期内 -10pct</li>
+                            <li><strong>利率</strong>：基准 LPR + 浮动点数（按客户分级 1.5pct ~ 4pct）</li>
+                            <li><strong>期限</strong>：1 年期 / 3 年期，到期一次性还本付息或按月付息到期还本</li>
+                            <li><strong>审批岗位</strong>：客户经理 → 支行风控 → 总行风险审查 → 普惠条线信贷审批委员会（金额 >100 万必经）</li>
+                        </ul>
+
+                        <h5>关键业务校验</h5>
+                        <ol>
+                            <li><strong>员工身份核验</strong>：实时调企业 HR 系统接口，确认在职状态、入职时间</li>
+                            <li><strong>股权权属核验</strong>：调中证登 / 三方股权登记机构接口，确认股权归属</li>
+                            <li><strong>关联授信合并</strong>：同一客户在本行所有授信合并计算，不能超过单户上限</li>
+                            <li><strong>反欺诈</strong>：员工与企业存在直系亲属关系的需要额外审批</li>
+                            <li><strong>额度幂等</strong>：同一客户同一企业同一时段不能重复发起申请</li>
+                        </ol>
+
+                        <h5>异常场景</h5>
+                        <ul>
+                            <li>股权解禁前临时减持 → 押品价值不足 → 触发追加保证金或提前还款</li>
+                            <li>员工离职 → 触发押品状态变更 → 进入"退出处置"流程</li>
+                            <li>企业被监管处罚 → 全行该企业 ESOP 授信冻结</li>
+                            <li>股价大跌触发预警线（押品价值跌破授信余额 110%）→ 自动短信通知 + 待人工介入</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-panel" id="esop-db">
+                        <h5>核心表结构（员工持股融资业务）</h5>
+                        <p>本业务涉及 8 张核心表，下面列 4 张最关键的：</p>
+
+                        <h5>1. 授信申请主表 <code>esop_credit_apply</code></h5>
+                        <div class="code-block">
+                            <span class="lang-tag">SQL</span>
+<pre><span class="kw">CREATE TABLE</span> <span class="typ">esop_credit_apply</span> (
+  <span class="var">id</span>                  <span class="typ">BIGINT</span>       <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="var">apply_no</span>            <span class="typ">VARCHAR</span>(<span class="num">32</span>) <span class="kw">NOT NULL</span> <span class="com">-- 申请单号 ESOP+yyyyMMdd+流水</span>,
+  <span class="var">customer_id</span>         <span class="typ">BIGINT</span>       <span class="kw">NOT NULL</span> <span class="com">-- 员工客户ID</span>,
+  <span class="var">enterprise_id</span>       <span class="typ">BIGINT</span>       <span class="kw">NOT NULL</span> <span class="com">-- 标的企业ID</span>,
+  <span class="var">apply_amount</span>        <span class="typ">DECIMAL</span>(<span class="num">18</span>,<span class="num">4</span>) <span class="kw">NOT NULL</span> <span class="com">-- 申请金额</span>,
+  <span class="var">approved_amount</span>     <span class="typ">DECIMAL</span>(<span class="num">18</span>,<span class="num">4</span>)          <span class="com">-- 实际批准额度</span>,
+  <span class="var">term_month</span>          <span class="typ">INT</span>          <span class="kw">NOT NULL</span> <span class="com">-- 期限月数</span>,
+  <span class="var">interest_rate</span>       <span class="typ">DECIMAL</span>(<span class="num">8</span>,<span class="num">6</span>)            <span class="com">-- 年化利率</span>,
+  <span class="var">repay_method</span>        <span class="typ">VARCHAR</span>(<span class="num">20</span>) <span class="kw">NOT NULL</span> <span class="com">-- ONE_OFF / MONTHLY_INTEREST</span>,
+  <span class="var">status</span>              <span class="typ">VARCHAR</span>(<span class="num">20</span>) <span class="kw">NOT NULL</span> <span class="com">-- DRAFT/SUBMITTED/APPROVING/APPROVED/REJECTED/EXPIRED</span>,
+  <span class="var">current_node</span>        <span class="typ">VARCHAR</span>(<span class="num">32</span>)            <span class="com">-- 当前审批节点</span>,
+  <span class="var">customer_manager</span>    <span class="typ">VARCHAR</span>(<span class="num">32</span>)            <span class="com">-- 客户经理工号</span>,
+  <span class="var">submit_time</span>         <span class="typ">DATETIME</span>,
+  <span class="var">approve_time</span>        <span class="typ">DATETIME</span>,
+  <span class="var">create_time</span>         <span class="typ">DATETIME</span>     <span class="kw">DEFAULT</span> <span class="fn">CURRENT_TIMESTAMP</span>,
+  <span class="var">update_time</span>         <span class="typ">DATETIME</span>     <span class="kw">DEFAULT</span> <span class="fn">CURRENT_TIMESTAMP</span> <span class="kw">ON UPDATE</span> <span class="fn">CURRENT_TIMESTAMP</span>,
+  <span class="kw">UNIQUE KEY</span> <span class="var">uk_apply_no</span> (<span class="var">apply_no</span>),
+  <span class="kw">UNIQUE KEY</span> <span class="var">uk_cust_ent_active</span> (<span class="var">customer_id</span>, <span class="var">enterprise_id</span>, <span class="var">status</span>) <span class="com">-- 同客户同企业进行中的申请唯一</span>,
+  <span class="kw">KEY</span> <span class="var">idx_status_node</span> (<span class="var">status</span>, <span class="var">current_node</span>),
+  <span class="kw">KEY</span> <span class="var">idx_customer</span> (<span class="var">customer_id</span>, <span class="var">create_time</span>)
+) <span class="kw">ENGINE=</span><span class="typ">InnoDB</span> <span class="kw">DEFAULT CHARSET=</span><span class="str">utf8mb4</span> <span class="kw">COMMENT=</span><span class="str">'ESOP授信申请主表'</span>;</pre>
+                        </div>
+                        <p style="font-size:13px;"><strong>设计要点</strong>：<code>uk_cust_ent_active</code> 复合唯一索引保证幂等（同客户同企业不能同时有 SUBMITTED/APPROVING 两条记录），<code>status</code> + <code>current_node</code> 联合索引支撑审批中心的待办列表查询。</p>
+
+                        <h5>2. 押品明细表 <code>esop_collateral</code></h5>
+                        <div class="code-block">
+                            <span class="lang-tag">SQL</span>
+<pre><span class="kw">CREATE TABLE</span> <span class="typ">esop_collateral</span> (
+  <span class="var">id</span>                  <span class="typ">BIGINT</span>       <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="var">apply_id</span>            <span class="typ">BIGINT</span>       <span class="kw">NOT NULL</span>,
+  <span class="var">collateral_type</span>     <span class="typ">VARCHAR</span>(<span class="num">20</span>) <span class="kw">NOT NULL</span> <span class="com">-- LISTED_STOCK / UNLISTED_STOCK / OPTION</span>,
+  <span class="var">stock_code</span>          <span class="typ">VARCHAR</span>(<span class="num">20</span>)            <span class="com">-- 上市股票代码</span>,
+  <span class="var">share_count</span>         <span class="typ">DECIMAL</span>(<span class="num">18</span>,<span class="num">4</span>) <span class="kw">NOT NULL</span> <span class="com">-- 持股数量</span>,
+  <span class="var">unit_price</span>          <span class="typ">DECIMAL</span>(<span class="num">18</span>,<span class="num">4</span>) <span class="kw">NOT NULL</span> <span class="com">-- 评估单价</span>,
+  <span class="var">evaluated_value</span>     <span class="typ">DECIMAL</span>(<span class="num">18</span>,<span class="num">4</span>) <span class="kw">NOT NULL</span> <span class="com">-- 评估总值</span>,
+  <span class="var">discount_rate</span>       <span class="typ">DECIMAL</span>(<span class="num">5</span>,<span class="num">4</span>)  <span class="kw">NOT NULL</span> <span class="com">-- 抵质押率 0.5000=50%</span>,
+  <span class="var">credit_value</span>        <span class="typ">DECIMAL</span>(<span class="num">18</span>,<span class="num">4</span>) <span class="kw">NOT NULL</span> <span class="com">-- 可贷额度 = 评估值 × 抵质押率</span>,
+  <span class="var">restricted</span>          <span class="typ">TINYINT</span>      <span class="kw">DEFAULT</span> <span class="num">0</span>  <span class="com">-- 是否禁售期</span>,
+  <span class="var">restricted_until</span>    <span class="typ">DATE</span>                  <span class="com">-- 禁售解禁日</span>,
+  <span class="var">eval_time</span>           <span class="typ">DATETIME</span>     <span class="kw">NOT NULL</span> <span class="com">-- 评估时间</span>,
+  <span class="var">eval_source</span>         <span class="typ">VARCHAR</span>(<span class="num">32</span>) <span class="kw">NOT NULL</span> <span class="com">-- INTERNAL / CSDC / THIRD_PARTY</span>,
+  <span class="kw">KEY</span> <span class="var">idx_apply</span> (<span class="var">apply_id</span>)
+) <span class="kw">COMMENT=</span><span class="str">'ESOP股权押品明细'</span>;</pre>
+                        </div>
+
+                        <h5>3. 审批流水表 <code>esop_approval_history</code></h5>
+                        <div class="code-block">
+                            <span class="lang-tag">SQL</span>
+<pre><span class="kw">CREATE TABLE</span> <span class="typ">esop_approval_history</span> (
+  <span class="var">id</span>              <span class="typ">BIGINT</span>      <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="var">apply_id</span>        <span class="typ">BIGINT</span>      <span class="kw">NOT NULL</span>,
+  <span class="var">node_code</span>       <span class="typ">VARCHAR</span>(<span class="num">32</span>) <span class="kw">NOT NULL</span> <span class="com">-- CM / RISK / CREDIT_CMT</span>,
+  <span class="var">action</span>          <span class="typ">VARCHAR</span>(<span class="num">20</span>) <span class="kw">NOT NULL</span> <span class="com">-- APPROVE / REJECT / RETURN / SIGN</span>,
+  <span class="var">approver</span>        <span class="typ">VARCHAR</span>(<span class="num">32</span>) <span class="kw">NOT NULL</span>,
+  <span class="var">approve_amount</span>  <span class="typ">DECIMAL</span>(<span class="num">18</span>,<span class="num">4</span>),
+  <span class="var">remark</span>          <span class="typ">VARCHAR</span>(<span class="num">512</span>),
+  <span class="var">action_time</span>     <span class="typ">DATETIME</span>    <span class="kw">DEFAULT</span> <span class="fn">CURRENT_TIMESTAMP</span>,
+  <span class="kw">KEY</span> <span class="var">idx_apply_time</span> (<span class="var">apply_id</span>, <span class="var">action_time</span>)
+) <span class="kw">COMMENT=</span><span class="str">'ESOP审批操作流水（不可删除，用于审计）'</span>;</pre>
+                        </div>
+                        <p style="font-size:13px;"><strong>关键设计</strong>：审批表只允许 INSERT，不允许 UPDATE/DELETE（应用层强约束 + DBA 配合监控），满足银监会审计追溯要求。</p>
+
+                        <h5>4. 额度账户表 <code>esop_credit_account</code></h5>
+                        <div class="code-block">
+                            <span class="lang-tag">SQL</span>
+<pre><span class="kw">CREATE TABLE</span> <span class="typ">esop_credit_account</span> (
+  <span class="var">id</span>              <span class="typ">BIGINT</span>      <span class="kw">PRIMARY KEY AUTO_INCREMENT</span>,
+  <span class="var">customer_id</span>     <span class="typ">BIGINT</span>      <span class="kw">NOT NULL</span>,
+  <span class="var">total_amount</span>    <span class="typ">DECIMAL</span>(<span class="num">18</span>,<span class="num">4</span>) <span class="kw">NOT NULL</span> <span class="com">-- 授信总额</span>,
+  <span class="var">used_amount</span>     <span class="typ">DECIMAL</span>(<span class="num">18</span>,<span class="num">4</span>) <span class="kw">DEFAULT</span> <span class="num">0</span> <span class="com">-- 已用额度</span>,
+  <span class="var">frozen_amount</span>   <span class="typ">DECIMAL</span>(<span class="num">18</span>,<span class="num">4</span>) <span class="kw">DEFAULT</span> <span class="num">0</span> <span class="com">-- 冻结额度（合同未放款）</span>,
+  <span class="var">version</span>         <span class="typ">INT</span>         <span class="kw">DEFAULT</span> <span class="num">0</span>  <span class="com">-- 乐观锁版本号</span>,
+  <span class="kw">UNIQUE KEY</span> <span class="var">uk_customer</span> (<span class="var">customer_id</span>),
+  <span class="kw">CHECK</span> (<span class="var">used_amount</span> + <span class="var">frozen_amount</span> &lt;= <span class="var">total_amount</span>)  <span class="com">-- 不能超额</span>
+) <span class="kw">COMMENT=</span><span class="str">'ESOP额度账户'</span>;</pre>
+                        </div>
+                        <p style="font-size:13px;"><strong>设计要点</strong>：<code>version</code> 乐观锁防并发占用额度；<code>CHECK</code> 约束兜底防止应用层 bug 导致超额。</p>
+                    </div>
+
+                    <div class="detail-panel" id="esop-code">
+                        <h5>1. 押品估值策略（策略模式）</h5>
+                        <p>不同押品类型有不同的估值算法，用策略模式抽象：</p>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="com">/** 押品估值策略接口 */</span>
+<span class="kw">public interface</span> <span class="typ">CollateralEvaluator</span> {
+    <span class="typ">CollateralType</span> <span class="fn">getType</span>();
+    <span class="typ">EvaluationResult</span> <span class="fn">evaluate</span>(<span class="typ">CollateralInput</span> input);
+}
+
+<span class="com">/** 上市公司股票估值 */</span>
+<span class="ano">@Component</span>
+<span class="kw">public class</span> <span class="typ">ListedStockEvaluator</span> <span class="kw">implements</span> <span class="typ">CollateralEvaluator</span> {
+
+    <span class="ano">@Resource</span>
+    <span class="kw">private</span> <span class="typ">StockPriceClient</span> stockPriceClient;  <span class="com">// 调三方实时行情</span>
+
+    <span class="ano">@Override</span>
+    <span class="kw">public</span> <span class="typ">CollateralType</span> <span class="fn">getType</span>() { <span class="kw">return</span> <span class="typ">CollateralType</span>.<span class="var">LISTED_STOCK</span>; }
+
+    <span class="ano">@Override</span>
+    <span class="kw">public</span> <span class="typ">EvaluationResult</span> <span class="fn">evaluate</span>(<span class="typ">CollateralInput</span> input) {
+        <span class="com">// 1. 取近 30 个交易日均价（避免单日波动）</span>
+        <span class="typ">BigDecimal</span> avgPrice = stockPriceClient.<span class="fn">getAvgPrice</span>(input.<span class="fn">getStockCode</span>(), <span class="num">30</span>);
+
+        <span class="com">// 2. 评估总值 = 持股数 × 均价</span>
+        <span class="typ">BigDecimal</span> evaluatedValue = input.<span class="fn">getShareCount</span>().<span class="fn">multiply</span>(avgPrice)
+            .<span class="fn">setScale</span>(<span class="num">4</span>, <span class="typ">RoundingMode</span>.<span class="var">HALF_UP</span>);
+
+        <span class="com">// 3. 抵质押率：基础 50% - 禁售期惩罚 10pct</span>
+        <span class="typ">BigDecimal</span> discountRate = <span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"0.50"</span>);
+        <span class="kw">if</span> (input.<span class="fn">isRestricted</span>()) {
+            discountRate = discountRate.<span class="fn">subtract</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"0.10"</span>));
+        }
+
+        <span class="com">// 4. 可贷金额 = 评估值 × 抵质押率（向下取整到分）</span>
+        <span class="typ">BigDecimal</span> creditValue = evaluatedValue.<span class="fn">multiply</span>(discountRate)
+            .<span class="fn">setScale</span>(<span class="num">2</span>, <span class="typ">RoundingMode</span>.<span class="var">DOWN</span>);
+
+        <span class="kw">return</span> <span class="typ">EvaluationResult</span>.<span class="fn">builder</span>()
+            .<span class="fn">evaluatedValue</span>(evaluatedValue)
+            .<span class="fn">discountRate</span>(discountRate)
+            .<span class="fn">creditValue</span>(creditValue)
+            .<span class="fn">evalSource</span>(<span class="str">"INTERNAL"</span>)
+            .<span class="fn">evalTime</span>(<span class="typ">LocalDateTime</span>.<span class="fn">now</span>())
+            .<span class="fn">build</span>();
+    }
+}
+
+<span class="com">/** 策略工厂：按 type 路由 */</span>
+<span class="ano">@Component</span>
+<span class="kw">public class</span> <span class="typ">CollateralEvaluatorFactory</span> {
+    <span class="kw">private final</span> <span class="typ">Map</span>&lt;<span class="typ">CollateralType</span>, <span class="typ">CollateralEvaluator</span>&gt; map = <span class="kw">new</span> <span class="typ">EnumMap</span>&lt;&gt;(<span class="typ">CollateralType</span>.<span class="kw">class</span>);
+
+    <span class="kw">public</span> <span class="typ">CollateralEvaluatorFactory</span>(<span class="typ">List</span>&lt;<span class="typ">CollateralEvaluator</span>&gt; evaluators) {
+        evaluators.<span class="fn">forEach</span>(e -&gt; map.<span class="fn">put</span>(e.<span class="fn">getType</span>(), e));
+    }
+
+    <span class="kw">public</span> <span class="typ">CollateralEvaluator</span> <span class="fn">get</span>(<span class="typ">CollateralType</span> type) {
+        <span class="typ">CollateralEvaluator</span> e = map.<span class="fn">get</span>(type);
+        <span class="kw">if</span> (e == <span class="kw">null</span>) <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"未支持的押品类型: "</span> + type);
+        <span class="kw">return</span> e;
+    }
+}</pre>
+                        </div>
+
+                        <h5>2. 授信申请提交（幂等校验 + 分布式锁）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@Service</span>
+<span class="kw">public class</span> <span class="typ">EsopCreditApplyService</span> {
+
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">EsopCreditApplyMapper</span> applyMapper;
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">CollateralEvaluatorFactory</span> evaluatorFactory;
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">RedisLockClient</span> lockClient;
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">LiteflowEngine</span> liteflowEngine;
+
+    <span class="ano">@Transactional</span>(rollbackFor = <span class="typ">Exception</span>.<span class="kw">class</span>)
+    <span class="kw">public</span> <span class="typ">ApplyResult</span> <span class="fn">submit</span>(<span class="typ">EsopApplyRequest</span> req) {
+        <span class="com">// 1. 分布式锁：同客户同企业并发提交防重</span>
+        <span class="typ">String</span> lockKey = <span class="str">"esop:apply:"</span> + req.<span class="fn">getCustomerId</span>() + <span class="str">":"</span> + req.<span class="fn">getEnterpriseId</span>();
+        <span class="kw">return</span> lockClient.<span class="fn">execute</span>(lockKey, <span class="num">10</span>, <span class="typ">TimeUnit</span>.<span class="var">SECONDS</span>, () -&gt; {
+
+            <span class="com">// 2. DB 唯一索引兜底：同客户同企业进行中的申请最多 1 条</span>
+            <span class="typ">EsopCreditApply</span> existing = applyMapper.<span class="fn">selectActiveByCustomerEnterprise</span>(
+                req.<span class="fn">getCustomerId</span>(), req.<span class="fn">getEnterpriseId</span>());
+            <span class="kw">if</span> (existing != <span class="kw">null</span>) {
+                <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"已有进行中的申请: "</span> + existing.<span class="fn">getApplyNo</span>());
+            }
+
+            <span class="com">// 3. 押品估值（策略路由）</span>
+            <span class="typ">CollateralEvaluator</span> evaluator = evaluatorFactory.<span class="fn">get</span>(req.<span class="fn">getCollateralType</span>());
+            <span class="typ">EvaluationResult</span> eval = evaluator.<span class="fn">evaluate</span>(req.<span class="fn">toEvalInput</span>());
+
+            <span class="com">// 4. 申请金额校验：不能超过押品可贷金额</span>
+            <span class="kw">if</span> (req.<span class="fn">getApplyAmount</span>().<span class="fn">compareTo</span>(eval.<span class="fn">getCreditValue</span>()) &gt; <span class="num">0</span>) {
+                <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"申请金额超过押品可贷金额"</span>);
+            }
+
+            <span class="com">// 5. 关联授信合并：同客户在本行所有授信合计不能超 200 万</span>
+            <span class="typ">BigDecimal</span> totalCredit = applyMapper.<span class="fn">sumActiveCreditByCustomer</span>(req.<span class="fn">getCustomerId</span>());
+            <span class="kw">if</span> (totalCredit.<span class="fn">add</span>(req.<span class="fn">getApplyAmount</span>()).<span class="fn">compareTo</span>(<span class="typ">SINGLE_LIMIT</span>) &gt; <span class="num">0</span>) {
+                <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"超过单户授信上限 200 万"</span>);
+            }
+
+            <span class="com">// 6. 落库申请</span>
+            <span class="typ">EsopCreditApply</span> apply = <span class="typ">EsopCreditApply</span>.<span class="fn">builder</span>()
+                .<span class="fn">applyNo</span>(<span class="fn">generateApplyNo</span>())
+                .<span class="fn">customerId</span>(req.<span class="fn">getCustomerId</span>())
+                .<span class="fn">enterpriseId</span>(req.<span class="fn">getEnterpriseId</span>())
+                .<span class="fn">applyAmount</span>(req.<span class="fn">getApplyAmount</span>())
+                .<span class="fn">status</span>(<span class="typ">ApplyStatus</span>.<span class="var">SUBMITTED</span>)
+                .<span class="fn">currentNode</span>(<span class="typ">ApprovalNode</span>.<span class="var">CM</span>.<span class="fn">getCode</span>())
+                .<span class="fn">submitTime</span>(<span class="typ">LocalDateTime</span>.<span class="fn">now</span>())
+                .<span class="fn">build</span>();
+            applyMapper.<span class="fn">insert</span>(apply);
+
+            <span class="com">// 7. 启动审批流（异步）</span>
+            liteflowEngine.<span class="fn">execute2Future</span>(<span class="str">"esopApprovalChain"</span>, apply.<span class="fn">getId</span>());
+
+            <span class="kw">return</span> <span class="typ">ApplyResult</span>.<span class="fn">success</span>(apply.<span class="fn">getApplyNo</span>());
+        });
+    }
+}</pre>
+                        </div>
+
+                        <h5>3. 关键单元测试（金额边界）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@SpringBootTest</span>
+<span class="kw">class</span> <span class="typ">EsopCreditApplyServiceTest</span> {
+
+    <span class="ano">@Test</span>
+    <span class="kw">void</span> <span class="fn">should_reject_when_apply_amount_exceeds_collateral</span>() {
+        <span class="typ">EsopApplyRequest</span> req = <span class="typ">EsopApplyRequest</span>.<span class="fn">builder</span>()
+            .<span class="fn">customerId</span>(<span class="num">10001L</span>)
+            .<span class="fn">applyAmount</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"500000.00"</span>))
+            .<span class="fn">collateralType</span>(<span class="typ">CollateralType</span>.<span class="var">LISTED_STOCK</span>)
+            .<span class="fn">shareCount</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"10000"</span>))   <span class="com">// 假设股价 50，押品 50w，抵押率 50% → 可贷 25w</span>
+            .<span class="fn">build</span>();
+
+        <span class="typ">BizException</span> ex = <span class="fn">assertThrows</span>(<span class="typ">BizException</span>.<span class="kw">class</span>, () -&gt; service.<span class="fn">submit</span>(req));
+        <span class="fn">assertThat</span>(ex.<span class="fn">getMessage</span>()).<span class="fn">contains</span>(<span class="str">"超过押品可贷金额"</span>);
+    }
+
+    <span class="ano">@Test</span>
+    <span class="kw">void</span> <span class="fn">should_apply_restricted_discount_when_share_in_lockup</span>() {
+        <span class="com">// 禁售期内股票抵押率应该是 40% (50% - 10%)</span>
+        <span class="typ">EvaluationResult</span> eval = evaluator.<span class="fn">evaluate</span>(<span class="fn">restrictedInput</span>());
+        <span class="fn">assertEquals</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"0.40"</span>), eval.<span class="fn">getDiscountRate</span>());
+    }
+}</pre>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="highlight-item">
+                <h4>2. 数据库设计 + 多环境配置管理 <span class="badge">基础工程</span></h4>
+                <div class="highlight-block">
+                    <div class="label">背景</div>
+                    <div class="content">
+                        新业务模块上线需要从零设计表结构，且要适配行内 SIT / UAT / 生产<strong>三套环境</strong>，每套环境的核心账务系统地址、对接外围系统的密钥都不同。
+                    </div>
+                </div>
+                <div class="highlight-block">
+                    <div class="label">我做了什么</div>
+                    <div class="content">
+                        <strong>表结构设计</strong>：员工持股融资业务的核心 8 张表设计（授信主表、押品明细、审批流水、额度变更日志、合同关联、还款计划、流水流水、操作审计）。所有金额字段统一用 <code>DECIMAL(18, 4)</code>，日期统一 UTC 存储；
+                        <strong>索引规划</strong>：按查询频次设计组合索引，授信查询走 <code>(customer_id, status, apply_date)</code>，审批走 <code>(approval_node, status)</code>；
+                        <strong>配置管理</strong>：所有环境差异化配置走 <code>Spring Boot Profile</code> + 分环境 <code>application-{env}.properties</code>，发版时打不同的产物分别推到 SIT / UAT / 生产；敏感配置（数据库密码、对接密钥）通过<strong>启动参数 + JVM 系统变量</strong>注入，不落代码仓库。
+                    </div>
+                </div>
+
+                <div class="detail-tabs">
+                    <button class="detail-tab" data-target="db-design">📋 数据库设计原则 <span class="arrow">▼</span></button>
+                    <button class="detail-tab" data-target="db-config">⚙️ 多环境配置实战 <span class="arrow">▼</span></button>
+                    <button class="detail-tab" data-target="db-code">💻 关键代码 <span class="arrow">▼</span></button>
+                </div>
+                <div class="detail-panels">
+
+                    <div class="detail-panel" id="db-design">
+                        <h5>银行系统数据库设计的"红线"</h5>
+                        <p>跟互联网项目的"快速迭代、能 work 就行"不同，银行项目数据库设计有几条红线，违反了过审都过不了：</p>
+
+                        <table>
+                            <thead>
+                                <tr><th>红线</th><th>具体要求</th><th>为什么</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>金额字段统一精度</td>
+                                    <td><code>DECIMAL(18,4)</code></td>
+                                    <td>单位精确到 0.0001 元，避免精度丢失；总位数 18 应付万亿级金额</td>
+                                </tr>
+                                <tr>
+                                    <td>所有变更字段必须保留</td>
+                                    <td>禁用 UPDATE 覆盖，改用 INSERT 新版本</td>
+                                    <td>满足审计追溯要求</td>
+                                </tr>
+                                <tr>
+                                    <td>关键表必须有 <code>create_time</code> + <code>update_time</code></td>
+                                    <td>且 <code>update_time</code> 走 <code>ON UPDATE CURRENT_TIMESTAMP</code></td>
+                                    <td>定位问题、审计、做增量同步都靠这俩</td>
+                                </tr>
+                                <tr>
+                                    <td>禁用物理删除</td>
+                                    <td>用 <code>is_deleted TINYINT</code> 软删，索引带这个字段</td>
+                                    <td>误删数据可恢复 + 审计</td>
+                                </tr>
+                                <tr>
+                                    <td>禁用 ENUM 类型</td>
+                                    <td>用 <code>VARCHAR</code> + 应用层枚举映射</td>
+                                    <td>新增枚举值无需 DDL 锁表</td>
+                                </tr>
+                                <tr>
+                                    <td>主键统一 <code>BIGINT AUTO_INCREMENT</code></td>
+                                    <td>禁用 UUID（性能差）、禁用业务字段做主键</td>
+                                    <td>插入性能 + 索引大小</td>
+                                </tr>
+                                <tr>
+                                    <td>索引必须经 DBA 评审</td>
+                                    <td>提交建表 SQL 前要附"预期查询模式 + 数据量估算"</td>
+                                    <td>避免上线后慢 SQL 拖垮 MySQL</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h5>索引设计实战（员工持股融资场景）</h5>
+                        <p>每个索引都要写清楚"覆盖哪些查询"，DBA 才会过审：</p>
+                        <ul>
+                            <li><code>idx_status_node (status, current_node)</code>：审批中心待办列表查询，<code>WHERE status='APPROVING' AND current_node='RISK'</code></li>
+                            <li><code>idx_customer (customer_id, create_time)</code>：客户经理"我的客户"列表，按时间倒序</li>
+                            <li><code>uk_cust_ent_active (customer_id, enterprise_id, status)</code>：幂等约束，DB 层兜底</li>
+                            <li><code>idx_apply_time (apply_id, action_time)</code>：审批流水按申请单 + 时间正序展示</li>
+                        </ul>
+
+                        <h5>主从分离 + 读写比</h5>
+                        <p>查询多写少的报表场景走从库（最终一致），授信申请这种强一致走主库。配置在 MyBatis-Plus DataSource 多数据源里：</p>
+                        <ul>
+                            <li>主库：授信提交、审批操作、放款（强一致写）</li>
+                            <li>从库：审批待办列表、报表查询（容忍秒级延迟）</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-panel" id="db-config">
+                        <h5>银行老项目的真实配置管理方式</h5>
+                        <p>外派银行项目的实际情况：<strong>没有用 Apollo / Nacos 这类配置中心</strong>。原因有三：</p>
+                        <ul>
+                            <li>① 银行内部对引入<strong>新组件</strong>极度保守，每个新中间件都要走"行内技术评审委员会"，周期 3~6 个月</li>
+                            <li>② 普惠信贷系统是<strong>外围业务系统</strong>，不能跟核心账务系统跨层依赖外部组件</li>
+                            <li>③ 信贷条线<strong>变更频率不高</strong>（不像互联网每天调参），用配置文件 + 发版完全够用</li>
+                        </ul>
+                        <p>所以用的是<strong>最朴素但稳定的方案</strong>：Spring Boot Profile + 多 properties 文件。</p>
+
+                        <h5>资源目录结构</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">resources/</span>
+<pre>src/main/resources/
+├── application.yml                  <span class="com"># 主配置（所有环境通用部分）</span>
+├── application-sit.yml              <span class="com"># SIT 环境差异化配置</span>
+├── application-uat.yml              <span class="com"># UAT 环境差异化配置</span>
+├── application-prod.yml             <span class="com"># 生产环境差异化配置</span>
+├── business/
+│   ├── esop-business.properties     <span class="com"># 业务参数（利率、抵押率等）</span>
+│   └── esop-rules-mapping.properties
+├── flow/
+│   ├── esop-approval.xml            <span class="com"># Liteflow 审批流定义</span>
+│   └── esop-loan.xml
+└── mapper/                          <span class="com"># MyBatis Mapper</span></pre>
+                        </div>
+
+                        <h5>主配置（application.yml）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">application.yml</span>
+<pre><span class="kw">spring:</span>
+  <span class="kw">application:</span>
+    <span class="kw">name:</span> <span class="str">esop-credit-service</span>
+  <span class="kw">profiles:</span>
+    <span class="kw">active:</span> <span class="str">${SPRING_PROFILES_ACTIVE:sit}</span>     <span class="com"># 启动参数注入</span>
+
+<span class="kw">server:</span>
+  <span class="kw">port:</span> <span class="num">8080</span>
+
+<span class="com"># 业务参数文件加载</span>
+<span class="kw">spring:</span>
+  <span class="kw">config:</span>
+    <span class="kw">import:</span>
+      - <span class="str">classpath:business/esop-business.properties</span>
+      - <span class="str">classpath:business/esop-rules-mapping.properties</span></pre>
+                        </div>
+
+                        <h5>环境差异化配置</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">application-sit.yml</span>
+<pre><span class="kw">spring:</span>
+  <span class="kw">datasource:</span>
+    <span class="kw">master:</span>
+      <span class="kw">url:</span> <span class="str">jdbc:mysql://10.10.1.50:3306/esop_sit</span>
+      <span class="kw">username:</span> <span class="str">esop_app</span>
+      <span class="com"># 密码不写在文件里！通过启动参数注入</span>
+
+<span class="com"># 核心账务系统对接（SIT 是测试环境地址）</span>
+<span class="kw">core-banking:</span>
+  <span class="kw">api-host:</span> <span class="str">http://10.10.2.30:8090</span>
+  <span class="kw">timeout-ms:</span> <span class="num">5000</span>
+
+<span class="kw">redis:</span>
+  <span class="kw">host:</span> <span class="str">10.10.3.10</span>
+  <span class="kw">port:</span> <span class="num">6379</span></pre>
+                        </div>
+
+                        <h5>敏感信息（密码 / 密钥）的处理</h5>
+                        <p>这是银行项目最严格的红线之一：<strong>密码、API 密钥、HMAC 签名密钥不允许出现在 Git 仓库里任何文件中</strong>。我们的做法：</p>
+                        <ol>
+                            <li><strong>启动脚本注入</strong>：<code>java -DDB_PASSWORD=*** -DCORE_API_KEY=*** -jar app.jar</code></li>
+                            <li><strong>启动脚本本身放在受控目录</strong>：<code>/etc/esop/launch.sh</code>，权限 <code>700</code>，只有应用账号可读</li>
+                            <li><strong>密钥由运维统一管理</strong>，开发本地用 <code>application-local.yml</code>（gitignore 不入库）</li>
+                        </ol>
+                        <div class="code-block">
+                            <span class="lang-tag">application.yml 占位</span>
+<pre><span class="kw">spring:</span>
+  <span class="kw">datasource:</span>
+    <span class="kw">master:</span>
+      <span class="kw">password:</span> <span class="str">${DB_PASSWORD}</span>      <span class="com"># 启动时从 -D 参数读</span>
+
+<span class="kw">core-banking:</span>
+  <span class="kw">api-key:</span> <span class="str">${CORE_API_KEY}</span></pre>
+                        </div>
+
+                        <h5>业务参数的加载（@ConfigurationProperties）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@Component</span>
+<span class="ano">@ConfigurationProperties</span>(prefix = <span class="str">"esop"</span>)
+<span class="ano">@Data</span>
+<span class="kw">public class</span> <span class="typ">EsopBusinessConfig</span> {
+
+    <span class="kw">private</span> <span class="typ">CreditConfig</span> credit = <span class="kw">new</span> <span class="typ">CreditConfig</span>();
+    <span class="kw">private</span> <span class="typ">CollateralConfig</span> collateral = <span class="kw">new</span> <span class="typ">CollateralConfig</span>();
+    <span class="kw">private</span> <span class="typ">RateConfig</span> rate = <span class="kw">new</span> <span class="typ">RateConfig</span>();
+    <span class="kw">private</span> <span class="typ">ApprovalConfig</span> approval = <span class="kw">new</span> <span class="typ">ApprovalConfig</span>();
+
+    <span class="ano">@Data</span>
+    <span class="kw">public static class</span> <span class="typ">CreditConfig</span> {
+        <span class="kw">private</span> <span class="typ">BigDecimal</span> singleLimit = <span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"2000000"</span>);
+    }
+
+    <span class="ano">@Data</span>
+    <span class="kw">public static class</span> <span class="typ">CollateralConfig</span> {
+        <span class="kw">private</span> <span class="typ">BigDecimal</span> listedStockDiscount = <span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"0.50"</span>);
+        <span class="kw">private</span> <span class="typ">BigDecimal</span> unlistedStockDiscount = <span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"0.30"</span>);
+        <span class="kw">private</span> <span class="typ">BigDecimal</span> restrictedPenalty = <span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"0.10"</span>);
+    }
+
+    <span class="com">// ... 其他</span>
+}</pre>
+                        </div>
+
+                        <h5>这套方案的<strong>痛点</strong>（也是后来跳到阅文体会到差距的地方）</h5>
+                        <table>
+                            <thead><tr><th>痛点</th><th>实际后果</th><th>当时的处理</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td>调参必须发版</td>
+                                    <td>总行下调一次抵质押率，要走完整发版流程（2 周）</td>
+                                    <td>只能等正常发版周期</td>
+                                </tr>
+                                <tr>
+                                    <td>三环境配置易漂移</td>
+                                    <td>SIT 加了 key，UAT/PROD 忘加，上线挂启动</td>
+                                    <td>建了 checklist，发版前手工对比 3 套配置</td>
+                                </tr>
+                                <tr>
+                                    <td>密码靠运维口头交接</td>
+                                    <td>运维交接时漏密码，凌晨发版翻车</td>
+                                    <td>改成密码用受控文档（行内 Confluence）+ 加密存档</td>
+                                </tr>
+                                <tr>
+                                    <td>无审计</td>
+                                    <td>谁改了配置文件、什么时候改的，只能靠 Git log</td>
+                                    <td>强制 Git 提交规范 + Code Review</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="margin-top:14px;"><strong style="color:var(--primary);">💡 这一节其实是后面"能力迁移"章节的伏笔</strong>——正是因为银行老项目<strong>没</strong>用配置中心，所以到阅文用上七彩石之后，我才特别能体会"配置中心"对工程效率的解放。</p>
+                    </div>
+
+                    <div class="detail-panel" id="db-code">
+                        <h5>1. MyBatis 多数据源（主从分离）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@Configuration</span>
+<span class="kw">public class</span> <span class="typ">DataSourceConfig</span> {
+
+    <span class="ano">@Bean</span>
+    <span class="ano">@ConfigurationProperties</span>(<span class="str">"spring.datasource.master"</span>)
+    <span class="kw">public</span> <span class="typ">DataSource</span> <span class="fn">masterDataSource</span>() {
+        <span class="kw">return</span> <span class="typ">DataSourceBuilder</span>.<span class="fn">create</span>().<span class="fn">build</span>();
+    }
+
+    <span class="ano">@Bean</span>
+    <span class="ano">@ConfigurationProperties</span>(<span class="str">"spring.datasource.slave"</span>)
+    <span class="kw">public</span> <span class="typ">DataSource</span> <span class="fn">slaveDataSource</span>() {
+        <span class="kw">return</span> <span class="typ">DataSourceBuilder</span>.<span class="fn">create</span>().<span class="fn">build</span>();
+    }
+
+    <span class="ano">@Bean</span>
+    <span class="kw">public</span> <span class="typ">DataSource</span> <span class="fn">routingDataSource</span>(<span class="ano">@Qualifier</span>(<span class="str">"masterDataSource"</span>) <span class="typ">DataSource</span> master,
+                                            <span class="ano">@Qualifier</span>(<span class="str">"slaveDataSource"</span>) <span class="typ">DataSource</span> slave) {
+        <span class="typ">DynamicDataSource</span> ds = <span class="kw">new</span> <span class="typ">DynamicDataSource</span>();
+        <span class="typ">Map</span>&lt;<span class="typ">Object</span>, <span class="typ">Object</span>&gt; map = <span class="kw">new</span> <span class="typ">HashMap</span>&lt;&gt;();
+        map.<span class="fn">put</span>(<span class="str">"master"</span>, master);
+        map.<span class="fn">put</span>(<span class="str">"slave"</span>, slave);
+        ds.<span class="fn">setTargetDataSources</span>(map);
+        ds.<span class="fn">setDefaultTargetDataSource</span>(master);
+        <span class="kw">return</span> ds;
+    }
+}
+
+<span class="com">/** 注解切换数据源 */</span>
+<span class="ano">@Target</span>({<span class="typ">ElementType</span>.<span class="var">METHOD</span>})
+<span class="ano">@Retention</span>(<span class="typ">RetentionPolicy</span>.<span class="var">RUNTIME</span>)
+<span class="kw">public @interface</span> <span class="typ">DataSourceType</span> {
+    <span class="typ">String</span> <span class="fn">value</span>() <span class="kw">default</span> <span class="str">"master"</span>;
+}
+
+<span class="com">/** AOP 切换 */</span>
+<span class="ano">@Aspect</span>
+<span class="ano">@Component</span>
+<span class="kw">public class</span> <span class="typ">DataSourceAspect</span> {
+    <span class="ano">@Around</span>(<span class="str">"@annotation(dst)"</span>)
+    <span class="kw">public</span> <span class="typ">Object</span> <span class="fn">around</span>(<span class="typ">ProceedingJoinPoint</span> pjp, <span class="typ">DataSourceType</span> dst) <span class="kw">throws</span> <span class="typ">Throwable</span> {
+        <span class="kw">try</span> {
+            <span class="typ">DynamicDataSource</span>.<span class="fn">setKey</span>(dst.<span class="fn">value</span>());
+            <span class="kw">return</span> pjp.<span class="fn">proceed</span>();
+        } <span class="kw">finally</span> {
+            <span class="typ">DynamicDataSource</span>.<span class="fn">clear</span>();
+        }
+    }
+}
+
+<span class="com">// 使用</span>
+<span class="ano">@DataSourceType</span>(<span class="str">"slave"</span>)
+<span class="kw">public</span> <span class="typ">List</span>&lt;<span class="typ">EsopApplyDTO</span>&gt; <span class="fn">queryApprovalList</span>(<span class="typ">QueryParam</span> param) {
+    <span class="kw">return</span> applyMapper.<span class="fn">selectByCondition</span>(param);   <span class="com">// 走从库</span>
+}</pre>
+                        </div>
+
+                        <h5>2. 资金流水的乐观锁更新</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@Service</span>
+<span class="kw">public class</span> <span class="typ">EsopCreditAccountService</span> {
+
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">EsopCreditAccountMapper</span> accountMapper;
+
+    <span class="com">/** 占用额度（合同签订时调用） */</span>
+    <span class="ano">@Transactional</span>(rollbackFor = <span class="typ">Exception</span>.<span class="kw">class</span>)
+    <span class="kw">public void</span> <span class="fn">freezeAmount</span>(<span class="typ">Long</span> customerId, <span class="typ">BigDecimal</span> amount) {
+        <span class="kw">int</span> retry = <span class="num">3</span>;
+        <span class="kw">while</span> (retry-- &gt; <span class="num">0</span>) {
+            <span class="typ">EsopCreditAccount</span> account = accountMapper.<span class="fn">selectByCustomerId</span>(customerId);
+            <span class="kw">if</span> (account == <span class="kw">null</span>) <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"额度账户不存在"</span>);
+
+            <span class="typ">BigDecimal</span> available = account.<span class="fn">getTotalAmount</span>()
+                .<span class="fn">subtract</span>(account.<span class="fn">getUsedAmount</span>())
+                .<span class="fn">subtract</span>(account.<span class="fn">getFrozenAmount</span>());
+
+            <span class="kw">if</span> (available.<span class="fn">compareTo</span>(amount) &lt; <span class="num">0</span>) {
+                <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"可用额度不足"</span>);
+            }
+
+            <span class="com">// 乐观锁 update：where version = old_version</span>
+            <span class="kw">int</span> rows = accountMapper.<span class="fn">freezeAmount</span>(customerId, amount, account.<span class="fn">getVersion</span>());
+            <span class="kw">if</span> (rows == <span class="num">1</span>) <span class="kw">return</span>;  <span class="com">// 成功</span>
+
+            <span class="com">// CAS 失败：被其他事务先更新了，重试</span>
+            log.<span class="fn">warn</span>(<span class="str">"额度乐观锁冲突，retry={}"</span>, retry);
+        }
+        <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"额度更新冲突，请稍后重试"</span>);
+    }
+}</pre>
+                        </div>
+                        <div class="code-block">
+                            <span class="lang-tag">Mapper.xml</span>
+<pre><span class="tag">&lt;update id="freezeAmount"&gt;</span>
+  UPDATE esop_credit_account
+  SET frozen_amount = frozen_amount + #{amount},
+      version = version + 1,
+      update_time = NOW()
+  WHERE customer_id = #{customerId}
+    AND version = #{version}
+    AND used_amount + frozen_amount + #{amount} &lt;= total_amount  <span class="com">-- DB 层兜底</span>
+<span class="tag">&lt;/update&gt;</span></pre>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="highlight-item">
+                <h4>3. 批量任务开发（贷后还款定时扫描） <span class="badge">日终批跑</span></h4>
+                <div class="highlight-block">
+                    <div class="label">背景</div>
+                    <div class="content">
+                        银行系统每天有<strong>固定的日终批跑窗口</strong>（通常凌晨 0:30~5:00），完成所有贷款的利息计提、还款计划更新、逾期判定、五级分类调整。批跑任务挂了会直接影响第二天的报表准确性，被监管追责。
+                    </div>
+                </div>
+                <div class="highlight-block">
+                    <div class="label">我做了什么</div>
+                    <div class="content">
+                        基于 <code>XXL-Job</code> 实现 <strong>3 个核心批跑任务</strong>：<br>
+                        <strong>① 还款计划生成</strong>：扫描当天放款的合同，按"等额本息/等额本金/按月付息"等不同还款方式生成完整还款计划，BigDecimal 精确计算到分；<br>
+                        <strong>② 逾期判定 + 利息计算</strong>：扫描所有未结清合同的还款计划，超过应还日期未还的判定为逾期，按逾期天数计算罚息（罚息利率 = 合同利率 × 1.5）；<br>
+                        <strong>③ 五级分类调整</strong>：根据逾期天数自动调整贷款分类（90 天内"关注"、90~180 天"次级"、180~360 天"可疑"、360+ 天"损失"），变更需写审计日志。
+                    </div>
+                </div>
+                <div class="highlight-block">
+                    <div class="label">技术细节</div>
+                    <div class="content">
+                        <strong>分片 + 幂等</strong>：XXL-Job 分片配置 8 片并行，按 <code>contract_id % 8</code> 分配到不同 worker；任务执行前查 <code>batch_run_log</code> 表的 <code>(task_name, business_date)</code>，已完成则跳过，确保<strong>幂等</strong>。<br>
+                        <strong>金额精度</strong>：所有利息计算用 <code>BigDecimal.setScale(2, RoundingMode.HALF_UP)</code>，禁止 double，避免一个月 10 万笔贷款累积出几百块的误差。<br>
+                        <strong>异常恢复</strong>：单个 contract 失败不中断整体批跑，错误进 <code>batch_error_log</code>，凌晨 5 点跑完后人工介入处理失败条目。
+                    </div>
+                </div>
+
+                <div class="detail-tabs">
+                    <button class="detail-tab" data-target="job-req">📋 业务需求与流程 <span class="arrow">▼</span></button>
+                    <button class="detail-tab" data-target="job-formula">🧮 利息计算公式 <span class="arrow">▼</span></button>
+                    <button class="detail-tab" data-target="job-code">💻 核心代码实现 <span class="arrow">▼</span></button>
+                </div>
+                <div class="detail-panels">
+
+                    <div class="detail-panel" id="job-req">
+                        <h5>批跑窗口与依赖关系</h5>
+                        <p>三个批跑任务有严格的<strong>执行顺序</strong>，前置任务失败后置任务必须停止：</p>
+                        <ol>
+                            <li><strong>00:30 - 01:00</strong> 还款计划生成（依赖：当日放款数据已落库）</li>
+                            <li><strong>01:00 - 02:30</strong> 逾期判定 + 利息计算（依赖：还款计划已就绪）</li>
+                            <li><strong>02:30 - 03:30</strong> 五级分类调整（依赖：逾期数据已就绪）</li>
+                            <li><strong>03:30 - 04:30</strong> 监管报表生成（依赖：五级分类已就绪）</li>
+                            <li><strong>04:30 - 05:00</strong> 数据校验与对账</li>
+                        </ol>
+                        <p>XXL-Job 的"<strong>子任务</strong>"功能保证依赖：父任务成功才触发子任务。</p>
+
+                        <h5>任务 1：还款计划生成</h5>
+                        <table>
+                            <thead><tr><th>项</th><th>详情</th></tr></thead>
+                            <tbody>
+                                <tr><td>触发时机</td><td>每日 00:30 + 当日新放款时实时触发</td></tr>
+                                <tr><td>输入</td><td>当日放款的所有合同（status = ACTIVE 且 plan_generated = 0）</td></tr>
+                                <tr><td>输出</td><td>每个合同的完整还款计划（按期数生成 N 行 repayment_plan）</td></tr>
+                                <tr><td>核心逻辑</td><td>按合同的 repay_method 选不同算法（等额本息/等额本金/按月付息到期还本）</td></tr>
+                                <tr><td>SLA</td><td>30 分钟内完成</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h5>任务 2：逾期判定 + 利息计算</h5>
+                        <table>
+                            <tbody>
+                                <tr><td>触发时机</td><td>每日 01:00</td></tr>
+                                <tr><td>输入</td><td>所有未结清还款计划（status IN ('PENDING', 'OVERDUE')）</td></tr>
+                                <tr><td>输出</td><td>逾期标记 + 罚息金额 + 应还总额更新</td></tr>
+                                <tr><td>核心规则</td><td>当前日期 &gt; 应还日期 → 标记 OVERDUE，按 (当前日期 - 应还日期) 天数计算罚息</td></tr>
+                                <tr><td>SLA</td><td>90 分钟内完成</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h5>任务 3：五级分类调整</h5>
+                        <table>
+                            <thead><tr><th>逾期天数</th><th>分类</th><th>含义</th></tr></thead>
+                            <tbody>
+                                <tr><td>0 天</td><td>正常</td><td>按时还款</td></tr>
+                                <tr><td>1 ~ 90 天</td><td>关注</td><td>有逾期但风险可控</td></tr>
+                                <tr><td>91 ~ 180 天</td><td>次级</td><td>风险较大，已计提部分准备金</td></tr>
+                                <tr><td>181 ~ 360 天</td><td>可疑</td><td>预计部分本金损失</td></tr>
+                                <tr><td>&gt; 360 天</td><td>损失</td><td>预计全额损失，需核销</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="detail-panel" id="job-formula">
+                        <h5>等额本息（每月还固定金额）</h5>
+                        <p>这是最复杂的算法，房贷常用。每月还款额 = (本金 × 月利率 × (1 + 月利率)^期数) / ((1 + 月利率)^期数 - 1)</p>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="com">/** 等额本息：每月还款额计算 */</span>
+<span class="kw">public</span> <span class="typ">BigDecimal</span> <span class="fn">calcEqualInstallment</span>(<span class="typ">BigDecimal</span> principal,    <span class="com">// 本金</span>
+                                       <span class="typ">BigDecimal</span> annualRate,   <span class="com">// 年化利率</span>
+                                       <span class="kw">int</span> termMonths) {        <span class="com">// 期数</span>
+    <span class="com">// 月利率</span>
+    <span class="typ">BigDecimal</span> monthlyRate = annualRate.<span class="fn">divide</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="num">12</span>), <span class="num">10</span>, <span class="typ">RoundingMode</span>.<span class="var">HALF_UP</span>);
+
+    <span class="com">// (1 + r)^n —— BigDecimal 没有内置 pow，但整数次幂可以用 pow(int)</span>
+    <span class="typ">BigDecimal</span> base = <span class="typ">BigDecimal</span>.<span class="var">ONE</span>.<span class="fn">add</span>(monthlyRate);
+    <span class="typ">BigDecimal</span> power = base.<span class="fn">pow</span>(termMonths);
+
+    <span class="com">// 月还款 = (本金 × r × (1+r)^n) / ((1+r)^n - 1)</span>
+    <span class="typ">BigDecimal</span> numerator = principal.<span class="fn">multiply</span>(monthlyRate).<span class="fn">multiply</span>(power);
+    <span class="typ">BigDecimal</span> denominator = power.<span class="fn">subtract</span>(<span class="typ">BigDecimal</span>.<span class="var">ONE</span>);
+
+    <span class="kw">return</span> numerator.<span class="fn">divide</span>(denominator, <span class="num">2</span>, <span class="typ">RoundingMode</span>.<span class="var">HALF_UP</span>);
+}</pre>
+                        </div>
+
+                        <h5>等额本金（本金每月固定，利息递减）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="com">/** 等额本金：第 n 期还款明细 */</span>
+<span class="kw">public</span> <span class="typ">RepayItem</span> <span class="fn">calcEqualPrincipal</span>(<span class="typ">BigDecimal</span> principal,
+                                  <span class="typ">BigDecimal</span> annualRate,
+                                  <span class="kw">int</span> termMonths,
+                                  <span class="kw">int</span> currentTerm) {  <span class="com">// 第几期</span>
+
+    <span class="typ">BigDecimal</span> monthlyRate = annualRate.<span class="fn">divide</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="num">12</span>), <span class="num">10</span>, <span class="typ">RoundingMode</span>.<span class="var">HALF_UP</span>);
+
+    <span class="com">// 每月本金 = 总本金 / 期数</span>
+    <span class="typ">BigDecimal</span> monthlyPrincipal = principal.<span class="fn">divide</span>(
+        <span class="kw">new</span> <span class="typ">BigDecimal</span>(termMonths), <span class="num">2</span>, <span class="typ">RoundingMode</span>.<span class="var">HALF_UP</span>);
+
+    <span class="com">// 当期利息 = 剩余本金 × 月利率</span>
+    <span class="typ">BigDecimal</span> remainingPrincipal = principal.<span class="fn">subtract</span>(
+        monthlyPrincipal.<span class="fn">multiply</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(currentTerm - <span class="num">1</span>)));
+    <span class="typ">BigDecimal</span> interest = remainingPrincipal.<span class="fn">multiply</span>(monthlyRate)
+        .<span class="fn">setScale</span>(<span class="num">2</span>, <span class="typ">RoundingMode</span>.<span class="var">HALF_UP</span>);
+
+    <span class="com">// 注意：最后一期把累积的尾差补上（避免精度丢失）</span>
+    <span class="kw">if</span> (currentTerm == termMonths) {
+        <span class="typ">BigDecimal</span> paid = monthlyPrincipal.<span class="fn">multiply</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(termMonths - <span class="num">1</span>));
+        monthlyPrincipal = principal.<span class="fn">subtract</span>(paid);  <span class="com">// 调整最后一期本金</span>
+    }
+
+    <span class="kw">return</span> <span class="kw">new</span> <span class="typ">RepayItem</span>(monthlyPrincipal, interest, monthlyPrincipal.<span class="fn">add</span>(interest));
+}</pre>
+                        </div>
+
+                        <h5>逾期罚息</h5>
+                        <p>罚息利率 = 合同利率 × 1.5（监管规定，最高不超过基准 LPR 的 4 倍）</p>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="com">/** 逾期罚息计算 */</span>
+<span class="kw">public</span> <span class="typ">BigDecimal</span> <span class="fn">calcPenalty</span>(<span class="typ">RepayPlan</span> plan, <span class="typ">LocalDate</span> currentDate) {
+    <span class="kw">if</span> (!currentDate.<span class="fn">isAfter</span>(plan.<span class="fn">getDueDate</span>())) {
+        <span class="kw">return</span> <span class="typ">BigDecimal</span>.<span class="var">ZERO</span>;  <span class="com">// 未逾期</span>
+    }
+
+    <span class="kw">long</span> overdueDays = <span class="typ">ChronoUnit</span>.<span class="var">DAYS</span>.<span class="fn">between</span>(plan.<span class="fn">getDueDate</span>(), currentDate);
+
+    <span class="com">// 罚息利率 = 合同利率 × 1.5</span>
+    <span class="typ">BigDecimal</span> penaltyRate = plan.<span class="fn">getInterestRate</span>().<span class="fn">multiply</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"1.5"</span>));
+
+    <span class="com">// 监管上限：不能超过 LPR × 4</span>
+    <span class="typ">BigDecimal</span> maxRate = lprConfig.<span class="fn">getCurrentLpr</span>().<span class="fn">multiply</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="str">"4"</span>));
+    <span class="kw">if</span> (penaltyRate.<span class="fn">compareTo</span>(maxRate) &gt; <span class="num">0</span>) penaltyRate = maxRate;
+
+    <span class="com">// 罚息 = 逾期本金 × 日罚息率 × 逾期天数</span>
+    <span class="typ">BigDecimal</span> dailyRate = penaltyRate.<span class="fn">divide</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(<span class="num">360</span>), <span class="num">10</span>, <span class="typ">RoundingMode</span>.<span class="var">HALF_UP</span>);
+    <span class="typ">BigDecimal</span> overduePrincipal = plan.<span class="fn">getPrincipalAmount</span>();
+
+    <span class="kw">return</span> overduePrincipal.<span class="fn">multiply</span>(dailyRate).<span class="fn">multiply</span>(<span class="kw">new</span> <span class="typ">BigDecimal</span>(overdueDays))
+        .<span class="fn">setScale</span>(<span class="num">2</span>, <span class="typ">RoundingMode</span>.<span class="var">HALF_UP</span>);
+}</pre>
+                        </div>
+                    </div>
+
+                    <div class="detail-panel" id="job-code">
+                        <h5>1. XXL-Job Handler（分片 + 幂等）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@Component</span>
+<span class="ano">@Slf4j</span>
+<span class="kw">public class</span> <span class="typ">RepaymentPlanGenerateHandler</span> {
+
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">EsopContractMapper</span> contractMapper;
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">RepaymentPlanService</span> planService;
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">BatchRunLogService</span> runLogService;
+
+    <span class="ano">@XxlJob</span>(<span class="str">"repaymentPlanGenerate"</span>)
+    <span class="kw">public void</span> <span class="fn">execute</span>() {
+        <span class="kw">int</span> shardIndex = <span class="typ">XxlJobHelper</span>.<span class="fn">getShardIndex</span>();   <span class="com">// 当前分片号 0~7</span>
+        <span class="kw">int</span> shardTotal = <span class="typ">XxlJobHelper</span>.<span class="fn">getShardTotal</span>();   <span class="com">// 总分片数 8</span>
+        <span class="typ">LocalDate</span> bizDate = <span class="typ">LocalDate</span>.<span class="fn">now</span>();
+        <span class="typ">String</span> taskName = <span class="str">"REPAYMENT_PLAN_GENERATE"</span>;
+
+        <span class="com">// 1. 幂等校验：当日该分片已经跑过则跳过</span>
+        <span class="kw">if</span> (runLogService.<span class="fn">isCompleted</span>(taskName, bizDate, shardIndex)) {
+            log.<span class="fn">info</span>(<span class="str">"[SKIP] {} shard={} 已完成"</span>, taskName, shardIndex);
+            <span class="kw">return</span>;
+        }
+
+        <span class="com">// 2. 标记任务开始</span>
+        <span class="typ">Long</span> runLogId = runLogService.<span class="fn">start</span>(taskName, bizDate, shardIndex);
+
+        <span class="kw">try</span> {
+            <span class="com">// 3. 分片查询：当日放款且 plan 未生成的合同</span>
+            <span class="typ">List</span>&lt;<span class="typ">EsopContract</span>&gt; contracts = contractMapper.<span class="fn">selectForPlanGenerate</span>(
+                bizDate, shardIndex, shardTotal);
+
+            log.<span class="fn">info</span>(<span class="str">"[START] shard={} 待处理 {} 笔合同"</span>, shardIndex, contracts.<span class="fn">size</span>());
+
+            <span class="kw">int</span> success = <span class="num">0</span>, fail = <span class="num">0</span>;
+            <span class="kw">for</span> (<span class="typ">EsopContract</span> contract : contracts) {
+                <span class="kw">try</span> {
+                    planService.<span class="fn">generatePlan</span>(contract);
+                    success++;
+                } <span class="kw">catch</span> (<span class="typ">Exception</span> e) {
+                    fail++;
+                    log.<span class="fn">error</span>(<span class="str">"[ERROR] contract={} 生成还款计划失败"</span>, contract.<span class="fn">getId</span>(), e);
+                    runLogService.<span class="fn">recordError</span>(runLogId, contract.<span class="fn">getId</span>(), e.<span class="fn">getMessage</span>());
+                    <span class="com">// 单条失败不影响整体</span>
+                }
+            }
+
+            runLogService.<span class="fn">finish</span>(runLogId, success, fail);
+            <span class="typ">XxlJobHelper</span>.<span class="fn">log</span>(<span class="str">"完成 success={} fail={}"</span>, success, fail);
+
+            <span class="com">// 4. 失败超阈值告警</span>
+            <span class="kw">if</span> (fail &gt; contracts.<span class="fn">size</span>() * <span class="num">0.05</span>) {
+                alarmService.<span class="fn">criticalAlert</span>(<span class="str">"还款计划生成失败率超 5%"</span>, fail, success);
+            }
+
+        } <span class="kw">catch</span> (<span class="typ">Exception</span> e) {
+            runLogService.<span class="fn">fail</span>(runLogId, e.<span class="fn">getMessage</span>());
+            <span class="kw">throw</span> e;  <span class="com">// 让 XXL-Job 标记失败</span>
+        }
+    }
+}</pre>
+                        </div>
+
+                        <h5>2. 还款计划生成核心逻辑</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@Service</span>
+<span class="kw">public class</span> <span class="typ">RepaymentPlanService</span> {
+
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">RepaymentCalculatorFactory</span> calcFactory;
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">RepaymentPlanMapper</span> planMapper;
+
+    <span class="ano">@Transactional</span>(rollbackFor = <span class="typ">Exception</span>.<span class="kw">class</span>)
+    <span class="kw">public void</span> <span class="fn">generatePlan</span>(<span class="typ">EsopContract</span> contract) {
+        <span class="com">// 1. 选择计算器（策略路由）</span>
+        <span class="typ">RepaymentCalculator</span> calc = calcFactory.<span class="fn">get</span>(contract.<span class="fn">getRepayMethod</span>());
+
+        <span class="com">// 2. 生成完整计划</span>
+        <span class="typ">List</span>&lt;<span class="typ">RepayItem</span>&gt; items = calc.<span class="fn">generate</span>(
+            contract.<span class="fn">getPrincipal</span>(),
+            contract.<span class="fn">getInterestRate</span>(),
+            contract.<span class="fn">getTermMonths</span>(),
+            contract.<span class="fn">getEffectiveDate</span>()
+        );
+
+        <span class="com">// 3. 落库（批量插入）</span>
+        <span class="typ">List</span>&lt;<span class="typ">RepaymentPlan</span>&gt; plans = <span class="kw">new</span> <span class="typ">ArrayList</span>&lt;&gt;(items.<span class="fn">size</span>());
+        <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; items.<span class="fn">size</span>(); i++) {
+            <span class="typ">RepayItem</span> item = items.<span class="fn">get</span>(i);
+            plans.<span class="fn">add</span>(<span class="typ">RepaymentPlan</span>.<span class="fn">builder</span>()
+                .<span class="fn">contractId</span>(contract.<span class="fn">getId</span>())
+                .<span class="fn">termNo</span>(i + <span class="num">1</span>)
+                .<span class="fn">dueDate</span>(item.<span class="fn">getDueDate</span>())
+                .<span class="fn">principalAmount</span>(item.<span class="fn">getPrincipal</span>())
+                .<span class="fn">interestAmount</span>(item.<span class="fn">getInterest</span>())
+                .<span class="fn">totalAmount</span>(item.<span class="fn">getTotal</span>())
+                .<span class="fn">status</span>(<span class="typ">PlanStatus</span>.<span class="var">PENDING</span>)
+                .<span class="fn">build</span>());
+        }
+        planMapper.<span class="fn">batchInsert</span>(plans);
+
+        <span class="com">// 4. 验算：所有期数本金之和必须 = 合同本金（兜底校验）</span>
+        <span class="typ">BigDecimal</span> totalPrincipal = plans.<span class="fn">stream</span>()
+            .<span class="fn">map</span>(<span class="typ">RepaymentPlan</span>::<span class="fn">getPrincipalAmount</span>)
+            .<span class="fn">reduce</span>(<span class="typ">BigDecimal</span>.<span class="var">ZERO</span>, <span class="typ">BigDecimal</span>::<span class="fn">add</span>);
+        <span class="kw">if</span> (totalPrincipal.<span class="fn">compareTo</span>(contract.<span class="fn">getPrincipal</span>()) != <span class="num">0</span>) {
+            <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"还款计划本金合计 != 合同本金，精度丢失"</span>);
+        }
+
+        <span class="com">// 5. 标记合同的 plan_generated = 1（避免重跑）</span>
+        contractMapper.<span class="fn">markPlanGenerated</span>(contract.<span class="fn">getId</span>());
+    }
+}</pre>
+                        </div>
+
+                        <h5>3. 五级分类调整 + 审计日志</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@Component</span>
+<span class="kw">public class</span> <span class="typ">FiveCategoryAdjustHandler</span> {
+
+    <span class="ano">@XxlJob</span>(<span class="str">"fiveCategoryAdjust"</span>)
+    <span class="kw">public void</span> <span class="fn">execute</span>() {
+        <span class="kw">int</span> shardIndex = <span class="typ">XxlJobHelper</span>.<span class="fn">getShardIndex</span>();
+        <span class="kw">int</span> shardTotal = <span class="typ">XxlJobHelper</span>.<span class="fn">getShardTotal</span>();
+
+        <span class="com">// 流式查询，避免大量合同一次性 toList 撑爆内存</span>
+        contractMapper.<span class="fn">streamByShardForCategoryAdjust</span>(shardIndex, shardTotal,
+            <span class="kw">new</span> <span class="typ">ResultHandler</span>&lt;<span class="typ">EsopContract</span>&gt;() {
+                <span class="ano">@Override</span>
+                <span class="kw">public void</span> <span class="fn">handleResult</span>(<span class="typ">ResultContext</span>&lt;? <span class="kw">extends</span> <span class="typ">EsopContract</span>&gt; ctx) {
+                    <span class="typ">EsopContract</span> c = ctx.<span class="fn">getResultObject</span>();
+
+                    <span class="com">// 1. 算最大逾期天数</span>
+                    <span class="kw">int</span> maxOverdueDays = planMapper.<span class="fn">selectMaxOverdueDays</span>(c.<span class="fn">getId</span>());
+
+                    <span class="com">// 2. 映射到五级分类</span>
+                    <span class="typ">FiveCategory</span> newCategory = <span class="typ">FiveCategory</span>.<span class="fn">fromOverdueDays</span>(maxOverdueDays);
+
+                    <span class="com">// 3. 不变则跳过</span>
+                    <span class="kw">if</span> (newCategory == c.<span class="fn">getFiveCategory</span>()) <span class="kw">return</span>;
+
+                    <span class="com">// 4. 调整 + 审计日志（强约束：必须留痕）</span>
+                    <span class="typ">FiveCategory</span> oldCategory = c.<span class="fn">getFiveCategory</span>();
+                    contractMapper.<span class="fn">updateCategory</span>(c.<span class="fn">getId</span>(), newCategory);
+                    auditLogService.<span class="fn">log</span>(<span class="typ">AuditEvent</span>.<span class="fn">categoryChange</span>(
+                        c.<span class="fn">getId</span>(), oldCategory, newCategory, maxOverdueDays));
+
+                    <span class="com">// 5. 进入"损失"分类要触发核销提醒</span>
+                    <span class="kw">if</span> (newCategory == <span class="typ">FiveCategory</span>.<span class="var">LOSS</span>) {
+                        notifyService.<span class="fn">writeOffReminder</span>(c);
+                    }
+                }
+            });
+    }
+}
+
+<span class="com">/** 五级分类枚举 */</span>
+<span class="kw">public enum</span> <span class="typ">FiveCategory</span> {
+    <span class="var">NORMAL</span>(<span class="num">0</span>), <span class="var">FOCUS</span>(<span class="num">90</span>), <span class="var">SUBSTANDARD</span>(<span class="num">180</span>), <span class="var">DOUBTFUL</span>(<span class="num">360</span>), <span class="var">LOSS</span>(<span class="typ">Integer</span>.<span class="var">MAX_VALUE</span>);
+
+    <span class="kw">private final int</span> threshold;
+
+    <span class="kw">public static</span> <span class="typ">FiveCategory</span> <span class="fn">fromOverdueDays</span>(<span class="kw">int</span> days) {
+        <span class="kw">if</span> (days &lt;= <span class="num">0</span>) <span class="kw">return</span> <span class="var">NORMAL</span>;
+        <span class="kw">if</span> (days &lt;= <span class="num">90</span>) <span class="kw">return</span> <span class="var">FOCUS</span>;
+        <span class="kw">if</span> (days &lt;= <span class="num">180</span>) <span class="kw">return</span> <span class="var">SUBSTANDARD</span>;
+        <span class="kw">if</span> (days &lt;= <span class="num">360</span>) <span class="kw">return</span> <span class="var">DOUBTFUL</span>;
+        <span class="kw">return</span> <span class="var">LOSS</span>;
+    }
+}</pre>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="highlight-item">
+                <h4>4. 接口开发 · 多岗位审批流编排 <span class="badge">流程引擎</span></h4>
+                <div class="highlight-block">
+                    <div class="label">业务场景</div>
+                    <div class="content">
+                        银行的审批流复杂度远超一般业务系统：一笔授信可能需要经过 <strong>客户经理 → 支行风控 → 总行风险审查 → 信贷审批委员会 → 副行长</strong> 5~8 个节点。每个节点的审批人随<strong>授信金额、产品类型、客户级别</strong>动态变化。
+                    </div>
+                </div>
+                <div class="highlight-block">
+                    <div class="label">我做了什么</div>
+                    <div class="content">
+                        基于 <code>Liteflow</code> 抽象审批流：<br>
+                        <strong>节点定义</strong>：每个审批节点封装为 <code>NodeComponent</code>，节点内部封装"通过 / 拒绝 / 退回 / 加签"4 种行为；<br>
+                        <strong>流程配置</strong>：审批流定义放在项目 <code>resources/flow/</code> 目录下的 XML 文件里，<strong>调整审批顺序需要走发版流程</strong>（银行管控严格，配置变更视为发版）；<br>
+                        <strong>动态分派</strong>：基于规则引擎（QLExpress）实现"金额 < 100w 跳过总行审批"等动态分派；<br>
+                        <strong>审计追溯</strong>：每个节点的审批结果、审批人、审批时间、备注全部入 <code>approval_history</code> 表，<strong>满足银监会审计要求</strong>。
+                    </div>
+                </div>
+
+                <div class="detail-tabs">
+                    <button class="detail-tab" data-target="approve-req">📋 审批流业务规则 <span class="arrow">▼</span></button>
+                    <button class="detail-tab" data-target="approve-xml">📜 Liteflow XML 配置 <span class="arrow">▼</span></button>
+                    <button class="detail-tab" data-target="approve-code">💻 Java 节点实现 <span class="arrow">▼</span></button>
+                </div>
+                <div class="detail-panels">
+
+                    <div class="detail-panel" id="approve-req">
+                        <h5>审批节点矩阵</h5>
+                        <table>
+                            <thead><tr><th>节点</th><th>角色</th><th>核心职责</th><th>跳过条件</th></tr></thead>
+                            <tbody>
+                                <tr><td>CM</td><td>客户经理</td><td>资料初审、风险初判</td><td>不可跳过</td></tr>
+                                <tr><td>BRANCH_RISK</td><td>支行风控</td><td>支行级风险审查</td><td>金额 &lt; 30 万跳过</td></tr>
+                                <tr><td>HQ_RISK</td><td>总行风险审查</td><td>总行级合规审查</td><td>金额 &lt; 50 万跳过</td></tr>
+                                <tr><td>CREDIT_CMT</td><td>信贷审批委员会</td><td>集体审议高额授信</td><td>金额 &lt; 100 万跳过</td></tr>
+                                <tr><td>VICE_PRESIDENT</td><td>副行长</td><td>最终批准</td><td>金额 &lt; 200 万跳过</td></tr>
+                            </tbody>
+                        </table>
+
+                        <h5>审批动作（每个节点都支持）</h5>
+                        <ul>
+                            <li><strong>APPROVE 通过</strong>：流转到下一节点</li>
+                            <li><strong>REJECT 拒绝</strong>：流程终止，整笔授信被拒</li>
+                            <li><strong>RETURN 退回</strong>：退回到指定上级节点重新审批（必须填备注）</li>
+                            <li><strong>SIGN 加签</strong>：临时增加一个审批节点（用于风险疑虑场景）</li>
+                            <li><strong>ADJUST 改额</strong>：调整批准金额（不能高于申请金额）</li>
+                        </ul>
+
+                        <h5>动态分派规则（QLExpress）</h5>
+                        <p>金额 + 客户级别 + 产品类型 联合决定走哪些节点：</p>
+                        <ul>
+                            <li>金额 &lt; 30 万 + 优质客户：CM → HQ_RISK（直跳总行）</li>
+                            <li>金额 30~100 万：CM → BRANCH_RISK → HQ_RISK</li>
+                            <li>金额 100~200 万：CM → BRANCH_RISK → HQ_RISK → CREDIT_CMT</li>
+                            <li>金额 &gt; 200 万：全节点必经</li>
+                            <li>禁售期股权押品：强制走 CREDIT_CMT（不论金额）</li>
+                        </ul>
+
+                        <h5>SLA 与超时机制</h5>
+                        <ul>
+                            <li>每个节点默认 SLA 24 小时，超时短信催办</li>
+                            <li>超 48 小时未审批：自动退回上级，标记"审批延误"</li>
+                            <li>客户经理 / 支行风控 不在岗：可委派给同级</li>
+                        </ul>
+                    </div>
+
+                    <div class="detail-panel" id="approve-xml">
+                        <h5>Liteflow XML 流程定义（放在项目 <code>resources/flow/esop-approval.xml</code>）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">XML</span>
+<pre><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;flow&gt;</span>
+  <span class="com">&lt;!-- ESOP 授信审批流（含动态路由）--&gt;</span>
+  <span class="tag">&lt;chain name="esopApprovalChain"&gt;</span>
+    THEN(
+      <span class="com">&lt;!-- 1. 客户经理初审：必经 --&gt;</span>
+      cmApproveNode,
+
+      <span class="com">&lt;!-- 2. 动态路由：根据金额/客户级别决定后续节点 --&gt;</span>
+      SWITCH(approvalRouteSelector).TO(
+        smallAmountChain,    <span class="com">&lt;!-- 小额：跳过支行/总行 --&gt;</span>
+        midAmountChain,      <span class="com">&lt;!-- 中额：到总行 --&gt;</span>
+        largeAmountChain,    <span class="com">&lt;!-- 大额：到信贷委 --&gt;</span>
+        ultraAmountChain     <span class="com">&lt;!-- 巨额：到副行长 --&gt;</span>
+      ),
+
+      <span class="com">&lt;!-- 3. 审批通过后置：发额度、推送核心账务 --&gt;</span>
+      finalizeApprovalNode
+    )
+  <span class="tag">&lt;/chain&gt;</span>
+
+  <span class="tag">&lt;chain name="smallAmountChain"&gt;</span>
+    THEN(branchRiskNode)
+  <span class="tag">&lt;/chain&gt;</span>
+
+  <span class="tag">&lt;chain name="midAmountChain"&gt;</span>
+    THEN(branchRiskNode, hqRiskNode)
+  <span class="tag">&lt;/chain&gt;</span>
+
+  <span class="tag">&lt;chain name="largeAmountChain"&gt;</span>
+    THEN(branchRiskNode, hqRiskNode, creditCommitteeNode)
+  <span class="tag">&lt;/chain&gt;</span>
+
+  <span class="tag">&lt;chain name="ultraAmountChain"&gt;</span>
+    THEN(branchRiskNode, hqRiskNode, creditCommitteeNode, vicePresidentNode)
+  <span class="tag">&lt;/chain&gt;</span>
+
+  <span class="com">&lt;!-- 异常分支：审批被拒 --&gt;</span>
+  <span class="tag">&lt;chain name="rejectChain"&gt;</span>
+    THEN(rejectHandlerNode, notifyApplicantNode)
+  <span class="tag">&lt;/chain&gt;</span>
+
+  <span class="com">&lt;!-- 异常分支：审批退回 --&gt;</span>
+  <span class="tag">&lt;chain name="returnChain"&gt;</span>
+    THEN(returnHandlerNode, notifyPreviousApproverNode)
+  <span class="tag">&lt;/chain&gt;</span>
+<span class="tag">&lt;/flow&gt;</span></pre>
+                        </div>
+
+                        <h5>启动期加载（一次性扫描）</h5>
+                        <p>因为没有配置中心，审批流 XML 是<strong>启动时一次性加载</strong>，调整顺序需要走发版流程。Liteflow 提供了启动期解析的方式：</p>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@Configuration</span>
+<span class="kw">public class</span> <span class="typ">LiteflowConfig</span> {
+
+    <span class="ano">@Bean</span>
+    <span class="kw">public</span> <span class="typ">LiteflowProperty</span> <span class="fn">liteflowProperty</span>() {
+        <span class="typ">LiteflowProperty</span> property = <span class="kw">new</span> <span class="typ">LiteflowProperty</span>();
+        <span class="com">// 扫描 resources/flow/ 目录下所有 XML</span>
+        property.<span class="fn">setRuleSource</span>(<span class="str">"classpath:flow/*.xml"</span>);
+        property.<span class="fn">setParseOnStart</span>(<span class="kw">true</span>);
+        <span class="kw">return</span> property;
+    }
+}
+
+<span class="com">/** 启动后校验：审批流是否解析成功（fail-fast 哲学）*/</span>
+<span class="ano">@Component</span>
+<span class="kw">public class</span> <span class="typ">FlowReadinessChecker</span> <span class="kw">implements</span> <span class="typ">ApplicationRunner</span> {
+
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">FlowExecutor</span> flowExecutor;
+
+    <span class="ano">@Override</span>
+    <span class="kw">public void</span> <span class="fn">run</span>(<span class="typ">ApplicationArguments</span> args) {
+        <span class="typ">List</span>&lt;<span class="typ">String</span>&gt; chains = <span class="typ">Arrays</span>.<span class="fn">asList</span>(
+            <span class="str">"esopApprovalChain"</span>, <span class="str">"smallAmountChain"</span>, <span class="str">"midAmountChain"</span>,
+            <span class="str">"largeAmountChain"</span>, <span class="str">"ultraAmountChain"</span>);
+        <span class="kw">for</span> (<span class="typ">String</span> chainId : chains) {
+            <span class="kw">if</span> (<span class="typ">FlowBus</span>.<span class="fn">getChain</span>(chainId) == <span class="kw">null</span>) {
+                <span class="kw">throw new</span> <span class="typ">IllegalStateException</span>(<span class="str">"审批流加载失败: "</span> + chainId);
+            }
+        }
+        log.<span class="fn">info</span>(<span class="str">"[Liteflow] 所有审批流加载成功，应用就绪"</span>);
+    }
+}</pre>
+                        </div>
+                        <p style="margin-top:10px;"><strong>设计取舍</strong>：银行场景下"审批流变更"是重大业务变更，必须经过完整测试 + 发版流程，<strong>不应该热更新</strong>。这跟互联网"按钮颜色配置热更新"是两种心态，更符合银行的合规要求。</p>
+                    </div>
+
+                    <div class="detail-panel" id="approve-code">
+                        <h5>1. 审批节点基类（NodeComponent）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="com">/** 审批节点基类：封装通用前后置 + 审计 */</span>
+<span class="kw">public abstract class</span> <span class="typ">AbstractApproveNode</span> <span class="kw">extends</span> <span class="typ">NodeComponent</span> {
+
+    <span class="ano">@Resource</span> <span class="kw">protected</span> <span class="typ">EsopCreditApplyMapper</span> applyMapper;
+    <span class="ano">@Resource</span> <span class="kw">protected</span> <span class="typ">EsopApprovalHistoryMapper</span> historyMapper;
+    <span class="ano">@Resource</span> <span class="kw">protected</span> <span class="typ">NotifyService</span> notifyService;
+
+    <span class="ano">@Override</span>
+    <span class="kw">public void</span> <span class="fn">process</span>() <span class="kw">throws</span> <span class="typ">Exception</span> {
+        <span class="typ">Long</span> applyId = <span class="kw">this</span>.<span class="fn">getRequestData</span>();
+        <span class="typ">EsopCreditApply</span> apply = applyMapper.<span class="fn">selectById</span>(applyId);
+        <span class="kw">if</span> (apply == <span class="kw">null</span>) <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"申请不存在"</span>);
+
+        <span class="com">// 1. 节点前置：更新 current_node、推送待办</span>
+        <span class="fn">enterNode</span>(apply);
+
+        <span class="com">// 2. 等待人工审批（异步等待外部 HTTP 调用）</span>
+        <span class="typ">ApprovalDecision</span> decision = <span class="fn">awaitApproval</span>(apply.<span class="fn">getId</span>(), <span class="fn">getNodeCode</span>());
+
+        <span class="com">// 3. 节点后置：根据决策路由</span>
+        <span class="kw">switch</span> (decision.<span class="fn">getAction</span>()) {
+            <span class="kw">case</span> <span class="var">APPROVE</span>:
+                <span class="fn">recordHistory</span>(apply, decision);
+                <span class="kw">break</span>;  <span class="com">// Liteflow 自动到下一节点</span>
+            <span class="kw">case</span> <span class="var">REJECT</span>:
+                <span class="fn">recordHistory</span>(apply, decision);
+                <span class="kw">this</span>.<span class="fn">setIsContinueOnError</span>(<span class="kw">false</span>);
+                <span class="fn">routeToRejectChain</span>(apply);
+                <span class="kw">break</span>;
+            <span class="kw">case</span> <span class="var">RETURN</span>:
+                <span class="fn">recordHistory</span>(apply, decision);
+                <span class="fn">routeToReturnChain</span>(apply, decision.<span class="fn">getReturnTo</span>());
+                <span class="kw">break</span>;
+        }
+    }
+
+    <span class="kw">protected abstract</span> <span class="typ">String</span> <span class="fn">getNodeCode</span>();
+
+    <span class="kw">protected void</span> <span class="fn">recordHistory</span>(<span class="typ">EsopCreditApply</span> apply, <span class="typ">ApprovalDecision</span> decision) {
+        <span class="typ">EsopApprovalHistory</span> history = <span class="typ">EsopApprovalHistory</span>.<span class="fn">builder</span>()
+            .<span class="fn">applyId</span>(apply.<span class="fn">getId</span>())
+            .<span class="fn">nodeCode</span>(<span class="fn">getNodeCode</span>())
+            .<span class="fn">action</span>(decision.<span class="fn">getAction</span>().<span class="fn">name</span>())
+            .<span class="fn">approver</span>(decision.<span class="fn">getApprover</span>())
+            .<span class="fn">approveAmount</span>(decision.<span class="fn">getAdjustedAmount</span>())
+            .<span class="fn">remark</span>(decision.<span class="fn">getRemark</span>())
+            .<span class="fn">actionTime</span>(<span class="typ">LocalDateTime</span>.<span class="fn">now</span>())
+            .<span class="fn">build</span>();
+        historyMapper.<span class="fn">insert</span>(history);  <span class="com">// 仅 INSERT，永不修改</span>
+    }
+}</pre>
+                        </div>
+
+                        <h5>2. 客户经理审批节点（具体实现）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@LiteflowComponent</span>(<span class="str">"cmApproveNode"</span>)
+<span class="kw">public class</span> <span class="typ">CustomerManagerApproveNode</span> <span class="kw">extends</span> <span class="typ">AbstractApproveNode</span> {
+
+    <span class="ano">@Override</span>
+    <span class="kw">protected</span> <span class="typ">String</span> <span class="fn">getNodeCode</span>() { <span class="kw">return</span> <span class="str">"CM"</span>; }
+
+    <span class="ano">@Override</span>
+    <span class="kw">protected void</span> <span class="fn">enterNode</span>(<span class="typ">EsopCreditApply</span> apply) {
+        <span class="com">// 客户经理审批前置校验</span>
+        <span class="kw">if</span> (apply.<span class="fn">getCustomerManager</span>() == <span class="kw">null</span>) {
+            <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"客户经理未指派"</span>);
+        }
+
+        <span class="com">// 1. 校验客户经理资质（必须有授信审批权限）</span>
+        permissionService.<span class="fn">requirePermission</span>(apply.<span class="fn">getCustomerManager</span>(), <span class="str">"ESOP_APPROVE_CM"</span>);
+
+        <span class="com">// 2. 更新申请单当前节点</span>
+        applyMapper.<span class="fn">updateCurrentNode</span>(apply.<span class="fn">getId</span>(), <span class="str">"CM"</span>);
+
+        <span class="com">// 3. 推送待办（站内信 + 短信）</span>
+        notifyService.<span class="fn">pushTodo</span>(apply.<span class="fn">getCustomerManager</span>(),
+            <span class="typ">TodoType</span>.<span class="var">ESOP_APPROVE</span>, apply.<span class="fn">getApplyNo</span>());
+    }
+}</pre>
+                        </div>
+
+                        <h5>3. 动态路由选择器（SWITCH）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@LiteflowComponent</span>(<span class="str">"approvalRouteSelector"</span>)
+<span class="kw">public class</span> <span class="typ">ApprovalRouteSelector</span> <span class="kw">extends</span> <span class="typ">NodeSwitchComponent</span> {
+
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">EsopBusinessConfig</span> config;
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">QlExpressEngine</span> qlEngine;
+
+    <span class="ano">@Override</span>
+    <span class="kw">public</span> <span class="typ">String</span> <span class="fn">processSwitch</span>() <span class="kw">throws</span> <span class="typ">Exception</span> {
+        <span class="typ">Long</span> applyId = <span class="kw">this</span>.<span class="fn">getRequestData</span>();
+        <span class="typ">EsopCreditApply</span> apply = applyMapper.<span class="fn">selectById</span>(applyId);
+
+        <span class="com">// 取动态规则配置（properties 加载）</span>
+        <span class="typ">String</span> ruleExpr = config.<span class="fn">getRouteRuleExpression</span>();
+        <span class="com">// 例: "amount &lt; 300000 ? 'small' :</span>
+        <span class="com">//      amount &lt; 1000000 ? 'mid' :</span>
+        <span class="com">//      amount &lt; 2000000 ? 'large' : 'ultra'"</span>
+
+        <span class="typ">Map</span>&lt;<span class="typ">String</span>, <span class="typ">Object</span>&gt; ctx = <span class="kw">new</span> <span class="typ">HashMap</span>&lt;&gt;();
+        ctx.<span class="fn">put</span>(<span class="str">"amount"</span>, apply.<span class="fn">getApplyAmount</span>());
+        ctx.<span class="fn">put</span>(<span class="str">"customerLevel"</span>, apply.<span class="fn">getCustomerLevel</span>());
+        ctx.<span class="fn">put</span>(<span class="str">"collateralType"</span>, apply.<span class="fn">getCollateralType</span>());
+        ctx.<span class="fn">put</span>(<span class="str">"isRestricted"</span>, apply.<span class="fn">isRestrictedCollateral</span>());
+
+        <span class="typ">String</span> route = (<span class="typ">String</span>) qlEngine.<span class="fn">execute</span>(ruleExpr, ctx);
+
+        <span class="com">// 强制规则：禁售期股权押品强制走信贷委</span>
+        <span class="kw">if</span> (apply.<span class="fn">isRestrictedCollateral</span>() &amp;&amp; <span class="str">"small"</span>.<span class="fn">equals</span>(route)) {
+            route = <span class="str">"large"</span>;
+        }
+
+        <span class="kw">switch</span> (route) {
+            <span class="kw">case</span> <span class="str">"small"</span>:  <span class="kw">return</span> <span class="str">"smallAmountChain"</span>;
+            <span class="kw">case</span> <span class="str">"mid"</span>:    <span class="kw">return</span> <span class="str">"midAmountChain"</span>;
+            <span class="kw">case</span> <span class="str">"large"</span>:  <span class="kw">return</span> <span class="str">"largeAmountChain"</span>;
+            <span class="kw">case</span> <span class="str">"ultra"</span>:  <span class="kw">return</span> <span class="str">"ultraAmountChain"</span>;
+            <span class="kw">default</span>: <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"未知路由: "</span> + route);
+        }
+    }
+}</pre>
+                        </div>
+
+                        <h5>4. 审批 HTTP 接口（外部触发）</h5>
+                        <div class="code-block">
+                            <span class="lang-tag">Java</span>
+<pre><span class="ano">@RestController</span>
+<span class="ano">@RequestMapping</span>(<span class="str">"/esop/approval"</span>)
+<span class="kw">public class</span> <span class="typ">EsopApprovalController</span> {
+
+    <span class="ano">@PostMapping</span>(<span class="str">"/{applyId}/decide"</span>)
+    <span class="ano">@RequirePermission</span>(<span class="str">"ESOP_APPROVE"</span>)
+    <span class="kw">public</span> <span class="typ">Result</span>&lt;<span class="typ">Void</span>&gt; <span class="fn">decide</span>(<span class="ano">@PathVariable</span> <span class="typ">Long</span> applyId,
+                              <span class="ano">@RequestBody</span> <span class="ano">@Valid</span> <span class="typ">ApprovalDecisionDTO</span> dto,
+                              <span class="ano">@CurrentUser</span> <span class="typ">User</span> user) {
+        <span class="com">// 1. 校验审批人是否有当前节点的权限</span>
+        approvalService.<span class="fn">checkApproverAtCurrentNode</span>(applyId, user.<span class="fn">getEmpNo</span>());
+
+        <span class="com">// 2. 提交决策（唤醒 Liteflow 等待中的节点）</span>
+        approvalService.<span class="fn">submitDecision</span>(applyId, <span class="typ">ApprovalDecision</span>.<span class="fn">builder</span>()
+            .<span class="fn">action</span>(dto.<span class="fn">getAction</span>())
+            .<span class="fn">approver</span>(user.<span class="fn">getEmpNo</span>())
+            .<span class="fn">adjustedAmount</span>(dto.<span class="fn">getAdjustedAmount</span>())
+            .<span class="fn">remark</span>(dto.<span class="fn">getRemark</span>())
+            .<span class="fn">build</span>());
+
+        <span class="kw">return</span> <span class="typ">Result</span>.<span class="fn">success</span>();
+    }
+}</pre>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- 业务术语 -->
+<section id="glossary">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">/ 04</div>
+            <h2 class="section-title">银行业务术语速查</h2>
+            <p class="section-desc">面试官如果是非金融背景，可以快速给他解释这些术语</p>
+        </div>
+
+        <div class="glossary-grid">
+            <div class="glossary-item">
+                <div class="term">授信</div>
+                <div class="def">银行同意给客户的最高可借款额度。"授信 100 万"≠"借了 100 万"，是个上限。比如信用卡的额度就是一种授信。</div>
+            </div>
+            <div class="glossary-item">
+                <div class="term">押品 / 抵质押物</div>
+                <div class="def">客户拿来抵押的资产，比如房产、股权、应收账款。银行评估其价值，按一定折扣率给出可贷金额。</div>
+            </div>
+            <div class="glossary-item">
+                <div class="term">抵质押率</div>
+                <div class="def">押品价值 × 抵质押率 = 可贷金额。不动产通常 70%，股权 30~50%，应收账款 60~80%。等于银行的"风险折扣"。</div>
+            </div>
+            <div class="glossary-item">
+                <div class="term">五级分类</div>
+                <div class="def">监管要求把贷款按风险分为：正常 / 关注 / 次级 / 可疑 / 损失。后三类合称"不良贷款"，是银行考核的关键指标。</div>
+            </div>
+            <div class="glossary-item">
+                <div class="term">等额本息 / 等额本金</div>
+                <div class="def">两种还款方式。等额本息每月还的总额相同（房贷常用）；等额本金每月还的本金相同，利息递减。</div>
+            </div>
+            <div class="glossary-item">
+                <div class="term">日终跑批</div>
+                <div class="def">银行核心系统在每天营业结束后（通常 0:30~5:00）执行的批量任务窗口，完成账务结转、利息计提、报表生成等。</div>
+            </div>
+            <div class="glossary-item">
+                <div class="term">普惠金融</div>
+                <div class="def">国家政策导向的金融服务，主要服务小微企业、农户、个体工商户。银行有专门的普惠条线 KPI。</div>
+            </div>
+            <div class="glossary-item">
+                <div class="term">对私 / 对公</div>
+                <div class="def">对私 = 给个人客户的业务（个人经营贷、按揭）；对公 = 给企业客户的业务（流动资金贷款、项目贷款）。</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 工作内容 -->
+<section id="work">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">/ 05</div>
+            <h2 class="section-title">日常工作内容</h2>
+            <p class="section-desc">外派模式下的工作日常 · 接需求 · 写代码 · 上线 · 运维</p>
+        </div>
+
+        <div class="work-summary">
+            <div class="work-card">
+                <h4>需求与设计</h4>
+                <ul>
+                    <li>参与业务方需求评审（业务方 = 银行普惠条线产品经理）</li>
+                    <li>输出概要设计、详细设计文档（行内有强制模板，需归档审计）</li>
+                    <li>数据库表结构设计 + 索引规划评审</li>
+                    <li>关键接口的时序图、状态机设计</li>
+                </ul>
+            </div>
+            <div class="work-card">
+                <h4>编码与测试</h4>
+                <ul>
+                    <li>员工持股融资业务模块开发（独立负责）</li>
+                    <li>多岗位审批流的 Liteflow 节点编排</li>
+                    <li>XXL-Job 批量任务编写、本地调试</li>
+                    <li>单元测试、SIT 自测、UAT 配合测试</li>
+                </ul>
+            </div>
+            <div class="work-card">
+                <h4>上线与运维</h4>
+                <ul>
+                    <li>SIT → UAT → 生产 三环境逐级上线</li>
+                    <li>多环境 properties 配置变更与发版协调</li>
+                    <li>日终批跑监控（凌晨值班）</li>
+                    <li>线上问题排查（日志、SQL 审计、堆栈分析）</li>
+                </ul>
+            </div>
+            <div class="work-card">
+                <h4>跨团队协作</h4>
+                <ul>
+                    <li>对接核心账务系统（行内）</li>
+                    <li>对接押品估值系统（行内 + 第三方）</li>
+                    <li>与风控团队联调审批规则</li>
+                    <li>与运维团队配合做数据库变更</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 技术栈 -->
+<section id="tech">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">/ 06</div>
+            <h2 class="section-title">技术栈</h2>
+            <p class="section-desc">银行项目典型技术选型 · 重稳定、重审计、重一致性</p>
+        </div>
+
+        <div class="tech-grid">
+            <div class="tech-card">
+                <div class="tech-name">Spring Cloud</div>
+                <div class="tech-role">微服务框架</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">Feign</div>
+                <div class="tech-role">声明式 RPC</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">MySQL</div>
+                <div class="tech-role">主从 · 分区表</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">MyBatis</div>
+                <div class="tech-role">ORM 框架</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">Redis</div>
+                <div class="tech-role">分布式锁 · 缓存</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">Liteflow</div>
+                <div class="tech-role">流程编排引擎</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">XXL-Job</div>
+                <div class="tech-role">分布式调度</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">Spring Profile</div>
+                <div class="tech-role">多环境 properties</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">QLExpress</div>
+                <div class="tech-role">规则引擎</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">BigDecimal</div>
+                <div class="tech-role">资金精度计算</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">SPI</div>
+                <div class="tech-role">扩展点机制</div>
+            </div>
+            <div class="tech-card">
+                <div class="tech-name">单元测试</div>
+                <div class="tech-role">JUnit · Mockito</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 能力迁移对照（银行 → 漫剧） -->
+<section id="transfer" class="transfer-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">/ 07</div>
+            <h2 class="section-title">能力迁移：银行 → 漫剧</h2>
+            <p class="section-desc">面试官最爱问的问题之一："你从银行跳到互联网，技术上怎么过渡的？"——这一节用 6 组对照说清楚。</p>
+        </div>
+
+        <div class="transfer-intro">
+            <h3>核心论点</h3>
+            <p>
+                银行项目和漫剧分销看似业务八杆子打不着，<strong style="color:var(--primary)">但底层工程能力 90% 通用</strong>。
+                银行的<span style="color:var(--primary)">"严谨 / 一致性 / 流程编排"</span>能力直接迁移到了漫剧的<span style="color:#5b9fff">"业务复杂度 / 跨系统同步 / 高扩展性"</span>场景。
+                我在阅文做的<strong>策略+模板方法、工厂模式、编排器、跨系统幂等</strong>这些，
+                都是<strong>从银行项目带过来的工程肌肉记忆</strong>，只是技术栈名字换了。
+            </p>
+        </div>
+
+        <div class="transfer-grid">
+
+            <!-- 1. 流程编排 -->
+            <div class="transfer-card">
+                <div class="pair">
+                    <div class="side bank">
+                        <div class="domain">🏦 银行 · 富邦华一</div>
+                        <div class="tech">Liteflow 审批流</div>
+                        <div class="desc">5 节点动态审批 · XML 配置 · QLExpress 路由</div>
+                    </div>
+                    <div class="arrow-icon">→</div>
+                    <div class="side manga">
+                        <div class="domain">🎬 漫剧 · 阅文</div>
+                        <div class="tech">Orchestrator 编排器</div>
+                        <div class="desc">机构创建 6 步 · 策略 + 校验器链 · 优先级插拔</div>
+                    </div>
+                </div>
+                <div class="insight">
+                    <strong>能力迁移点</strong>：把"业务流程"从代码硬编中抽象出来，变成<strong>可配置 / 可扩展 / 可热更新</strong>的节点编排。
+                    银行用 Liteflow + 启动期加载 XML，阅文 nova 用自研 Orchestrator + 校验器链，
+                    本质都是<strong>把"步骤"做成一等公民</strong>，新增步骤不动主流程代码。
+                </div>
+            </div>
+
+            <!-- 2. 策略模式 -->
+            <div class="transfer-card">
+                <div class="pair">
+                    <div class="side bank">
+                        <div class="domain">🏦 银行</div>
+                        <div class="tech">押品估值策略</div>
+                        <div class="desc">股权 / 不动产 / 应收账款 三类估值器</div>
+                    </div>
+                    <div class="arrow-icon">→</div>
+                    <div class="side manga">
+                        <div class="domain">🎬 漫剧</div>
+                        <div class="tech">合同签约策略 + 工厂</div>
+                        <div class="desc">5 种合同类型策略 + 4 种内容形态工厂</div>
+                    </div>
+                </div>
+                <div class="insight">
+                    <strong>能力迁移点</strong>：<code>CollateralEvaluator</code> 接口 + <code>EnumMap</code> 路由，
+                    跟漫剧的 <code>ContractInvoker</code> + <code>ArtifactHandlerFactory</code> 是同一个套路。
+                    在银行学的策略模式肌肉记忆，<strong>到阅文直接用，新合同类型从 5 天降到 1 天</strong>。
+                </div>
+            </div>
+
+            <!-- 3. 跨系统一致性 -->
+            <div class="transfer-card">
+                <div class="pair">
+                    <div class="side bank">
+                        <div class="domain">🏦 银行</div>
+                        <div class="tech">额度账户乐观锁 + 唯一索引</div>
+                        <div class="desc">version CAS · CHECK 约束 · DB 兜底</div>
+                    </div>
+                    <div class="arrow-icon">→</div>
+                    <div class="side manga">
+                        <div class="domain">🎬 漫剧</div>
+                        <div class="tech">合同号幂等三层防御</div>
+                        <div class="desc">前置校验 + DB 唯一索引 + bind_script_cnt</div>
+                    </div>
+                </div>
+                <div class="insight">
+                    <strong>能力迁移点</strong>：银行教会我"<strong>代码层 + DB 层双重保险</strong>"的肌肉记忆——
+                    永远不要假设代码能拦住所有并发。
+                    漫剧的合同号重复事故就是用这套思路解的：<strong>3 个月零次重复，修复 10+ 历史脏数据</strong>。
+                </div>
+            </div>
+
+            <!-- 4. 配置管理（成长型迁移：从无到有） -->
+            <div class="transfer-card">
+                <div class="pair">
+                    <div class="side bank">
+                        <div class="domain">🏦 银行</div>
+                        <div class="tech">多 properties + 启动注入</div>
+                        <div class="desc">application-{env}.yml · 密码走 -D 参数 · 调参必发版</div>
+                    </div>
+                    <div class="arrow-icon">→</div>
+                    <div class="side manga">
+                        <div class="domain">🎬 漫剧</div>
+                        <div class="tech">腾讯七彩石配置中心</div>
+                        <div class="desc">appId.groupId.config 树 · 类型化 · 热生效 · 灰度推送</div>
+                    </div>
+                </div>
+                <div class="insight">
+                    <strong>能力迁移点（这个有点反向）</strong>：银行项目<strong>没用</strong>配置中心，所以到阅文用上七彩石之后，
+                    我对"配置中心解决什么问题"的理解特别深刻——
+                    银行那边调一次抵质押率要走 2 周发版，到阅文改个开关 5 分钟生效，差距巨大。
+                    反过来银行养成的"<strong>三环境配置同步 checklist + @Value 必须带默认值</strong>"习惯，
+                    到阅文也直接受用，<strong>救过两次配置缺失导致启动失败的事故</strong>。
+                </div>
+            </div>
+
+            <!-- 5. 批量任务 -->
+            <div class="transfer-card">
+                <div class="pair">
+                    <div class="side bank">
+                        <div class="domain">🏦 银行</div>
+                        <div class="tech">XXL-Job 日终批跑</div>
+                        <div class="desc">8 分片并行 · batch_run_log 幂等 · 错误记录续跑</div>
+                    </div>
+                    <div class="arrow-icon">→</div>
+                    <div class="side manga">
+                        <div class="domain">🎬 漫剧</div>
+                        <div class="tech">夜间批量任务稳定性优化</div>
+                        <div class="desc">分片每批 50 · update_task_id 幂等 · 3 次重试</div>
+                    </div>
+                </div>
+                <div class="insight">
+                    <strong>能力迁移点</strong>：银行的"<strong>批跑 SLA + 失败可恢复</strong>"思维直接救了漫剧。
+                    最早漫剧的批量绑定一挂就要全部重跑，借鉴银行 <code>batch_run_log</code> 的思路加了
+                    <code>update_task_id</code> 幂等标记，<strong>从周均 1~2 次告警降到月均 0 次</strong>。
+                </div>
+            </div>
+
+            <!-- 6. 资金计算精度 -->
+            <div class="transfer-card">
+                <div class="pair">
+                    <div class="side bank">
+                        <div class="domain">🏦 银行</div>
+                        <div class="tech">BigDecimal 利息精度</div>
+                        <div class="desc">setScale(2, HALF_UP) · 禁用 double · 末期补差</div>
+                    </div>
+                    <div class="arrow-icon">→</div>
+                    <div class="side manga">
+                        <div class="domain">🎬 漫剧</div>
+                        <div class="tech">分销结算金额计算</div>
+                        <div class="desc">BigDecimal 全链路 · DECIMAL(16,4) · 三方对账</div>
+                    </div>
+                </div>
+                <div class="insight">
+                    <strong>能力迁移点</strong>：在银行养成的"<strong>所有钱必须 BigDecimal</strong>"洁癖直接受用。
+                    漫剧 C 端结算遇到金额溢出（DECIMAL 10,2 → 16,4）和精度丢失这类问题，我第一反应就是这套银行打法。
+                    <strong>三方对账</strong>（订单 = 结算 = 支付）也是从银行的"账务三方对齐"借鉴来的。
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 总结升华 -->
+        <div class="transfer-summary">
+            <h4>💡 这一节的潜台词（讲给面试官听）</h4>
+            <p>"我在银行 1.5 年学到的不是 Spring Cloud 怎么用，而是<strong>怎么写一个不出事故的系统</strong>："</p>
+            <p>① <strong>资金安全的偏执</strong>：永远 BigDecimal、永远 setScale、永远 DB 唯一索引兜底。</p>
+            <p>② <strong>流程优先于代码</strong>：任何审批/编排都先想"步骤是什么"，再想"代码怎么写"。</p>
+            <p>③ <strong>配置即契约</strong>：变更配置 = 变更行为，必须有审计、灰度、回滚三件套。</p>
+            <p>④ <strong>幂等不是可选项</strong>：批跑、定时、重试、回调，每一个都默认要做幂等。</p>
+            <p>⑤ <strong>失败可恢复</strong>：单条失败不影响整体、错误记日志、失败后能续跑。</p>
+            <p style="margin-top:14px;"><strong>这些不是技术，是工程素养。换公司、换业务、换技术栈都不会贬值。</strong></p>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>彭冲 · Java 后端工程师 · 富邦华一银行普惠信贷管理系统项目详情</p>
+        <p style="margin-top:8px;">📧 1539112470@qq.com · 📱 17344035687</p>
+    </div>
+</footer>
+
+<script>
+// 懒加载动画 - 所有需要 fade-in 的元素监听
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.section-header, .module-card, .highlight-item, .stat-card, .glossary-item, .tech-card, .work-card, .transfer-card, .transfer-intro, .transfer-summary').forEach(el => {
+    observer.observe(el);
+});
+
+// 平滑滚动
+document.querySelectorAll('nav a').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+
+// 点击展开/收起 详情面板
+document.querySelectorAll('.detail-tab').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const targetId = this.getAttribute('data-target');
+        const panel = document.getElementById(targetId);
+        if (!panel) return;
+
+        const isActive = this.classList.contains('active');
+
+        // 同一组的其他 tab 收起（兄弟 tab）
+        const tabsContainer = this.parentElement;
+        const panelsContainer = tabsContainer.nextElementSibling;
+        tabsContainer.querySelectorAll('.detail-tab').forEach(b => b.classList.remove('active'));
+        panelsContainer.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('active'));
+
+        // 切换当前
+        if (!isActive) {
+            this.classList.add('active');
+            panel.classList.add('active');
+        }
+    });
+});
+</script>
+
+</body>
+</html>

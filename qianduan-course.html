@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>comics-management (Vega 前端) — 交互式代码课程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-bg: #FAF7F2;
+  --color-bg-warm: #F5F0E8;
+  --color-bg-code: #1E1E2E;
+  --color-text: #2C2A28;
+  --color-text-secondary: #6B6560;
+  --color-text-muted: #9E9790;
+  --color-border: #E5DFD6;
+  --color-border-light: #EEEBE5;
+  --color-surface: #FFFFFF;
+  --color-surface-warm: #FDF9F3;
+  --color-accent: #D94F30;
+  --color-accent-hover: #C4432A;
+  --color-accent-light: #FDEEE9;
+  --color-accent-muted: #E8836C;
+  --color-success: #2D8B55;
+  --color-success-light: #E8F5EE;
+  --color-error: #C93B3B;
+  --color-error-light: #FDE8E8;
+  --color-info: #2A7B9B;
+  --color-info-light: #E4F2F7;
+  --color-actor-1: #D94F30;
+  --color-actor-2: #2A7B9B;
+  --color-actor-3: #7B6DAA;
+  --color-actor-4: #D4A843;
+  --color-actor-5: #2D8B55;
+  --font-display: 'Bricolage Grotesque', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(44,42,40,0.06);
+  --shadow: 0 4px 12px rgba(44,42,40,0.08);
+  --shadow-lg: 0 10px 32px rgba(44,42,40,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+body { padding: 0; }
+
+/* ---- 顶部 Hero ---- */
+.hero {
+  background: linear-gradient(180deg, var(--color-bg-warm) 0%, var(--color-bg) 100%);
+  padding: 80px 24px 60px;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+}
+.hero-kicker {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  padding: 5px 12px;
+  border: 1px solid var(--color-accent);
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 6vw, 68px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--color-text);
+  margin-bottom: 20px;
+}
+.hero-title em {
+  color: var(--color-accent);
+  font-style: normal;
+}
+.hero-sub {
+  font-size: 17px;
+  color: var(--color-text-secondary);
+  max-width: 640px;
+  margin: 0 auto 30px;
+  line-height: 1.7;
+}
+.hero-meta {
+  display: inline-flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+.hero-meta span::before { content: '· '; color: var(--color-border); }
+.hero-meta span:first-child::before { content: ''; }
+
+/* ---- 导航 ---- */
+.nav {
+  position: sticky;
+  top: 0;
+  background: rgba(250, 247, 242, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--color-border);
+  z-index: 100;
+  padding: 12px 0;
+}
+.nav-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav a {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: 7px 13px;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.nav a:hover { background: var(--color-accent-light); color: var(--color-accent); }
+.nav a.active { background: var(--color-accent); color: #fff; }
+
+/* ---- 主体布局 ---- */
+.main { max-width: 860px; margin: 0 auto; padding: 30px 24px 80px; }
+.module {
+  margin-bottom: 80px;
+  padding-top: 30px;
+}
+.module-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+.module-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-text);
+  margin-bottom: 18px;
+}
+.module-intro {
+  font-size: 16.5px;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  margin-bottom: 32px;
+  max-width: 720px;
+}
+.screen-heading {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  margin: 44px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.screen-heading::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 22px;
+  background: var(--color-accent);
+  border-radius: 2px;
+}
+.screen-heading span.emoji { font-size: 22px; }
+
+p { margin: 0 0 14px; font-size: 15.5px; color: var(--color-text); line-height: 1.8; }
+p strong { font-weight: 600; color: var(--color-text); }
+em { color: var(--color-accent); font-style: normal; font-weight: 500; }
+
+ul, ol { margin: 0 0 16px 24px; font-size: 15.5px; line-height: 1.85; }
+li { margin-bottom: 5px; }
+
+/* ---- Callout ---- */
+.callout {
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  margin: 20px 0;
+  border-left: 3px solid;
+  background: var(--color-surface-warm);
+}
+.callout-icon { font-size: 20px; flex-shrink: 0; line-height: 1.4; }
+.callout-content { flex: 1; }
+.callout-title { font-weight: 600; margin-bottom: 4px; font-family: var(--font-display); font-size: 15px; }
+.callout-content p:last-child { margin-bottom: 0; font-size: 14.5px; }
+.callout.callout-info { border-left-color: var(--color-info); background: var(--color-info-light); }
+.callout.callout-info .callout-title { color: var(--color-info); }
+.callout.callout-warning { border-left-color: var(--color-actor-4); background: #FBF5E2; }
+.callout.callout-warning .callout-title { color: #8B6914; }
+.callout.callout-accent { border-left-color: var(--color-accent); background: var(--color-accent-light); }
+.callout.callout-accent .callout-title { color: var(--color-accent); }
+.callout.callout-success { border-left-color: var(--color-success); background: var(--color-success-light); }
+.callout.callout-success .callout-title { color: var(--color-success); }
+
+/* ---- 代码块 ---- */
+.code-block {
+  background: var(--color-bg-code);
+  border-radius: var(--radius);
+  margin: 16px 0;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.02em;
+}
+.code-header .code-lang {
+  font-weight: 600;
+  color: var(--color-accent-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10.5px;
+}
+.code-header .code-file {
+  color: rgba(255,255,255,0.5);
+  font-size: 11px;
+}
+.code-block pre {
+  padding: 14px 18px;
+  overflow-x: auto;
+  color: #D4D4D4;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre;
+}
+.code-keyword { color: #C586C0; }
+.code-function { color: #DCDCAA; }
+.code-string { color: #CE9178; }
+.code-number { color: #B5CEA8; }
+.code-class { color: #4EC9B0; }
+.code-comment { color: #6A9955; font-style: italic; }
+.code-anno { color: #DCDCAA; font-weight: 500; }
+.code-type { color: #4FC1FF; }
+.code-field { color: #9CDCFE; }
+
+/* ---- 徽章 ---- */
+.badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.badge-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+.badge-item.primary { background: var(--color-accent-light); border-color: var(--color-accent); color: var(--color-accent); }
+.badge-item.code {
+  font-family: var(--font-mono);
+  background: var(--color-bg-code);
+  color: #DCDCAA;
+  border-color: transparent;
+  font-size: 12px;
+}
+
+/* ---- 文件树 ---- */
+.file-tree {
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 18px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--color-text);
+}
+.file-tree .dir { color: var(--color-accent); font-weight: 600; }
+.file-tree .file { color: var(--color-text-secondary); }
+.file-tree .note { color: var(--color-text-muted); font-style: italic; }
+
+/* ---- 流程图(演员) ---- */
+.flow-container {
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  margin: 24px 0;
+  overflow-x: auto;
+}
+.flow-actors {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  min-width: fit-content;
+}
+.flow-actor {
+  flex: 0 0 auto;
+  min-width: 110px;
+  padding: 16px 14px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.flow-actor-icon { font-size: 24px; margin-bottom: 6px; }
+.flow-actor-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.flow-actor-role {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 3px;
+}
+.flow-arrow {
+  color: var(--color-accent);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.flow-actor:nth-child(1) { border-color: var(--color-actor-1); }
+.flow-actor:nth-child(3) { border-color: var(--color-actor-2); }
+.flow-actor:nth-child(5) { border-color: var(--color-actor-3); }
+.flow-actor:nth-child(7) { border-color: var(--color-actor-4); }
+.flow-actor:nth-child(9) { border-color: var(--color-actor-5); }
+
+/* ---- 对话气泡 ---- */
+.chat-window {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: var(--shadow-sm);
+}
+.chat-message {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+.chat-avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.chat-bubble {
+  flex: 1;
+  background: var(--color-bg-warm);
+  padding: 10px 14px;
+  border-radius: 4px 14px 14px 14px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.chat-sender {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Quiz 小测 ---- */
+.quiz {
+  background: var(--color-surface-warm);
+  border: 2px dashed var(--color-accent-muted);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  margin: 32px 0 20px;
+}
+.quiz-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+.quiz-kicker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.quiz-q {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--color-border);
+}
+.quiz-q:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+.quiz-question {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  display: flex;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14.5px;
+  transition: all 0.15s;
+}
+.quiz-option:hover { border-color: var(--color-accent-muted); background: #fff; }
+.quiz-option.selected { border-color: var(--color-accent); background: var(--color-accent-light); }
+.quiz-option.correct { border-color: var(--color-success); background: var(--color-success-light); }
+.quiz-option.wrong { border-color: var(--color-error); background: var(--color-error-light); }
+.quiz-option-marker {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  width: 22px;
+}
+.quiz-option.correct .quiz-option-marker { color: var(--color-success); }
+.quiz-option.wrong .quiz-option-marker { color: var(--color-error); }
+.quiz-explanation {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: var(--color-info-light);
+  border-left: 3px solid var(--color-info);
+  border-radius: 4px;
+  font-size: 13.5px;
+  color: var(--color-text);
+  line-height: 1.65;
+  display: none;
+}
+.quiz-explanation.visible { display: block; }
+.quiz-explanation strong { color: var(--color-info); font-weight: 600; }
+
+/* ---- 表格 ---- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: 14px;
+}
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--color-border-light); }
+th { background: var(--color-bg-warm); font-weight: 600; color: var(--color-accent); font-size: 13px; letter-spacing: 0.02em; }
+tr:last-child td { border-bottom: none; }
+td code { font-family: var(--font-mono); font-size: 12.5px; background: var(--color-bg-warm); padding: 1px 6px; border-radius: 4px; }
+
+/* ---- footer ---- */
+.footer {
+  max-width: 860px;
+  margin: 40px auto 0;
+  padding: 40px 24px 60px;
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+}
+.footer strong { color: var(--color-accent); font-weight: 600; }
+
+/* ---- 动画 ---- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeUp 0.5s ease-out both; }
+.stagger-children > * { animation: fadeUp 0.5s ease-out both; }
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.20s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.30s; }
+
+/* ---- 响应式 ---- */
+@media (max-width: 600px) {
+  .hero { padding: 60px 20px 40px; }
+  .main { padding: 24px 18px 60px; }
+  .flow-actor { min-width: 90px; padding: 12px 10px; }
+  .code-block pre { font-size: 12px; padding: 12px 14px; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-kicker">📘 交互式代码课程 · 深度真实代码版</div>
+  <h1 class="hero-title">comics-management <em>Vega 配套前端</em></h1>
+  <p class="hero-sub">Vue 3 + Vite + TypeScript + Arco Design。329 源文件、176 views、50 components、46 apis——阅文漫剧运营后台前端。<strong>代码片段 100% 来自真实源码</strong>。</p>
+  <div class="hero-meta">
+    <span>Vue 3 + setup</span>
+    <span>Vite 5 + TS</span>
+    <span>Pinia 状态</span>
+    <span>Arco Design</span>
+    <span>vue-router 动态路由</span>
+    <span>329 源文件</span>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#m1">1 · 项目定位</a>
+    <a href="#m2">2 · Axios 封装</a>
+    <a href="#m3">3 · 动态路由</a>
+    <a href="#m4">4 · 权限指令</a>
+    <a href="#m5">5 · Pinia 架构</a>
+    <a href="#m6">6 · Tabs 系统</a>
+    <a href="#m7">7 · 构建优化</a>
+  </div>
+</nav>
+
+<div class="main">
+
+<section class="module" id="m1">
+  <div class="module-kicker">Module 01</div>
+  <h1 class="module-title">项目定位</h1>
+  <p class="module-intro">包名 <code>comics-management</code>（npm 仓库里的名字），是 Vega 后端的 Web 管理端（vega-view）。面向运营同学，做合同审核、内容管理、分销配置、数据导入等。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🎬</span>一天的操作流</h2>
+  <ul>
+    <li>运营小张登录 → Token 存 <code>localStorage</code></li>
+    <li>前端调 <code>getUserInfo()</code> → 拿到用户 + 菜单树（含权限）</li>
+    <li>前端用菜单树动态生成路由（<code>import.meta.glob</code> 懒加载 Vue 组件）</li>
+    <li>每个按钮用 <code>v-hasPerm="['contract:create']"</code> 指令做权限校验</li>
+    <li>数据请求走封装好的 <code>http.get/post</code>，自动加 token、自动 loading、自动错误提示</li>
+  </ul>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-content">
+      <div class="callout-title">和后端 Vega 的对应关系</div>
+      <p>后端 Vega 提供 21 个 Controller 的 REST API，前端 comics-management 消费这些 API，有 46 个 apis 模块一一对应。前端的权限系统直接使用后端返回的 <code>roles</code>（带 <code>ROLE_</code> 前缀）和 <code>permissions</code>（细粒度 identifier）。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">📂</span>真实目录结构</h2>
+  <div class="file-tree">
+<span class="dir">qianduan/src/</span><br>
+├── <span class="file">main.ts</span>         <span class="note"># 入口: ArcoVue + Pinia + Router + FormRender</span><br>
+├── <span class="file">App.vue</span>         <span class="note"># 根组件(只有 Layout + ConfigProvider)</span><br>
+├── <span class="file">aegis.ts</span>        <span class="note"># 腾讯伽利略埋点 SDK</span><br>
+├── <span class="dir">views/</span> <span class="note"># 176 个业务页面</span><br>
+│   ├── <span class="dir">admin/</span>        <span class="note"># 管理员</span><br>
+│   ├── <span class="dir">authSign/</span>     <span class="note"># 授权签约</span><br>
+│   ├── <span class="dir">content/</span>      <span class="note"># 内容管理</span><br>
+│   ├── <span class="dir">dataImport/</span>   <span class="note"># 数据导入</span><br>
+│   ├── <span class="dir">promotion/</span>    <span class="note"># 推广</span><br>
+│   ├── <span class="dir">settlement/</span>   <span class="note"># 结算</span><br>
+│   ├── <span class="dir">users/</span>        <span class="note"># 用户</span><br>
+│   └── ... 5 个其他模块<br>
+├── <span class="dir">components/</span> <span class="note"># 50 个公共组件</span><br>
+│   ├── <span class="dir">AuthSign/</span>     <span class="note"># 授权签名组件</span><br>
+│   ├── <span class="dir">Breadcrumb/</span>   <span class="note"># 面包屑</span><br>
+│   ├── <span class="dir">YTabs/</span>        <span class="note"># ⭐ 自定义 Tabs 系统</span><br>
+│   └── ... 47 个<br>
+├── <span class="dir">apis/</span> <span class="note"># 46 个 API 模块</span><br>
+│   ├── <span class="file">user.ts</span>            <span class="note"># getUserInfo 等</span><br>
+│   ├── <span class="file">admin.ts</span><br>
+│   └── ... 44 个<br>
+├── <span class="dir">stores/</span> <span class="note"># Pinia 状态</span><br>
+│   ├── <span class="file">index.ts</span>          <span class="note"># 统一导出</span><br>
+│   └── <span class="dir">modules/</span><br>
+│       ├── <span class="file">app.ts</span>         <span class="note"># 主题、侧栏</span><br>
+│       ├── <span class="file">dict.ts</span>        <span class="note"># 字典</span><br>
+│       ├── <span class="file">route.ts</span>       <span class="note"># ⭐ 动态路由</span><br>
+│       ├── <span class="file">tabs.ts</span>        <span class="note"># ⭐ 多标签系统</span><br>
+│       └── <span class="file">user.ts</span>        <span class="note"># ⭐ 用户 + 权限</span><br>
+├── <span class="dir">router/</span><br>
+│   ├── <span class="file">index.ts</span>          <span class="note"># 路由定义 + 重置</span><br>
+│   └── <span class="dir">guard/</span>             <span class="note"># ⭐ 路由守卫</span><br>
+├── <span class="dir">layout/</span>              <span class="note"># 3 种布局</span><br>
+│   ├── <span class="file">index.vue</span><br>
+│   ├── <span class="file">LayoutDefault.vue</span><br>
+│   ├── <span class="file">LayoutMix.vue</span><br>
+│   └── <span class="file">LayoutTop.vue</span><br>
+├── <span class="dir">utils/</span> <span class="note"># 15 个工具</span><br>
+│   ├── <span class="file">request.ts</span>        <span class="note"># ⭐ axios 封装</span><br>
+│   ├── <span class="file">has.ts</span>            <span class="note"># ⭐ hasPerm / hasRole</span><br>
+│   ├── <span class="file">auth.ts</span>           <span class="note"># token localStorage</span><br>
+│   └── ... 12 个<br>
+├── <span class="dir">directives/</span> <span class="note"># 自定义指令</span><br>
+│   └── <span class="file">hasPerm.ts</span>        <span class="note"># ⭐ v-hasPerm</span><br>
+└── <span class="dir">hooks/</span> <span class="note"># 15 个 Composable</span>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🛠️</span>技术栈一览</h2>
+  <div class="badge-list">
+    <span class="badge-item primary">Vue 3 Composition API</span>
+    <span class="badge-item">Vite 5</span>
+    <span class="badge-item">TypeScript 5</span>
+    <span class="badge-item">Pinia</span>
+    <span class="badge-item">Vue Router 4</span>
+    <span class="badge-item">Arco Design</span>
+    <span class="badge-item">axios</span>
+    <span class="badge-item">NProgress</span>
+    <span class="badge-item">VisActor VTable</span>
+    <span class="badge-item">CodeMirror 6</span>
+    <span class="badge-item">Wangeditor</span>
+    <span class="badge-item code">腾讯 Aegis V2</span>
+    <span class="badge-item code">form-render4</span>
+    <span class="badge-item">unplugin-auto-import</span>
+    <span class="badge-item">@vueuse</span>
+    <span class="badge-item">xe-utils</span>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 1</div>
+    <div class="quiz-title">项目定位</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. comics-management 的技术栈核心是什么？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>React + Next.js</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>Vue 3 + Vite + TS + Arco Design + Pinia</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>Vue 2 + Webpack + Vuex</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>Angular</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>从 <code>package.json</code> 看出：<code>@arco-design/web-vue</code>、<code>vue</code>、<code>pinia</code>、<code>vite</code>。配合 <code>vue-tsc</code> 做类型检查，是典型的 Vue 3 + Vite 现代技术栈。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. 前端的 176 个 views 和后端 Vega 的 21 个 Controller 为啥数量差这么多？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>前端冗余</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>每个 Controller 对应多个 views（列表页+详情页+编辑页+弹窗等），所以 Views 比 Controllers 多数倍是正常的</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>API 太少</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>代码质量问题</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>一个后端 <code>ContractController</code> 通常对应多个前端页面：合同列表页、创建合同页、合同详情页、审核弹窗、回调日志页等。前端页面粒度比后端接口细得多。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m2">
+  <div class="module-kicker">Module 02 · 重点</div>
+  <h1 class="module-title">Axios 封装 — 前后端协议真相</h1>
+  <p class="module-intro">这是前端项目里最值得逐行讲的文件 —— <code>utils/request.ts</code>。包含 <strong>NProgress 自动 loading、Token 自动塞 header、code=2 登录态 SSO 跳转、code=2303 静默抛、自定义 suppressErrorMessage</strong> 等多个真实设计。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🔧</span>真实 request.ts</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-file">utils/request.ts（真实完整）</span></div>
+<pre>
+<span class="code-keyword">import</span> axios <span class="code-keyword">from</span> <span class="code-string">"axios"</span>;
+<span class="code-keyword">import</span> { Message, Notification } <span class="code-keyword">from</span> <span class="code-string">"@arco-design/web-vue"</span>;
+<span class="code-keyword">import</span> NProgress <span class="code-keyword">from</span> <span class="code-string">"nprogress"</span>;
+<span class="code-keyword">import</span> { getToken } <span class="code-keyword">from</span> <span class="code-string">"@/utils/auth"</span>;
+
+<span class="code-comment">// ⭐ NProgress 自动进度条(去掉默认 spinner 更轻量)</span>
+NProgress.<span class="code-function">configure</span>({ showSpinner: <span class="code-keyword">false</span> });
+
+<span class="code-keyword">const</span> StatusCodeMessage: <span class="code-class">Record</span>&lt;<span class="code-class">number</span>, <span class="code-class">string</span>&gt; = {
+  <span class="code-number">401</span>: <span class="code-string">"未授权，请重新登录(401)"</span>,
+  <span class="code-number">403</span>: <span class="code-string">"拒绝访问(403)"</span>,
+  <span class="code-number">500</span>: <span class="code-string">"服务器错误(500)"</span>,
+  <span class="code-comment">// ... 其他状态码</span>
+};
+
+<span class="code-keyword">const</span> http: <span class="code-class">AxiosInstance</span> = axios.<span class="code-function">create</span>({
+  baseURL: <span class="code-class">import</span>.<span class="code-function">meta</span>.env.VITE_API_PREFIX,
+  timeout: <span class="code-number">30</span> * <span class="code-number">1000</span>,
+});
+
+http.defaults.headers[<span class="code-string">"X-Requested-With"</span>] = <span class="code-string">"XMLHttpRequest"</span>;
+
+<span class="code-comment">// ⭐ 请求拦截器：自动 loading + 自动塞 token</span>
+http.interceptors.request.<span class="code-function">use</span>(
+  (config) =&gt; {
+    NProgress.<span class="code-function">start</span>();
+    <span class="code-keyword">const</span> token = <span class="code-function">getToken</span>();
+    <span class="code-keyword">if</span> (token) {
+      <span class="code-keyword">if</span> (!config.headers) config.headers = {};
+      config.headers.token = token;  <span class="code-comment">// ⭐ Header 名叫 token,不是 Authorization</span>
+    }
+    <span class="code-keyword">return</span> config;
+  },
+  (error) =&gt; {
+    NProgress.<span class="code-function">done</span>();
+    <span class="code-keyword">return</span> <span class="code-class">Promise</span>.<span class="code-function">reject</span>(error);
+  },
+);
+
+<span class="code-comment">// ⭐⭐ 响应拦截器：按业务 code 精细分流</span>
+http.interceptors.response.<span class="code-function">use</span>(
+  (response) =&gt; {
+    <span class="code-keyword">const</span> { message, code, data } = response.data;
+    NProgress.<span class="code-function">done</span>();
+
+    <span class="code-comment">// ① code === 2 : 登录态失效</span>
+    <span class="code-keyword">if</span> (code === <span class="code-number">2</span>) {
+      <span class="code-keyword">if</span> (<span class="code-class">import</span>.<span class="code-function">meta</span>.env.DEV) {
+        Message.<span class="code-function">error</span>(<span class="code-string">"登录态失效"</span>);
+      } <span class="code-keyword">else</span> {
+        <span class="code-comment">// 生产环境 data 里就是 SSO 登录 URL</span>
+        window.location.href = data;
+      }
+      <span class="code-keyword">return</span> <span class="code-class">Promise</span>.<span class="code-function">reject</span>(<span class="code-keyword">new</span> <span class="code-class">Error</span>(<span class="code-string">"登录态失效"</span>));
+    }
+
+    <span class="code-comment">// ② code === 2303 : 特殊业务异常,调用方自己处理,不打 toast</span>
+    <span class="code-keyword">if</span> (code === <span class="code-number">2303</span>) {
+      <span class="code-keyword">return</span> <span class="code-class">Promise</span>.<span class="code-function">reject</span>(response.data);
+    }
+
+    <span class="code-comment">// ③ 其他非 0 : 根据 config 决定是否 toast</span>
+    <span class="code-keyword">if</span> (code !== <span class="code-number">0</span>) {
+      <span class="code-keyword">if</span> (response.config.customParam?.suppressErrorMessage) {
+        <span class="code-comment">// 调用方传了 suppressErrorMessage:true → 静默</span>
+        <span class="code-keyword">return</span> <span class="code-class">Promise</span>.<span class="code-function">reject</span>(response.data);
+      } <span class="code-keyword">else</span> {
+        Message.<span class="code-function">error</span>(message || <span class="code-string">"服务器端错误"</span>);
+        <span class="code-keyword">return</span> <span class="code-class">Promise</span>.<span class="code-function">reject</span>(response.data);
+      }
+    }
+
+    <span class="code-keyword">return</span> response.data;
+  },
+  (error) =&gt; {
+    NProgress.<span class="code-function">done</span>();
+    Message.<span class="code-function">clear</span>();
+    <span class="code-keyword">const</span> response = <span class="code-class">Object</span>.<span class="code-function">assign</span>({}, error.response);
+    response &&
+      Message.<span class="code-function">error</span>(
+        StatusCodeMessage[response.status] ||
+          <span class="code-string">"系统异常, 请检查网络或联系管理员！"</span>,
+      );
+    <span class="code-keyword">return</span> <span class="code-class">Promise</span>.<span class="code-function">reject</span>(error);
+  },
+);
+
+<span class="code-comment">// ⭐ request 再包一层: response.data.data 解出来直接返回</span>
+<span class="code-keyword">const</span> request = &lt;T = <span class="code-class">unknown</span>&gt;(config: <span class="code-class">AxiosRequestConfig</span>): <span class="code-class">Promise</span>&lt;T&gt; =&gt; {
+  <span class="code-keyword">return new</span> <span class="code-class">Promise</span>((resolve, reject) =&gt; {
+    http.<span class="code-function">request</span>&lt;T&gt;(config)
+      .<span class="code-function">then</span>((res) =&gt; resolve(res.data))  <span class="code-comment">// ← 再剥一层</span>
+      .<span class="code-function">catch</span>((err) =&gt; reject(err));
+  });
+};
+
+<span class="code-keyword">export default</span> { request, get, post };
+</pre>
+  </div>
+
+  <div class="callout callout-accent">
+    <span class="callout-icon">🎓</span>
+    <div class="callout-content">
+      <div class="callout-title">4 个面试必问的细节</div>
+      <p>① <strong>Header 名是 <code>token</code> 而不是 <code>Authorization</code></strong>：历史决定，后端就这么约定的。阅文内部项目常见。<br>
+      ② <strong>code === 2 登录态失效</strong>：开发环境 toast，生产环境 <code>window.location.href = data</code> 跳转 SSO 登录 URL（data 字段返回）。<br>
+      ③ <strong>code === 2303 静默抛</strong>：特殊业务错误，调用方自己 try-catch 处理，不打 toast（防止干扰）。<br>
+      ④ <strong>suppressErrorMessage 自定义参数</strong>：调用方传 <code>{ customParam: { suppressErrorMessage: true } }</code> 告诉 request 不要 toast。比如批量导入场景一个一个错不能每次都 toast。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">💎</span>数据结构的三层剥洋葱</h2>
+  <p>后端返回的 HTTP 响应体结构是：</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">JSON</span><span class="code-file">后端响应体结构</span></div>
+<pre>
+{
+  <span class="code-string">"code"</span>: <span class="code-number">0</span>,          <span class="code-comment">// 0 = 成功,非 0 = 失败</span>
+  <span class="code-string">"message"</span>: <span class="code-string">""</span>,       <span class="code-comment">// 错误消息</span>
+  <span class="code-string">"data"</span>: {            <span class="code-comment">// ⭐ 业务数据(前端真正想要的)</span>
+    <span class="code-string">"data"</span>: [...],      <span class="code-comment">// 这里可能又是一层 data</span>
+    <span class="code-string">"total"</span>: <span class="code-number">100</span>
+  }
+}
+</pre>
+  </div>
+  <p>前端做了两层剥离：</p>
+  <ol>
+    <li><strong>第一层</strong>：<code>interceptors.response</code> 返回 <code>response.data</code>（后端最外层）</li>
+    <li><strong>第二层</strong>：<code>request</code> 函数 <code>.then(res =&gt; resolve(res.data))</code> 再剥一层</li>
+  </ol>
+  <p>这样业务代码拿到的已经是最里层的业务数据，无需每次 <code>res.data.data</code>。</p>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 2</div>
+    <div class="quiz-title">Axios 封装</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. 调用 API 想让它"错了不要弹 toast"怎么做？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>没办法</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>传 <code>{ customParam: { suppressErrorMessage: true } }</code></div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>全局关掉 Message</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>重写 request</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>响应拦截器里会检查 <code>response.config.customParam?.suppressErrorMessage</code>，true 时静默抛 Promise.reject，调用方自己处理。典型场景：批量处理时一个失败不要打断其他。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. 登录态失效时，生产环境会做什么？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>弹 toast</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>直接 <code>window.location.href = data</code> 跳转到后端返回的 SSO 登录 URL</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>刷新页面</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>清 localStorage</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>后端在 code=2 的响应里返回 data 字段内容就是 SSO 登录 URL（带回跳参数）。前端直接跳过去，登录成功后会回跳回当前页面。这是 SSO 标准模式。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">3. <code>code === 2303</code> 为啥特殊处理？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>随便</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>特定业务错误，调用方自己捕获处理（不走通用 toast）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>性能</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>安全</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>具体 code 可能和业务约定——比如"合同已被同事签过"这种需要前端弹确认框处理的，不能粗暴 toast。后端约定 2303 为这类"预期内的业务冲突"，前端逻辑层处理。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m3">
+  <div class="module-kicker">Module 03 · 重点</div>
+  <h1 class="module-title">动态路由 — 按菜单生成</h1>
+  <p class="module-intro">前端不硬编码路由树，而是<strong>登录后根据后端返回的菜单数据动态生成</strong>。这是 B 端后台的经典做法，好处是"后端改权限/菜单，前端不用发版"。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🗺️</span>动态路由生成流程</h2>
+
+  <div class="flow-container">
+    <div class="flow-actors">
+      <div class="flow-actor"><div class="flow-actor-icon">🔑</div><div class="flow-actor-name">登录</div><div class="flow-actor-role">Token</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">👤</div><div class="flow-actor-name">getUserInfo</div><div class="flow-actor-role">User + Menu</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🌲</div><div class="flow-actor-name">菜单树</div><div class="flow-actor-role">递归</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🔧</div><div class="flow-actor-name">formatRoutes</div><div class="flow-actor-role">转 Route</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">📍</div><div class="flow-actor-name">addRoute</div><div class="flow-actor-role">注册</div></div>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🧩</span>import.meta.glob 懒加载</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-file">stores/modules/route.ts（关键片段）</span></div>
+<pre>
+<span class="code-keyword">import</span> { mapTree } <span class="code-keyword">from</span> <span class="code-string">"xe-utils"</span>;
+<span class="code-keyword">import</span> { constantRoutes } <span class="code-keyword">from</span> <span class="code-string">"@/router"</span>;
+
+<span class="code-keyword">const</span> <span class="code-class">Layout</span> = () =&gt; <span class="code-class">import</span>(<span class="code-string">"@/layout/index.vue"</span>);
+
+<span class="code-comment">// ⭐⭐⭐ 一行代码懒加载所有 views</span>
+<span class="code-keyword">const</span> modules = <span class="code-class">import</span>.<span class="code-function">meta</span>.<span class="code-function">glob</span>(<span class="code-string">"@/views/**/*.vue"</span>);
+
+<span class="code-comment">// 根据组件路径字符串找到对应的 import 函数</span>
+<span class="code-keyword">export const</span> <span class="code-function">loadView</span> = (view: <span class="code-class">string</span>) =&gt; {
+  <span class="code-keyword">let</span> res;
+  <span class="code-keyword">for</span> (<span class="code-keyword">const</span> path <span class="code-keyword">in</span> modules) {
+    <span class="code-comment">// "../views/admin/list.vue" → "admin/list"</span>
+    <span class="code-keyword">const</span> dir = path.<span class="code-function">split</span>(<span class="code-string">"views/"</span>)[<span class="code-number">1</span>].<span class="code-function">split</span>(<span class="code-string">".vue"</span>)[<span class="code-number">0</span>];
+    <span class="code-keyword">if</span> (dir === view) {
+      res = () =&gt; modules[path]();  <span class="code-comment">// ⭐ 返回懒加载函数</span>
+    }
+  }
+  <span class="code-keyword">return</span> res;
+};
+
+<span class="code-comment">// 特殊组件名映射: "Layout" / "ParentView" / 其他按路径加载</span>
+<span class="code-keyword">const</span> <span class="code-function">transformComponentView</span> = (component: <span class="code-class">string</span>) =&gt; {
+  <span class="code-keyword">if</span> (component === <span class="code-string">"Layout"</span>) <span class="code-keyword">return</span> Layout <span class="code-keyword">as never</span>;
+  <span class="code-keyword">if</span> (component === <span class="code-string">"ParentView"</span>) <span class="code-keyword">return</span> ParentView <span class="code-keyword">as never</span>;
+  <span class="code-keyword">return</span> <span class="code-function">loadView</span>(component) <span class="code-keyword">as never</span>;
+};
+
+<span class="code-comment">// 把后端菜单数据转成 vue-router 的 RouteRecordRaw</span>
+<span class="code-keyword">const</span> <span class="code-function">formatAsyncRoutes</span> = (menus: <span class="code-class">MenuItem</span>[]) =&gt; {
+  <span class="code-keyword">if</span> (!menus.length) <span class="code-keyword">return</span> [];
+  menus.<span class="code-function">sort</span>((a, b) =&gt; (a?.sort ?? <span class="code-number">0</span>) - (b?.sort ?? <span class="code-number">0</span>));
+
+  <span class="code-comment">// ⭐ 用 xe-utils 的 mapTree 递归处理树</span>
+  <span class="code-keyword">const</span> routes = <span class="code-function">mapTree</span>(menus, (item) =&gt; {
+    <span class="code-keyword">if</span> (item.children?.length) {
+      item.children.<span class="code-function">sort</span>((a, b) =&gt; (a?.sort ?? <span class="code-number">0</span>) - (b?.sort ?? <span class="code-number">0</span>));
+    }
+    <span class="code-keyword">const</span> _item = {
+      path: item.path,
+      name: <span class="code-function">transformPathToName</span>(item.path),
+      component: item.component ? <span class="code-function">transformComponentView</span>(item.component) : <span class="code-keyword">undefined</span>,
+      redirect: item.redirect,
+      meta: {
+        hidden: item.hidden,
+        keepAlive: item.keepAlive,
+        title: item.title,
+        svgIcon: item.svgIcon,
+        affix: item.affix,         <span class="code-comment">// ⭐ 固定标签</span>
+        showInTabs: item.showInTabs,
+        activeMenu: item.activeMenu,
+      },
+    };
+    <span class="code-comment">// 清掉 undefined 字段让 route meta 干净</span>
+    <span class="code-class">Object</span>.<span class="code-function">keys</span>(_item.meta).<span class="code-function">forEach</span>((key) =&gt; {
+      <span class="code-keyword">if</span> (_item.meta[key] === <span class="code-keyword">undefined</span>) <span class="code-keyword">delete</span> _item.meta[key];
+    });
+    <span class="code-keyword">return</span> _item;
+  });
+  <span class="code-keyword">return</span> routes <span class="code-keyword">as</span> <span class="code-class">RouteRecordRaw</span>[];
+};
+</pre>
+  </div>
+
+  <div class="callout callout-accent">
+    <span class="callout-icon">🎩</span>
+    <div class="callout-content">
+      <div class="callout-title"><code>import.meta.glob</code> 的魔法</div>
+      <p>这一行：<br><code>const modules = import.meta.glob('@/views/**/*.vue');</code><br><br>
+      Vite 在<strong>编译时</strong>扫描 <code>views/</code> 下所有 <code>.vue</code> 文件，生成如下对象：<br>
+      <code>{ '../views/admin/list.vue': () =&gt; import('../views/admin/list.vue'), ... }</code><br><br>
+      每个 value 是 <strong>懒加载函数</strong>，调用时才真正加载代码。后端返回 "admin/list" 字符串，<code>loadView</code> 找到对应函数返回。<br>
+      <strong>优点</strong>：① 按需加载，首屏不加载全部；② 后端改菜单配置立刻生效，无需前端发版。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🛂</span>路由守卫</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-file">router/guard/index.ts</span></div>
+<pre>
+<span class="code-keyword">export default function</span> <span class="code-function">createRouteGuard</span>(router: <span class="code-class">Router</span>) {
+  <span class="code-function">setupPageGuard</span>(router);           <span class="code-comment">// 路由跳转 emit 事件</span>
+  <span class="code-function">setupPermissionGuard</span>(router);     <span class="code-comment">// 权限守卫: 加载菜单 + addRoute</span>
+}
+
+<span class="code-comment">// 简单的 beforeEach: 触发路由切换事件(给 Tabs 等组件监听)</span>
+<span class="code-keyword">export const</span> <span class="code-function">setupPageGuard</span> = (router: <span class="code-class">Router</span>) =&gt; {
+  router.<span class="code-function">beforeEach</span>((to, from) =&gt; {
+    <span class="code-function">setRouteEmitter</span>(to, from);
+  });
+};
+</pre>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 3</div>
+    <div class="quiz-title">动态路由</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. <code>import.meta.glob('@/views/**/*.vue')</code> 什么时候执行？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>运行时，每次调用都扫描一次</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>Vite 编译时静态分析，生成含懒加载函数的对象</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>服务端渲染时</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>不需要编译</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>Vite 的 <code>import.meta.glob</code> 是编译时的宏（非运行时函数）。Vite 扫所有匹配文件，为每个生成独立的 chunk。用户访问某路由才加载该 chunk（懒加载）。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. 动态路由 vs 静态路由（把所有路由写在 routes.ts 数组里），前者的核心优势是什么？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>性能更好</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>后端改菜单/权限无需前端发版，权限矩阵灵活</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>代码量更少</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>SEO 更好</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>B 端后台的菜单和权限是强运营属性：新上线功能 / 按角色隐藏菜单 / 临时授权。静态路由每次改都要发版。动态路由把菜单和权限交给后端配置系统，前端代码不动。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">3. <code>mapTree</code> 来自哪个库？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>lodash</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span><code>xe-utils</code>（行内表格第三方工具库，处理树结构特别强）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>vueuse</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>自己写的</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong><code>xe-utils</code> 是 vxe-table 作者写的工具库，树操作特别全：<code>mapTree / eachTree / findTree / filterTree</code>。递归菜单树 + 转换节点 用 <code>mapTree</code> 一行搞定。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m4">
+  <div class="module-kicker">Module 04 · 重点</div>
+  <h1 class="module-title">权限体系 — v-hasPerm 指令</h1>
+  <p class="module-intro">前端权限三件套：<strong>hasPerm() 函数 + v-hasPerm 指令 + 超管 wildcard</strong>。所有按钮级权限都走这套。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🔑</span>has.ts 工具函数</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-file">utils/has.ts（真实完整）</span></div>
+<pre>
+<span class="code-keyword">import</span> { useUserStore } <span class="code-keyword">from</span> <span class="code-string">"@/stores"</span>;
+
+<span class="code-comment">// ⭐ 超管 wildcard 配置</span>
+<span class="code-keyword">const</span> SUPER_ADMIN_PERMISSION = <span class="code-string">"*:*:*"</span>;
+<span class="code-keyword">const</span> SUPER_ADMIN_ROLE = <span class="code-string">"role_admin"</span>;
+
+<span class="code-comment">// 判断单个权限</span>
+<span class="code-keyword">export function</span> <span class="code-function">hasPerm</span>(permission: <span class="code-class">string</span>): <span class="code-class">boolean</span> {
+  <span class="code-keyword">if</span> (!permission) <span class="code-keyword">return false</span>;
+  <span class="code-keyword">const</span> permissions = <span class="code-function">useUserStore</span>().permissions;
+  <span class="code-comment">// ⭐ 命中超管 wildcard 或者具体权限 identifier</span>
+  <span class="code-keyword">return</span> permissions.<span class="code-function">some</span>((v) =&gt; v === SUPER_ADMIN_PERMISSION || v === permission);
+}
+
+<span class="code-comment">// 任一权限命中即可</span>
+<span class="code-keyword">export function</span> <span class="code-function">hasPermOr</span>(permissions: <span class="code-class">string</span>[]): <span class="code-class">boolean</span> {
+  <span class="code-keyword">return</span> permissions.<span class="code-function">some</span>(<span class="code-function">hasPerm</span>);
+}
+
+<span class="code-comment">// 全部权限都命中</span>
+<span class="code-keyword">export function</span> <span class="code-function">hasPermAnd</span>(permissions: <span class="code-class">string</span>[]): <span class="code-class">boolean</span> {
+  <span class="code-keyword">return</span> permissions.<span class="code-function">every</span>(<span class="code-function">hasPerm</span>);
+}
+
+<span class="code-keyword">export function</span> <span class="code-function">hasRole</span>(role: <span class="code-class">string</span>): <span class="code-class">boolean</span> {
+  <span class="code-keyword">if</span> (!role) <span class="code-keyword">return false</span>;
+  <span class="code-keyword">const</span> roles = <span class="code-function">useUserStore</span>().roles;
+  <span class="code-keyword">return</span> roles.<span class="code-function">some</span>((v) =&gt; v === SUPER_ADMIN_ROLE || v === role);
+}
+</pre>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🎨</span>v-hasPerm 自定义指令</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-file">directives/hasPerm.ts（真实）</span></div>
+<pre>
+<span class="code-keyword">import</span> { hasPermOr } <span class="code-keyword">from</span> <span class="code-string">"@/utils/has"</span>;
+
+<span class="code-keyword">function</span> <span class="code-function">checkPermission</span>(el: <span class="code-class">HTMLElement</span>, binding: <span class="code-class">DirectiveBinding</span>&lt;<span class="code-class">string</span>[]&gt;) {
+  <span class="code-keyword">const</span> { value } = binding;
+
+  <span class="code-keyword">if</span> (!value || !<span class="code-class">Array</span>.<span class="code-function">isArray</span>(value) || value.length === <span class="code-number">0</span>) {
+    <span class="code-keyword">throw new</span> <span class="code-class">Error</span>(
+      <span class="code-string">'权限参数格式错误，示例：v-hasPerm="[\'home:btn:edit\',\'home:btn:delete\']"'</span>
+    );
+  }
+
+  <span class="code-keyword">const</span> hasPermission = <span class="code-function">hasPermOr</span>(value);
+
+  <span class="code-keyword">if</span> (!hasPermission) {
+    <span class="code-comment">// ⭐ 直接从 DOM 移除元素(不是 display:none 或 v-if)</span>
+    el.parentNode?.<span class="code-function">removeChild</span>(el);
+  }
+}
+
+<span class="code-keyword">const</span> hasPermDirective: <span class="code-class">Directive</span> = {
+  <span class="code-function">mounted</span>(el, binding) { <span class="code-function">checkPermission</span>(el, binding); },
+  <span class="code-function">updated</span>(el, binding) { <span class="code-function">checkPermission</span>(el, binding); },
+};
+</pre>
+  </div>
+
+  <p>使用：</p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Vue</span><span class="code-file">在任意 .vue 模板里</span></div>
+<pre>
+<span class="code-keyword">&lt;a-button</span> <span class="code-field">v-hasPerm</span>=<span class="code-string">"['contract:create']"</span> <span class="code-field">@click</span>=<span class="code-string">"createContract"</span><span class="code-keyword">&gt;</span>
+  创建合同
+<span class="code-keyword">&lt;/a-button&gt;</span>
+
+<span class="code-keyword">&lt;a-button</span> <span class="code-field">v-hasPerm</span>=<span class="code-string">"['contract:edit', 'contract:admin']"</span><span class="code-keyword">&gt;</span>
+  编辑合同  <span class="code-comment">&lt;!-- 任一权限即可 --&gt;</span>
+<span class="code-keyword">&lt;/a-button&gt;</span>
+</pre>
+  </div>
+
+  <div class="callout callout-warning">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-content">
+      <div class="callout-title">removeChild vs v-if 的取舍</div>
+      <p>代码里用 <code>el.parentNode?.removeChild(el)</code> 直接从 DOM 砍掉元素，而不是 <code>display: none</code>。对比：<br>
+      • <strong>removeChild</strong>：元素彻底消失，F12 看不到、JS 获取不到、事件/watcher 不存在。<strong>安全性好</strong>（无权限用户理论上 DOM 都看不见按钮）。<br>
+      • <strong>v-if</strong>：效果类似但 Vue 管理生命周期，性能稍好。<br>
+      • <strong>display:none</strong>：F12 能看到，技术好的用户能改样式显示出来再点击——<strong>安全性差</strong>。<br><br>
+      <strong>但</strong>：前端权限校验只是"UI 层的便利"，真正的权限必须后端校验！前端砍了按钮不代表安全。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">👑</span>超管 wildcard 设计</h2>
+
+  <table>
+    <tr><th>权限字符串</th><th>含义</th><th>匹配</th></tr>
+    <tr><td><code>*:*:*</code></td><td>全量权限</td><td>任意 <code>hasPerm()</code> 都返回 true</td></tr>
+    <tr><td><code>role_admin</code></td><td>超管角色</td><td>任意 <code>hasRole()</code> 都返回 true</td></tr>
+    <tr><td><code>contract:create</code></td><td>具体权限</td><td>精确匹配</td></tr>
+    <tr><td><code>home:btn:edit</code></td><td>三段式权限</td><td>模块:对象:操作</td></tr>
+  </table>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">💎</span>
+    <div class="callout-content">
+      <div class="callout-title">权限命名约定</div>
+      <p>看源码 <code>home:btn:edit</code> 这种格式，和后端对应的是 <code>PermissionDO.identifier</code> 字段。命名约定：<code>模块:对象:操作</code>，比如：<br>
+      • <code>contract:btn:create</code> — 合同模块的创建按钮<br>
+      • <code>settlement:list:view</code> — 结算列表的查看权限<br>
+      • <code>admin:user:disable</code> — 管理员的用户禁用操作<br><br>
+      规范命名的好处是运营配置权限时一眼懂。</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 4</div>
+    <div class="quiz-title">权限指令</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. <code>v-hasPerm</code> 为啥用 <code>removeChild</code> 而不是 <code>display:none</code>？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>性能</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>更彻底——F12 看不到、JS 获取不到，防止被手动改样式绕过</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>Vue 限制</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>美观</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong><code>display:none</code> 攻击者能用 F12 改样式显示出来再点击（虽然后端还会拦，但不够干净）。<code>removeChild</code> 让元素彻底从 DOM 消失，没了就是没了。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. <code>hasPermAnd(['a', 'b'])</code> 和 <code>hasPermOr(['a', 'b'])</code> 的区别？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>一样</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>And 必须同时有 a 和 b；Or 任一有即可（v-hasPerm 指令用的是 Or）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>And 是与门，Or 是或门</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>命名混淆</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong><code>hasPermAnd</code> 用 <code>.every()</code>（全部命中），<code>hasPermOr</code> 用 <code>.some()</code>（任一命中）。<strong>指令默认 Or</strong>——写 <code>v-hasPerm="['edit', 'admin']"</code> 意思是"有编辑或管理员权限就显示"。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">3. 前端权限校验能替代后端校验吗？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>能，后端不用校验</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>不能，前端只是 UI 便利，真正的安全必须后端接口层校验</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>能，HTTPS 已足够</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>不知道</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>前端代码对攻击者完全可见，F12 / Postman 可以绕过。前端权限只是"让没权限的用户看不到按钮"，真正的权限必须在后端 Controller 层（Spring Security <code>@PreAuthorize</code>）再次校验。"前后端双层权限"是标准做法。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m5">
+  <div class="module-kicker">Module 05</div>
+  <h1 class="module-title">Pinia 状态架构</h1>
+  <p class="module-intro">5 个 store modules：<code>app / dict / route / tabs / user</code>。全部使用 <strong>Setup Store</strong>（组合式，ref+computed 而非 options），职责清晰。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🧠</span>User Store 真实代码</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-file">stores/modules/user.ts（真实）</span></div>
+<pre>
+<span class="code-keyword">import</span> { defineStore } <span class="code-keyword">from</span> <span class="code-string">"pinia"</span>;
+<span class="code-keyword">import</span> { computed, reactive, ref } <span class="code-keyword">from</span> <span class="code-string">"vue"</span>;
+<span class="code-keyword">import</span> { getUserInfo } <span class="code-keyword">from</span> <span class="code-string">"@/apis/user"</span>;
+
+<span class="code-comment">// ⭐ Setup Store 写法(推荐),用 setup 函数而非 options 对象</span>
+<span class="code-keyword">const</span> storeSetup = () =&gt; {
+  <span class="code-keyword">const</span> userInfo = <span class="code-function">reactive</span>({
+    userName: <span class="code-string">""</span>, email: <span class="code-string">""</span>, avatar: <span class="code-string">""</span>,
+  });
+
+  <span class="code-keyword">const</span> name = <span class="code-function">computed</span>(() =&gt; userInfo.userName);
+  <span class="code-keyword">const</span> avatar = <span class="code-function">computed</span>(() =&gt; userInfo.avatar);
+
+  <span class="code-keyword">const</span> roles = <span class="code-function">ref</span>&lt;<span class="code-class">string</span>[]&gt;([]);           <span class="code-comment">// 角色列表</span>
+  <span class="code-keyword">const</span> permissions = <span class="code-function">ref</span>&lt;<span class="code-class">string</span>[]&gt;([]);     <span class="code-comment">// 权限列表</span>
+
+  <span class="code-comment">// 特殊能力:评级是否可见(从权限计算)</span>
+  <span class="code-keyword">const</span> ratingVisible = <span class="code-function">computed</span>(() =&gt;
+    permissions.value.<span class="code-function">includes</span>(<span class="code-string">"show:drama-rating"</span>)
+  );
+
+  <span class="code-comment">// ⭐⭐ 用户初始化:拉取 user + menu + 绑定埋点</span>
+  <span class="code-keyword">const</span> getInit = <span class="code-keyword">async</span> () =&gt; {
+    <span class="code-keyword">try</span> {
+      <span class="code-keyword">const</span> res = <span class="code-keyword">await</span> <span class="code-function">getUserInfo</span>();
+      <span class="code-keyword">const</span> { user, menu } = res;
+
+      userInfo.userName = user.userName;
+      userInfo.email = user.email;
+
+      <span class="code-comment">// ⭐ 绑定腾讯 Aegis 埋点 uid</span>
+      <span class="code-keyword">if</span> (window.AegisV2) {
+        window.AegisV2.<span class="code-function">setConfig</span>({
+          uid: <span class="code-string">`${user?.userName}_${user?.userId}`</span>,
+        });
+      }
+
+      <span class="code-comment">// 取角色 tag</span>
+      roles.value = user.roles.<span class="code-function">map</span>((role) =&gt; role.tag);
+
+      <span class="code-comment">// ⭐ 递归菜单,收集所有 permission identifier,同时过滤隐藏菜单</span>
+      <span class="code-keyword">function</span> <span class="code-function">filterMenu</span>(menu: <span class="code-class">any</span>[]) {
+        <span class="code-keyword">return</span> menu.<span class="code-function">filter</span>((item) =&gt; {
+          permissions.value.<span class="code-function">push</span>(item.authority.identifier);
+          <span class="code-keyword">if</span> (item.children?.length &gt; <span class="code-number">0</span>) {
+            item.children = <span class="code-function">filterMenu</span>(item.children);
+          }
+          <span class="code-comment">// type === 3 可能是按钮级权限(不要作为菜单显示)</span>
+          <span class="code-keyword">return</span> item.authority.type !== <span class="code-number">3</span>;
+        });
+      }
+
+      <span class="code-keyword">return</span> <span class="code-function">filterMenu</span>(menu);
+    } <span class="code-keyword">catch</span> (error) {
+      console.<span class="code-function">error</span>(<span class="code-string">"获取用户信息失败:"</span>, error);
+      <span class="code-keyword">throw</span> error;
+    }
+  };
+
+  <span class="code-keyword">return</span> { userInfo, name, avatar, email, roles, permissions, ratingVisible, getInit };
+};
+
+<span class="code-comment">// ⭐ persist: false → 不持久化到 localStorage(防止 token 失效后还能看到旧数据)</span>
+<span class="code-keyword">export const</span> useUserStore = <span class="code-function">defineStore</span>(<span class="code-string">"user"</span>, storeSetup, { persist: <span class="code-keyword">false</span> });
+</pre>
+  </div>
+
+  <div class="callout callout-accent">
+    <span class="callout-icon">💎</span>
+    <div class="callout-content">
+      <div class="callout-title">4 个设计细节</div>
+      <p>① <strong>Setup Store 写法</strong>：用 <code>() =&gt; { ... return {...} }</code> setup 函数，而不是 <code>{ state, getters, actions }</code> options。现代 Pinia 推荐，读起来像写 composable。<br>
+      ② <strong>permissions 从 menu 递归收集</strong>：不单独拉 permission 列表，减少接口。<br>
+      ③ <strong>type !== 3 过滤</strong>：权限 authority 有 type 字段区分菜单/页面/按钮（按钮不作为侧栏菜单显示）。<br>
+      ④ <strong>persist: false</strong>：不持久化。如果 token 过期了，刷新页面会强制重新拉 user + menu，保证菜单/权限实时性。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">📋</span>5 个 Store 各司其职</h2>
+
+  <table>
+    <tr><th>Store</th><th>职责</th><th>持久化</th></tr>
+    <tr><td><code>user</code></td><td>用户信息、角色、权限、菜单</td><td>❌（每次登录重拉）</td></tr>
+    <tr><td><code>app</code></td><td>主题、侧栏折叠、语言设置</td><td>✅ localStorage</td></tr>
+    <tr><td><code>dict</code></td><td>字典缓存（状态枚举、分类等）</td><td>按需缓存</td></tr>
+    <tr><td><code>route</code></td><td>动态路由 + 常量路由</td><td>❌（每次重新 addRoute）</td></tr>
+    <tr><td><code>tabs</code></td><td>多标签页 + keep-alive 缓存列表</td><td>❌</td></tr>
+  </table>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 5</div>
+    <div class="quiz-title">Pinia 状态</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. Setup Store 比 Options Store 好在哪？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>性能更好</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>语法和 Vue 3 Composition API 一致，可以内部调用 composable、更好的 TypeScript 推导</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>Pinia 只支持它</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>一样</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>Setup Store 就是一个 setup 函数，里面可以 <code>useRouter()</code>、<code>ref()</code>、<code>watch()</code>，和写组件一样。Options Store 受对象结构限制，不能嵌套使用其他 composable。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. user store 为啥 <code>persist: false</code>？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>用不上</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>token 过期后刷新页面要强制重拉 user + menu，保证权限实时</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>性能</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>隐私</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>如果持久化用户信息到 localStorage，刷新时直接用本地的，token 失效了也不知道。不持久化 → 刷新时触发 getUserInfo → 如果 token 失效走 code=2 → 跳转 SSO。保证安全。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m6">
+  <div class="module-kicker">Module 06</div>
+  <h1 class="module-title">Tabs 多标签系统</h1>
+  <p class="module-intro">B 端后台标配——<strong>已打开页面做成标签页</strong>，可以快速切换、固定、关闭、配合 <code>&lt;keep-alive&gt;</code> 缓存。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🗂️</span>Tabs Store 核心</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-file">stores/modules/tabs.ts（关键方法）</span></div>
+<pre>
+<span class="code-keyword">const</span> storeSetup = () =&gt; {
+  <span class="code-keyword">const</span> router = <span class="code-function">useRouter</span>();
+
+  <span class="code-comment">// 当前打开的标签列表</span>
+  <span class="code-keyword">const</span> tabList = <span class="code-function">ref</span>&lt;<span class="code-class">RouteLocationNormalized</span>[]&gt;([]);
+
+  <span class="code-comment">// ⭐ keep-alive 的 include 列表(用路由 name 做 key)</span>
+  <span class="code-keyword">const</span> cacheList = <span class="code-function">ref</span>&lt;<span class="code-class">RouteRecordName</span>[]&gt;([]);
+
+  <span class="code-comment">// 添加标签</span>
+  <span class="code-keyword">const</span> addTabItem = (item: <span class="code-class">RouteLocationNormalized</span>) =&gt; {
+    <span class="code-keyword">const</span> index = tabList.value.<span class="code-function">findIndex</span>((i) =&gt; i.path === item.path);
+
+    <span class="code-keyword">if</span> (index &gt;= <span class="code-number">0</span>) {
+      <span class="code-comment">// 已存在但 query 不同 → 更新</span>
+      <span class="code-keyword">if</span> (tabList.value[index].fullPath !== item.fullPath) {
+        tabList.value[index] = item;
+      }
+    } <span class="code-keyword">else</span> {
+      <span class="code-comment">// 不存在 → 添加(除非 meta.showInTabs === false)</span>
+      <span class="code-keyword">if</span> (item.meta?.showInTabs ?? <span class="code-keyword">true</span>) {
+        tabList.value.<span class="code-function">push</span>(item);
+      }
+    }
+  };
+
+  <span class="code-comment">// 删除标签</span>
+  <span class="code-keyword">const</span> deleteTabItem = (path: <span class="code-class">string</span>) =&gt; {
+    <span class="code-comment">// ⭐ affix(固定)标签不能删</span>
+    <span class="code-keyword">const</span> index = tabList.value.<span class="code-function">findIndex</span>(
+      (item) =&gt; item.path === path && !item.meta?.affix
+    );
+    <span class="code-keyword">if</span> (index &lt; <span class="code-number">0</span>) <span class="code-keyword">return</span>;
+
+    <span class="code-keyword">const</span> isActive = router.currentRoute.value.path === tabList.value[index].path;
+    tabList.value.<span class="code-function">splice</span>(index, <span class="code-number">1</span>);
+
+    <span class="code-comment">// ⭐ 删的是当前激活页 → 跳到最后一个标签</span>
+    <span class="code-keyword">if</span> (isActive && tabList.value.length) {
+      <span class="code-keyword">const</span> lastTab = tabList.value[tabList.value.length - <span class="code-number">1</span>];
+      router.<span class="code-function">push</span>(lastTab.fullPath || lastTab.path);
+    }
+  };
+
+  <span class="code-comment">// 清空(除 affix)</span>
+  <span class="code-keyword">const</span> clearTabList = () =&gt; {
+    <span class="code-keyword">const</span> routeStore = <span class="code-function">useRouteStore</span>();
+    <span class="code-keyword">const</span> affixTabs = [];
+    <span class="code-comment">// ⭐ xe-utils 的 eachTree 遍历路由找 affix:true</span>
+    <span class="code-function">eachTree</span>(routeStore.routes, (item) =&gt; {
+      <span class="code-keyword">if</span> (item.meta?.affix) affixTabs.<span class="code-function">push</span>(item);
+    });
+    tabList.value = affixTabs;
+  };
+
+  <span class="code-comment">// ⭐ Keep-alive 缓存管理</span>
+  <span class="code-keyword">const</span> addCacheItem = (item) =&gt; {
+    <span class="code-keyword">if</span> (!item.name || !item.meta?.keepAlive) <span class="code-keyword">return</span>;
+    <span class="code-keyword">if</span> (!cacheList.value.<span class="code-function">includes</span>(item.name)) {
+      cacheList.value.<span class="code-function">push</span>(item.name);
+    }
+  };
+
+  <span class="code-comment">// 关闭当前标签时同时清缓存</span>
+  <span class="code-keyword">const</span> closeCurrent = (path: <span class="code-class">string</span>) =&gt; {
+    <span class="code-keyword">const</span> item = tabList.value.<span class="code-function">find</span>((i) =&gt; i.path === path);
+    <span class="code-keyword">if</span> (item?.name) <span class="code-function">deleteCacheItem</span>(item.name);
+  };
+};
+</pre>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-content">
+      <div class="callout-title">Tabs 系统的 3 个关键 meta 字段</div>
+      <p>路由 meta 定义了 Tabs 行为：<br>
+      • <code>showInTabs</code>（默认 true）：是否作为标签显示（比如登录页设 false）<br>
+      • <code>affix</code>：固定标签，不能删除（首页常这么设）<br>
+      • <code>keepAlive</code>：切换时缓存组件状态（表格筛选条件、滚动位置）<br><br>
+      业务代码只要在 <code>router meta</code> 里配好这 3 个字段，Tabs 和 keep-alive 自动生效。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🔗</span>和 &lt;keep-alive&gt; 的联动</h2>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Vue</span><span class="code-file">layout/index.vue 里的 keep-alive（示意）</span></div>
+<pre>
+<span class="code-keyword">&lt;router-view</span> <span class="code-field">v-slot</span>=<span class="code-string">"{ Component, route }"</span><span class="code-keyword">&gt;</span>
+  <span class="code-keyword">&lt;keep-alive</span> <span class="code-field">:include</span>=<span class="code-string">"tabsStore.cacheList"</span><span class="code-keyword">&gt;</span>
+    <span class="code-keyword">&lt;component</span> <span class="code-field">:is</span>=<span class="code-string">"Component"</span> <span class="code-field">:key</span>=<span class="code-string">"route.fullPath"</span> <span class="code-keyword">/&gt;</span>
+  <span class="code-keyword">&lt;/keep-alive&gt;</span>
+<span class="code-keyword">&lt;/router-view&gt;</span>
+</pre>
+  </div>
+  <p><code>:include</code> 绑定到 Pinia 里的 <code>cacheList</code>——<strong>响应式</strong>。<code>addCacheItem</code> 往里 push name，对应组件被 keep-alive 缓存；<code>deleteCacheItem</code> 删除后组件被销毁。</p>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 6</div>
+    <div class="quiz-title">Tabs 系统</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. 想让一个页面"关闭后再次打开时，表格筛选条件保留"，该怎么做？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>写进 localStorage</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>路由 meta 加 <code>keepAlive: true</code>，自动走 keep-alive 缓存</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>URL 带参数</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>做不到</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>keep-alive 是 Vue 组件级缓存。配合 Tabs 的 cacheList，只要 meta.keepAlive=true 就会被缓存。用户切回来时组件没被销毁，所有 state 保留（但和 localStorage 不同，关闭浏览器就没了）。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. <code>closeCurrent</code> 关闭标签时为啥同时清 cacheList？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>美观</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>用户明确关闭的意图 = 不想保留，清缓存释放内存并确保下次打开是全新状态</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>性能</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>规范</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>"关闭标签"的语义 = 我不要这个页面了。缓存保留会让"再次打开时还是旧状态"，多半不符合用户期待（我想要个新的表单）。同时清 cacheList 语义清晰。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m7">
+  <div class="module-kicker">Module 07</div>
+  <h1 class="module-title">Vite 构建优化</h1>
+  <p class="module-intro">线上应用性能的关键——<code>vite.config.ts</code> 里有不少优化细节。</p>
+
+  <h2 class="screen-heading"><span class="emoji">⚙️</span>真实 vite.config.ts</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-file">vite.config.ts（真实关键配置）</span></div>
+<pre>
+<span class="code-keyword">export default</span> <span class="code-function">defineConfig</span>(({ mode }) =&gt; {
+  <span class="code-keyword">const</span> env = <span class="code-function">loadEnv</span>(mode, process.cwd());
+  <span class="code-keyword">return</span> {
+    <span class="code-comment">// ⭐ base 支持 CDN 部署</span>
+    base: process.env.cdnUrl || env.VITE_BASE,
+
+    resolve: {
+      alias: {
+        <span class="code-string">"~"</span>: <span class="code-function">fileURLToPath</span>(<span class="code-keyword">new</span> <span class="code-class">URL</span>(<span class="code-string">"./"</span>, <span class="code-class">import</span>.<span class="code-function">meta</span>.url)),
+        <span class="code-string">"@"</span>: <span class="code-function">fileURLToPath</span>(<span class="code-keyword">new</span> <span class="code-class">URL</span>(<span class="code-string">"./src"</span>, <span class="code-class">import</span>.<span class="code-function">meta</span>.url)),
+      },
+    },
+
+    server: {
+      port: <span class="code-number">9999</span>,
+      proxy: {
+        <span class="code-comment">// ⭐ 开发环境 /api 代理到后端</span>
+        <span class="code-string">"/api"</span>: {
+          target: env.VITE_API_BASE_URL,
+          changeOrigin: <span class="code-keyword">true</span>,
+        },
+      },
+    },
+
+    plugins: [
+      <span class="code-function">vue</span>(),
+      <span class="code-function">vueJsx</span>(),
+
+      <span class="code-comment">// ⭐ 自动 import Vue/Vue Router API 和 Arco 组件</span>
+      <span class="code-function">AutoImport</span>({
+        imports: [<span class="code-string">"vue"</span>, <span class="code-string">"vue-router"</span>, {
+          vue: [<span class="code-string">"useTemplateRef"</span>, <span class="code-string">"onWatcherCleanup"</span>, <span class="code-string">"useId"</span>]
+        }],
+        dts: <span class="code-string">"src/auto-import.d.ts"</span>,
+        resolvers: [<span class="code-function">ArcoResolver</span>()],
+      }),
+
+      <span class="code-comment">// ⭐ 自动注册 components 目录下的组件</span>
+      <span class="code-function">Components</span>({
+        dirs: [<span class="code-string">"src/components"</span>],
+        dts: <span class="code-string">"src/components.d.ts"</span>,
+        resolvers: [
+          <span class="code-function">ArcoResolver</span>({
+            sideEffect: <span class="code-keyword">true</span>,       <span class="code-comment">// 样式按需自动导入</span>
+            resolveIcons: <span class="code-keyword">true</span>,     <span class="code-comment">// Arco 图标按需</span>
+          }),
+        ],
+      }),
+
+      <span class="code-comment">// ⭐ SVG 图标精灵方案</span>
+      <span class="code-function">createSvgIconsPlugin</span>({
+        iconDirs: [path.<span class="code-function">resolve</span>(process.cwd(), <span class="code-string">"src/icons"</span>)],
+        symbolId: <span class="code-string">"icon-[dir]-[name]"</span>,
+      }),
+
+      <span class="code-comment">// ⭐ Mock Server(开发 + 生产 injectCode)</span>
+      <span class="code-function">viteMockServe</span>({
+        mockPath: <span class="code-string">"mock"</span>,
+        localEnabled: <span class="code-keyword">true</span>,
+        prodEnabled: <span class="code-keyword">false</span>,
+      }),
+    ],
+
+    build: {
+      chunkSizeWarningLimit: <span class="code-number">2000</span>,   <span class="code-comment">// 单 chunk 警告阈值</span>
+      outDir: <span class="code-string">"dist"</span>,
+
+      minify: <span class="code-string">"terser"</span>,
+      terserOptions: {
+        compress: {
+          drop_console: <span class="code-keyword">true</span>,      <span class="code-comment">// ⭐ 生产环境去掉 console</span>
+          drop_debugger: <span class="code-keyword">true</span>,
+        },
+        format: { comments: <span class="code-keyword">false</span> },  <span class="code-comment">// 去除所有注释</span>
+      },
+
+      rollupOptions: {
+        output: {
+          <span class="code-comment">// 静态资源分目录输出</span>
+          chunkFileNames: <span class="code-string">"static/js/[name]-[hash].js"</span>,
+          entryFileNames: <span class="code-string">"static/js/[name]-[hash].js"</span>,
+          assetFileNames: <span class="code-string">"static/[ext]/[name]-[hash].[ext]"</span>,
+
+          <span class="code-comment">// ⭐⭐⭐ 手动分包:大依赖独立 chunk,提升缓存命中</span>
+          <span class="code-function">manualChunks</span>(id) {
+            <span class="code-keyword">if</span> (id.<span class="code-function">includes</span>(<span class="code-string">"node_modules"</span>)) {
+              <span class="code-keyword">if</span> (id.<span class="code-function">includes</span>(<span class="code-string">"vue"</span>)) <span class="code-keyword">return</span> <span class="code-string">"vue"</span>;
+              <span class="code-keyword">if</span> (id.<span class="code-function">includes</span>(<span class="code-string">"echarts"</span>)) <span class="code-keyword">return</span> <span class="code-string">"echarts"</span>;
+              <span class="code-keyword">if</span> (id.<span class="code-function">includes</span>(<span class="code-string">"vtable"</span>)) <span class="code-keyword">return</span> <span class="code-string">"vtable"</span>;
+              <span class="code-keyword">return</span> <span class="code-string">"vendor"</span>;
+            }
+          },
+        },
+      },
+    },
+  };
+});
+</pre>
+  </div>
+
+  <div class="callout callout-accent">
+    <span class="callout-icon">🎓</span>
+    <div class="callout-content">
+      <div class="callout-title">5 个面试追问的优化点</div>
+      <p>① <strong>AutoImport + Components</strong>：写代码时不用手动 <code>import { ref, computed } from 'vue'</code>，插件自动处理。<strong>Arco 组件按需引入</strong>，不打包完整 UI 库。<br>
+      ② <strong>manualChunks 分包策略</strong>：vue / echarts / vtable / vendor 分成独立 chunk。好处：更新业务代码不影响这些大依赖的 hash，浏览器缓存继续有效。<br>
+      ③ <strong>terser drop_console</strong>：生产包去 console，减少体积+避免信息泄露。<br>
+      ④ <strong>SVG 图标精灵</strong>：<code>src/icons</code> 下的 SVG 打包成精灵图，<code>symbolId: "icon-[dir]-[name]"</code>。<br>
+      ⑤ <strong>vite-plugin-mock</strong>：开发时本地 mock 数据，开后端接口没好的情况下前端照样开发。</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 7</div>
+    <div class="quiz-title">构建优化</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. <code>manualChunks</code> 按 "vue/echarts/vtable/vendor" 分包，好处是什么？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>性能更好</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>业务代码更新时，这些大依赖 chunk 的 hash 不变，浏览器缓存继续用</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>打包更快</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>CDN 要求</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>如果所有 node_modules 打一个大 vendor chunk，任何业务更新都会让整个 vendor hash 变，用户重新下载 MB 级的依赖。分包后：echarts 几乎不升级 → 永久缓存。业务改 → 只重下业务 chunk。关键的首屏加速手段。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. <code>AutoImport</code> 插件干什么？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>自动安装 npm 包</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>代码里用 <code>ref()</code> / <code>computed()</code> 不用手写 import，插件编译时自动加上</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>自动引入 CSS</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>无用</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>减少样板代码——Composition API 用得多时，一个文件可能 import 十几个 Vue API。插件自动扫描你用了哪些，编译时添加 import 语句。搭配 <code>dts: 'src/auto-import.d.ts'</code> 生成类型声明文件让 TS 能识别。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">3. Vite 开发时 <code>proxy: '/api'</code> 的作用？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>HTTPS</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>前端 localhost:9999 的 /api 请求会被代理到后端服务，绕过 CORS</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>加速</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>隐藏密钥</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>开发时前端跑在 <code>localhost:9999</code>，后端跑在另一个域名。浏览器直连后端有 CORS 问题，但前端只调 <code>/api/...</code>，Vite dev server 代理到后端。生产环境由 Nginx 同样路径做代理。</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>📘 <strong>comics-management 交互式代码课程 · 深度真实代码版</strong> · 完结撒花 🎉</p>
+  <p>Vega 后端 + 这份前端课程配合着看，前后端一条龙吃透。</p>
+  <p style="margin-top: 14px; font-size: 12px; color: var(--color-text-muted);">基于 repomix 真实源码生成 · Claude Opus 4.7 1M · v1 深度版</p>
+</footer>
+
+</div>
+
+<script>
+// Quiz 交互
+document.querySelectorAll('.quiz-q').forEach(q => {
+  const options = q.querySelectorAll('.quiz-option');
+  const explanation = q.querySelector('.quiz-explanation');
+  options.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (q.dataset.answered) return;
+      q.dataset.answered = '1';
+      const isCorrect = opt.dataset.correct === 'true';
+      opt.classList.add(isCorrect ? 'correct' : 'wrong');
+      if (!isCorrect) {
+        const right = q.querySelector('.quiz-option[data-correct="true"]');
+        if (right) right.classList.add('correct');
+      }
+      if (explanation) explanation.classList.add('visible');
+    });
+  });
+});
+
+// 导航高亮
+const sections = document.querySelectorAll('.module');
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.offsetTop - 100;
+    if (window.scrollY >= top) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// 平滑滚动
+navLinks.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) window.scrollTo({ top: target.offsetTop - 60, behavior: 'smooth' });
+  });
+});
+
+// 入场动画(IntersectionObserver 触发)
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('animate-in');
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.callout, .flow-container, .code-block, .file-tree, .chat-window, .quiz, table').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

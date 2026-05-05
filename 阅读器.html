@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面试资料阅读器</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/java.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/sql.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/javascript.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/xml.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/yaml.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11/lib/languages/bash.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11/styles/github-dark.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg: #0d1117;
+    --bg-2: #161b22;
+    --surface: #1c2128;
+    --surface-2: #22272e;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-dim: #8b949e;
+    --text-muted: #6e7681;
+    --primary: #58a6ff;
+    --primary-dim: rgba(88, 166, 255, 0.15);
+    --success: #3fb950;
+    --accent: #ff7b72;
+    --warning: #f0b72f;
+    --purple: #bc8cff;
+}
+
+html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow: hidden;
+}
+
+/* 布局 */
+.layout {
+    display: grid;
+    grid-template-columns: 280px 1fr 240px;
+    height: 100vh;
+}
+
+/* === 左侧文件列表 === */
+.sidebar {
+    background: var(--bg-2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 16px;
+}
+
+.sidebar-header {
+    padding-bottom: 14px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.sidebar-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 4px;
+}
+
+.sidebar-subtitle {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+.search-box {
+    width: 100%;
+    margin-bottom: 14px;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-box:focus {
+    border-color: var(--primary);
+}
+
+.file-group {
+    margin-bottom: 18px;
+}
+
+.group-title {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    padding-left: 8px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-dim);
+    font-size: 13px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    margin-bottom: 2px;
+}
+
+.file-item:hover {
+    background: var(--surface);
+    color: var(--text);
+}
+
+.file-item.active {
+    background: var(--primary-dim);
+    color: var(--primary);
+    border-left-color: var(--primary);
+}
+
+.file-item .icon {
+    flex-shrink: 0;
+}
+
+.file-item .name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-item .size {
+    font-size: 10px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.external-links {
+    padding-top: 14px;
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+}
+
+.external-links a {
+    display: block;
+    padding: 7px 10px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 13px;
+    border-radius: 6px;
+    margin-bottom: 2px;
+}
+
+.external-links a:hover {
+    background: var(--surface);
+    color: var(--primary);
+}
+
+/* === 中间内容区 === */
+.content-wrapper {
+    overflow-y: auto;
+    padding: 0;
+    position: relative;
+}
+
+.content-header {
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.content-title {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.content-info {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.content {
+    padding: 30px 40px 60px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Markdown 样式 */
+.content h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0 0 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--primary);
+    color: var(--text);
+    line-height: 1.3;
+}
+
+.content h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    line-height: 1.4;
+}
+
+.content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 24px 0 10px;
+    color: var(--primary);
+}
+
+.content h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 18px 0 8px;
+    color: var(--text);
+}
+
+.content p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 12px;
+}
+
+.content ul, .content ol {
+    padding-left: 24px;
+    margin-bottom: 12px;
+}
+
+.content li {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.content strong {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.content em {
+    color: var(--warning);
+    font-style: normal;
+}
+
+.content code {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: #ffa657;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+}
+
+.content pre {
+    background: #0a0e17 !important;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    overflow-x: auto;
+    margin: 14px 0;
+}
+
+.content pre code {
+    background: none;
+    border: none;
+    color: #d1d9e0;
+    padding: 0;
+    font-size: 12.5px;
+    line-height: 1.6;
+}
+
+.content blockquote {
+    border-left: 4px solid var(--primary);
+    background: var(--primary-dim);
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+    color: var(--text);
+}
+
+.content blockquote p {
+    margin-bottom: 0;
+    color: var(--text);
+}
+
+.content hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+}
+
+.content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 13px;
+}
+
+.content th, .content td {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    text-align: left;
+}
+
+.content th {
+    background: var(--surface);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.content td {
+    color: var(--text);
+}
+
+.content a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.content a:hover {
+    text-decoration: underline;
+}
+
+/* === 右侧目录 === */
+.toc {
+    background: var(--bg-2);
+    border-left: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 30px 16px;
+}
+
+.toc-title {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    padding-left: 8px;
+}
+
+.toc-item {
+    display: block;
+    padding: 5px 10px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 12px;
+    border-radius: 4px;
+    border-left: 2px solid transparent;
+    margin-bottom: 2px;
+    cursor: pointer;
+    line-height: 1.5;
+}
+
+.toc-item:hover {
+    color: var(--text);
+    background: var(--surface);
+}
+
+.toc-item.active {
+    color: var(--primary);
+    border-left-color: var(--primary);
+    background: var(--primary-dim);
+}
+
+.toc-item.level-1 { padding-left: 10px; font-weight: 600; color: var(--text-dim); }
+.toc-item.level-2 { padding-left: 18px; }
+.toc-item.level-3 { padding-left: 28px; font-size: 11px; }
+
+/* 空状态 */
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--text-dim);
+    text-align: center;
+}
+
+.empty .emoji {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+/* 加载中 */
+.loading {
+    padding: 30px 40px;
+    color: var(--text-dim);
+    text-align: center;
+}
+
+/* 滚动条 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* 响应式 */
+@media (max-width: 1200px) {
+    .layout {
+        grid-template-columns: 260px 1fr;
+    }
+    .toc {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+    .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        z-index: 100;
+        transform: translateX(-100%);
+        transition: transform 0.3s;
+    }
+    .sidebar.visible {
+        transform: translateX(0);
+    }
+    .content-header {
+        padding: 12px 16px;
+    }
+    .content {
+        padding: 20px 16px 60px;
+    }
+    .mobile-menu-btn {
+        display: block !important;
+    }
+}
+
+.mobile-menu-btn {
+    display: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+/* 进度条 */
+.progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--primary);
+    width: 0;
+    transition: width 0.2s;
+    z-index: 200;
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="layout">
+
+<!-- 左侧文件列表 -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-title">📚 面试资料</div>
+        <div class="sidebar-subtitle">阅文漫剧项目 · 5 年 Java 经验</div>
+    </div>
+
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 搜索文档标题...">
+
+    <div class="file-group">
+        <div class="group-title">核心文档</div>
+        <div class="file-item" data-file="阅文漫剧_真实面经.md" data-icon="🎯">
+            <span class="icon">🎯</span>
+            <span class="name">阅文漫剧真实面经</span>
+        </div>
+        <div class="file-item" data-file="项目简历.md" data-icon="📄">
+            <span class="icon">📄</span>
+            <span class="name">项目简历</span>
+        </div>
+        <div class="file-item" data-file="我真做过的需求.md" data-icon="💼">
+            <span class="icon">💼</span>
+            <span class="name">我真做过的需求</span>
+        </div>
+        <div class="file-item" data-file="第二梯队技术点.md" data-icon="🔧">
+            <span class="icon">🔧</span>
+            <span class="name">第二梯队技术点</span>
+        </div>
+    </div>
+
+    <div class="file-group">
+        <div class="group-title">STAR 剧本</div>
+        <div class="file-item" data-file="STAR答题剧本-上.md" data-icon="🎬">
+            <span class="icon">🎬</span>
+            <span class="name">STAR 答题剧本(上)</span>
+        </div>
+        <div class="file-item" data-file="STAR答题剧本-下.md" data-icon="🎬">
+            <span class="icon">🎬</span>
+            <span class="name">STAR 答题剧本(下)</span>
+        </div>
+    </div>
+
+    <div class="file-group">
+        <div class="group-title">日常口语</div>
+        <div class="file-item" data-file="日常工作经验.md" data-icon="☕">
+            <span class="icon">☕</span>
+            <span class="name">日常工作经验</span>
+        </div>
+        <div class="file-item" data-file="补充素材库.md" data-icon="📦">
+            <span class="icon">📦</span>
+            <span class="name">补充素材库</span>
+        </div>
+    </div>
+
+    <div class="file-group">
+        <div class="group-title">问答 · 八股</div>
+        <div class="file-item" data-file="面试问答册.md" data-icon="❓">
+            <span class="icon">❓</span>
+            <span class="name">面试问答册</span>
+        </div>
+        <div class="file-item" data-file="八股高频清单.md" data-icon="📋">
+            <span class="icon">📋</span>
+            <span class="name">八股高频清单</span>
+        </div>
+    </div>
+
+    <div class="file-group">
+        <div class="group-title">模拟面试</div>
+        <div class="file-item" data-file="完整模拟面试剧本.md" data-icon="🎤">
+            <span class="icon">🎤</span>
+            <span class="name">完整模拟面试</span>
+        </div>
+        <div class="file-item" data-file="压力面剧本.md" data-icon="🔥">
+            <span class="icon">🔥</span>
+            <span class="name">压力面剧本</span>
+        </div>
+    </div>
+
+    <div class="file-group">
+        <div class="group-title">训练与执行</div>
+        <div class="file-item" data-file="5天开口训练法.md" data-icon="🏋️">
+            <span class="icon">🏋️</span>
+            <span class="name">5 天开口训练法</span>
+        </div>
+    </div>
+
+    <div class="external-links">
+        <div class="group-title">其他可视化</div>
+        <a href="项目全景导图.html" target="_blank">🗺️ 项目全景思维导图</a>
+        <a href="简历页面.html" target="_blank">🎨 动画简历页面</a>
+    </div>
+</div>
+
+<!-- 中间内容区 -->
+<div class="content-wrapper" id="contentWrapper">
+    <div class="content-header">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰ 菜单</button>
+        <div class="content-title" id="contentTitle">选择左边的文档开始阅读</div>
+        <div class="content-info" id="contentInfo"></div>
+    </div>
+
+    <div class="content" id="content">
+        <div class="empty">
+            <div class="emoji">👈</div>
+            <div>从左侧选一个文档开始看</div>
+            <div style="margin-top: 8px; font-size: 13px;">推荐从<strong style="color: var(--primary)"> 🎯 阅文漫剧真实面经</strong> 开始</div>
+        </div>
+    </div>
+</div>
+
+<!-- 右侧目录 -->
+<div class="toc" id="toc">
+    <div class="toc-title">本文目录</div>
+    <div id="tocContent">
+        <div style="color: var(--text-muted); font-size: 12px; padding: 8px;">
+            打开文档后显示目录
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script>
+// ============ 初始化 ============
+hljs.registerLanguage('java', hljs.getLanguage ? hljs.getLanguage('java') : null);
+marked.setOptions({
+    breaks: true,
+    gfm: true,
+    highlight: function(code, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            try { return hljs.highlight(code, { language: lang }).value; }
+            catch (e) { return code; }
+        }
+        return hljs.highlightAuto(code).value;
+    }
+});
+
+// ============ 文件列表 ============
+const files = document.querySelectorAll('.file-item');
+
+files.forEach(item => {
+    item.addEventListener('click', () => {
+        const filename = item.dataset.file;
+        loadFile(filename);
+        files.forEach(f => f.classList.remove('active'));
+        item.classList.add('active');
+    });
+});
+
+// ============ 加载文件 ============
+async function loadFile(filename) {
+    const content = document.getElementById('content');
+    const contentTitle = document.getElementById('contentTitle');
+    const contentInfo = document.getElementById('contentInfo');
+
+    content.innerHTML = '<div class="loading">⏳ 加载中...</div>';
+    contentTitle.textContent = filename;
+
+    try {
+        // 文件在同目录下
+        const response = await fetch(encodeURIComponent(filename));
+        if (!response.ok) throw new Error('加载失败 HTTP ' + response.status);
+
+        const markdown = await response.text();
+
+        // 字数统计
+        const wordCount = markdown.length;
+        const lineCount = markdown.split('\n').length;
+        contentInfo.textContent = `${lineCount} 行 · ${(wordCount / 1000).toFixed(1)}K 字`;
+
+        // 渲染 Markdown
+        content.innerHTML = marked.parse(markdown);
+
+        // 给所有 h2/h3/h4 加上 id 方便目录跳转
+        const headings = content.querySelectorAll('h1, h2, h3, h4');
+        headings.forEach((h, i) => {
+            h.id = 'h-' + i;
+        });
+
+        // 高亮代码块
+        content.querySelectorAll('pre code').forEach(block => {
+            hljs.highlightElement(block);
+        });
+
+        // 生成目录
+        generateTOC(headings);
+
+        // 滚动到顶部
+        document.getElementById('contentWrapper').scrollTop = 0;
+
+        // URL hash
+        location.hash = filename;
+    } catch (e) {
+        content.innerHTML = `
+            <div class="empty">
+                <div class="emoji">⚠️</div>
+                <div>加载失败: ${e.message}</div>
+                <div style="margin-top: 10px; font-size: 12px; color: var(--text-muted);">
+                    如果直接双击 HTML 打开,浏览器会拒绝加载本地 md 文件。<br>
+                    解决方法:在面试资料目录下运行 <code style="background: var(--surface); padding: 2px 6px;">python3 -m http.server 8000</code><br>
+                    然后访问 <code style="background: var(--surface); padding: 2px 6px;">http://localhost:8000/阅读器.html</code>
+                </div>
+            </div>
+        `;
+    }
+}
+
+// ============ 目录生成 ============
+function generateTOC(headings) {
+    const tocContent = document.getElementById('tocContent');
+    if (headings.length === 0) {
+        tocContent.innerHTML = '<div style="color: var(--text-muted); font-size: 12px; padding: 8px;">本文档无标题</div>';
+        return;
+    }
+
+    const html = Array.from(headings).map(h => {
+        const level = parseInt(h.tagName[1]);
+        const text = h.textContent.trim();
+        return `<a class="toc-item level-${level - 1}" data-target="${h.id}">${text}</a>`;
+    }).join('');
+
+    tocContent.innerHTML = html;
+
+    tocContent.querySelectorAll('.toc-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const target = document.getElementById(item.dataset.target);
+            if (target) {
+                // 滚动到目标位置(考虑 sticky 头部)
+                const wrapper = document.getElementById('contentWrapper');
+                const headerHeight = 60;
+                wrapper.scrollTop = target.offsetTop - headerHeight - 10;
+            }
+        });
+    });
+}
+
+// ============ 滚动时高亮目录 + 进度条 ============
+const contentWrapper = document.getElementById('contentWrapper');
+const progressBar = document.getElementById('progressBar');
+
+contentWrapper.addEventListener('scroll', () => {
+    // 进度条
+    const scrollTop = contentWrapper.scrollTop;
+    const scrollHeight = contentWrapper.scrollHeight - contentWrapper.clientHeight;
+    const progress = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    progressBar.style.width = progress + '%';
+
+    // 目录高亮
+    const headings = document.querySelectorAll('#content h1, #content h2, #content h3, #content h4');
+    let currentId = null;
+    for (let h of headings) {
+        if (h.offsetTop - 100 <= scrollTop) {
+            currentId = h.id;
+        }
+    }
+
+    if (currentId) {
+        document.querySelectorAll('.toc-item').forEach(item => {
+            item.classList.toggle('active', item.dataset.target === currentId);
+        });
+    }
+});
+
+// ============ 搜索 ============
+document.getElementById('searchBox').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase();
+    files.forEach(item => {
+        const name = item.querySelector('.name').textContent.toLowerCase();
+        item.style.display = name.includes(q) ? 'flex' : 'none';
+    });
+});
+
+// ============ 响应式 ============
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('visible');
+}
+
+// 点击内容区关闭侧栏(小屏)
+document.getElementById('contentWrapper').addEventListener('click', () => {
+    if (window.innerWidth < 768) {
+        document.getElementById('sidebar').classList.remove('visible');
+    }
+});
+
+// ============ URL hash 记忆 ============
+if (location.hash) {
+    const filename = decodeURIComponent(location.hash.slice(1));
+    const target = Array.from(files).find(f => f.dataset.file === filename);
+    if (target) {
+        target.click();
+    }
+} else {
+    // 默认打开第一个
+    // files[0].click();  // 不自动打开,让用户选
+}
+
+// ============ 键盘快捷键 ============
+document.addEventListener('keydown', (e) => {
+    // Ctrl/Cmd + K 聚焦搜索
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        document.getElementById('searchBox').focus();
+    }
+    // ESC 清空搜索
+    if (e.key === 'Escape') {
+        const sb = document.getElementById('searchBox');
+        if (document.activeElement === sb) {
+            sb.value = '';
+            sb.dispatchEvent(new Event('input'));
+        }
+    }
+});
+</script>
+
+</body>
+</html>

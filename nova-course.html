@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nova 数据采集服务 — 交互式代码课程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-bg: #FAF7F2;
+  --color-bg-warm: #F5F0E8;
+  --color-bg-code: #1E1E2E;
+  --color-text: #2C2A28;
+  --color-text-secondary: #6B6560;
+  --color-text-muted: #9E9790;
+  --color-border: #E5DFD6;
+  --color-border-light: #EEEBE5;
+  --color-surface: #FFFFFF;
+  --color-surface-warm: #FDF9F3;
+  --color-accent: #D94F30;
+  --color-accent-hover: #C4432A;
+  --color-accent-light: #FDEEE9;
+  --color-accent-muted: #E8836C;
+  --color-success: #2D8B55;
+  --color-success-light: #E8F5EE;
+  --color-error: #C93B3B;
+  --color-error-light: #FDE8E8;
+  --color-info: #2A7B9B;
+  --color-info-light: #E4F2F7;
+  --color-actor-1: #D94F30;
+  --color-actor-2: #2A7B9B;
+  --color-actor-3: #7B6DAA;
+  --color-actor-4: #D4A843;
+  --color-actor-5: #2D8B55;
+  --font-display: 'Bricolage Grotesque', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(44,42,40,0.06);
+  --shadow: 0 4px 12px rgba(44,42,40,0.08);
+  --shadow-lg: 0 10px 32px rgba(44,42,40,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+body { padding: 0; }
+
+/* ---- 顶部 Hero ---- */
+.hero {
+  background: linear-gradient(180deg, var(--color-bg-warm) 0%, var(--color-bg) 100%);
+  padding: 80px 24px 60px;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+}
+.hero-kicker {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  padding: 5px 12px;
+  border: 1px solid var(--color-accent);
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 6vw, 68px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--color-text);
+  margin-bottom: 20px;
+}
+.hero-title em {
+  color: var(--color-accent);
+  font-style: normal;
+}
+.hero-sub {
+  font-size: 17px;
+  color: var(--color-text-secondary);
+  max-width: 640px;
+  margin: 0 auto 30px;
+  line-height: 1.7;
+}
+.hero-meta {
+  display: inline-flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+.hero-meta span::before { content: '· '; color: var(--color-border); }
+.hero-meta span:first-child::before { content: ''; }
+
+/* ---- 导航 ---- */
+.nav {
+  position: sticky;
+  top: 0;
+  background: rgba(250, 247, 242, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--color-border);
+  z-index: 100;
+  padding: 12px 0;
+}
+.nav-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav a {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: 7px 13px;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.nav a:hover { background: var(--color-accent-light); color: var(--color-accent); }
+.nav a.active { background: var(--color-accent); color: #fff; }
+
+/* ---- 主体布局 ---- */
+.main { max-width: 860px; margin: 0 auto; padding: 30px 24px 80px; }
+.module {
+  margin-bottom: 80px;
+  padding-top: 30px;
+}
+.module-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+.module-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-text);
+  margin-bottom: 18px;
+}
+.module-intro {
+  font-size: 16.5px;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  margin-bottom: 32px;
+  max-width: 720px;
+}
+.screen-heading {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  margin: 44px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.screen-heading::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 22px;
+  background: var(--color-accent);
+  border-radius: 2px;
+}
+.screen-heading span.emoji { font-size: 22px; }
+
+p { margin: 0 0 14px; font-size: 15.5px; color: var(--color-text); line-height: 1.8; }
+p strong { font-weight: 600; color: var(--color-text); }
+em { color: var(--color-accent); font-style: normal; font-weight: 500; }
+
+ul, ol { margin: 0 0 16px 24px; font-size: 15.5px; line-height: 1.85; }
+li { margin-bottom: 5px; }
+
+/* ---- Callout ---- */
+.callout {
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  margin: 20px 0;
+  border-left: 3px solid;
+  background: var(--color-surface-warm);
+}
+.callout-icon { font-size: 20px; flex-shrink: 0; line-height: 1.4; }
+.callout-content { flex: 1; }
+.callout-title { font-weight: 600; margin-bottom: 4px; font-family: var(--font-display); font-size: 15px; }
+.callout-content p:last-child { margin-bottom: 0; font-size: 14.5px; }
+.callout.callout-info { border-left-color: var(--color-info); background: var(--color-info-light); }
+.callout.callout-info .callout-title { color: var(--color-info); }
+.callout.callout-warning { border-left-color: var(--color-actor-4); background: #FBF5E2; }
+.callout.callout-warning .callout-title { color: #8B6914; }
+.callout.callout-accent { border-left-color: var(--color-accent); background: var(--color-accent-light); }
+.callout.callout-accent .callout-title { color: var(--color-accent); }
+.callout.callout-success { border-left-color: var(--color-success); background: var(--color-success-light); }
+.callout.callout-success .callout-title { color: var(--color-success); }
+
+/* ---- 代码块 ---- */
+.code-block {
+  background: var(--color-bg-code);
+  border-radius: var(--radius);
+  margin: 16px 0;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.02em;
+}
+.code-header .code-lang {
+  font-weight: 600;
+  color: var(--color-accent-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10.5px;
+}
+.code-header .code-file {
+  color: rgba(255,255,255,0.5);
+  font-size: 11px;
+}
+.code-block pre {
+  padding: 14px 18px;
+  overflow-x: auto;
+  color: #D4D4D4;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre;
+}
+.code-keyword { color: #C586C0; }
+.code-function { color: #DCDCAA; }
+.code-string { color: #CE9178; }
+.code-number { color: #B5CEA8; }
+.code-class { color: #4EC9B0; }
+.code-comment { color: #6A9955; font-style: italic; }
+.code-anno { color: #DCDCAA; font-weight: 500; }
+.code-type { color: #4FC1FF; }
+.code-field { color: #9CDCFE; }
+
+/* ---- 徽章 ---- */
+.badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.badge-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+.badge-item.primary { background: var(--color-accent-light); border-color: var(--color-accent); color: var(--color-accent); }
+.badge-item.code {
+  font-family: var(--font-mono);
+  background: var(--color-bg-code);
+  color: #DCDCAA;
+  border-color: transparent;
+  font-size: 12px;
+}
+
+/* ---- 文件树 ---- */
+.file-tree {
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 18px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--color-text);
+}
+.file-tree .dir { color: var(--color-accent); font-weight: 600; }
+.file-tree .file { color: var(--color-text-secondary); }
+.file-tree .note { color: var(--color-text-muted); font-style: italic; }
+
+/* ---- 流程图(演员) ---- */
+.flow-container {
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  margin: 24px 0;
+  overflow-x: auto;
+}
+.flow-actors {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  min-width: fit-content;
+}
+.flow-actor {
+  flex: 0 0 auto;
+  min-width: 110px;
+  padding: 16px 14px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.flow-actor-icon { font-size: 24px; margin-bottom: 6px; }
+.flow-actor-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.flow-actor-role {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 3px;
+}
+.flow-arrow {
+  color: var(--color-accent);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.flow-actor:nth-child(1) { border-color: var(--color-actor-1); }
+.flow-actor:nth-child(3) { border-color: var(--color-actor-2); }
+.flow-actor:nth-child(5) { border-color: var(--color-actor-3); }
+.flow-actor:nth-child(7) { border-color: var(--color-actor-4); }
+.flow-actor:nth-child(9) { border-color: var(--color-actor-5); }
+
+/* ---- 对话气泡 ---- */
+.chat-window {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: var(--shadow-sm);
+}
+.chat-message {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+.chat-avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.chat-bubble {
+  flex: 1;
+  background: var(--color-bg-warm);
+  padding: 10px 14px;
+  border-radius: 4px 14px 14px 14px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.chat-sender {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Quiz 小测 ---- */
+.quiz {
+  background: var(--color-surface-warm);
+  border: 2px dashed var(--color-accent-muted);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  margin: 32px 0 20px;
+}
+.quiz-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+.quiz-kicker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.quiz-q {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--color-border);
+}
+.quiz-q:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+.quiz-question {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  display: flex;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14.5px;
+  transition: all 0.15s;
+}
+.quiz-option:hover { border-color: var(--color-accent-muted); background: #fff; }
+.quiz-option.selected { border-color: var(--color-accent); background: var(--color-accent-light); }
+.quiz-option.correct { border-color: var(--color-success); background: var(--color-success-light); }
+.quiz-option.wrong { border-color: var(--color-error); background: var(--color-error-light); }
+.quiz-option-marker {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  width: 22px;
+}
+.quiz-option.correct .quiz-option-marker { color: var(--color-success); }
+.quiz-option.wrong .quiz-option-marker { color: var(--color-error); }
+.quiz-explanation {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: var(--color-info-light);
+  border-left: 3px solid var(--color-info);
+  border-radius: 4px;
+  font-size: 13.5px;
+  color: var(--color-text);
+  line-height: 1.65;
+  display: none;
+}
+.quiz-explanation.visible { display: block; }
+.quiz-explanation strong { color: var(--color-info); font-weight: 600; }
+
+/* ---- 表格 ---- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: 14px;
+}
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--color-border-light); }
+th { background: var(--color-bg-warm); font-weight: 600; color: var(--color-accent); font-size: 13px; letter-spacing: 0.02em; }
+tr:last-child td { border-bottom: none; }
+td code { font-family: var(--font-mono); font-size: 12.5px; background: var(--color-bg-warm); padding: 1px 6px; border-radius: 4px; }
+
+/* ---- footer ---- */
+.footer {
+  max-width: 860px;
+  margin: 40px auto 0;
+  padding: 40px 24px 60px;
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+}
+.footer strong { color: var(--color-accent); font-weight: 600; }
+
+/* ---- 动画 ---- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeUp 0.5s ease-out both; }
+.stagger-children > * { animation: fadeUp 0.5s ease-out both; }
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.20s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.30s; }
+
+/* ---- 响应式 ---- */
+@media (max-width: 600px) {
+  .hero { padding: 60px 20px 40px; }
+  .main { padding: 24px 18px 60px; }
+  .flow-actor { min-width: 90px; padding: 12px 10px; }
+  .code-block pre { font-size: 12px; padding: 12px 14px; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-kicker">📘 交互式代码课程 · 深度真实代码版</div>
+  <h1 class="hero-title">Nova 数据采集服务 <em>源码之旅</em></h1>
+  <p class="hero-sub">224 源文件、14 Controller、26 Service、16 Manager——阅文漫剧 UP 主端后端。<strong>所有代码片段 100% 来自真实源码</strong>，每个方法名、配置、包名都能对应原文。</p>
+  <div class="hero-meta">
+    <span>Spring Boot</span>
+    <span>Peacock 框架</span>
+    <span>TransmittableThreadLocal</span>
+    <span>ywguid/ywkey Cookie</span>
+    <span>TRPC + Polaris</span>
+    <span>224 源文件</span>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#m1">1 · Nova 定位</a>
+    <a href="#m2">2 · Filter 链真相</a>
+    <a href="#m3">3 · SessionContext 深度</a>
+    <a href="#m4">4 · 外部服务封装</a>
+    <a href="#m5">5 · 缓存 + 安全</a>
+    <a href="#m6">6 · 异常处理</a>
+    <a href="#m7">7 · 全局架构</a>
+  </div>
+</nav>
+
+<div class="main">
+
+<section class="module" id="m1">
+  <div class="module-kicker">Module 01</div>
+  <h1 class="module-title">这个应用是做什么的</h1>
+  <p class="module-intro">包名 <code>com.yuewen.openplatform.nova</code>，是阅文漫剧<strong>面向 UP 主（C 端）</strong>的后端服务。承接注册、身份核验、素材签约、资产查看一站式操作。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🎬</span>一个 UP 主"小雨"的故事</h2>
+  <p>小雨是一位漫剧 AI 真人赛道的创作者。她要：</p>
+  <ol>
+    <li>注册账号（用阅文账号 <code>ywguid</code> + <code>ywkey</code> Cookie 登录）</li>
+    <li>填资料（<code>POST /api/v1/me/add</code> 或 <code>/addwithworks</code>）</li>
+    <li>身份核验（<code>POST /api/v1/me/idverify</code>，内部调实名 + 活体）</li>
+    <li>签约合同 → 查资产 → 等收益</li>
+  </ol>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-content">
+      <div class="callout-title">三兄弟关系</div>
+      <p><strong>Nova</strong>（C 端，UP 主）、<strong>Vega</strong>（B 端，运营）、<strong>Comic Drama Web</strong>（B 端，分销商）。三者共享底层 Peacock Driver Uploader 数据访问层（TRPC），但用户群完全不同。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">📂</span>真实目录结构</h2>
+  <div class="file-tree">
+<span class="dir">nova/solution_nova/src/main/java/com/yuewen/openplatform/nova/</span><br>
+├── <span class="dir">web/</span><br>
+│   ├── <span class="dir">controller/</span> <span class="note"># 14 个 Controller</span><br>
+│   │   ├── <span class="file">MeController.java</span>         <span class="note"># /api/v1/me</span><br>
+│   │   ├── <span class="file">ApplyController.java</span>      <span class="note"># 签约</span><br>
+│   │   ├── <span class="file">BookSelectController.java</span> <span class="note"># 选书</span><br>
+│   │   └── ... 11 个<br>
+│   ├── <span class="dir">filter/</span> <span class="note"># 3 个 Filter</span><br>
+│   │   ├── <span class="file">BasicFilter.java</span>   <span class="note"># CORS + Wrapper 切换</span><br>
+│   │   ├── <span class="file">LoginFilter.java</span>   <span class="note"># Cookie 校验 + debug 模式</span><br>
+│   │   └── <span class="file">APFilter.java</span>      <span class="note"># 访问日志</span><br>
+│   ├── <span class="file">SkipLoginPathScanner.java</span> <span class="note"># 启动扫 @SkipLogin</span><br>
+│   └── <span class="file">GlobalExceptionHandler.java</span>   <span class="note"># 全局异常</span><br>
+├── <span class="dir">service/</span> <span class="note"># 26 个 Service</span><br>
+│   └── <span class="file">ProfileService.java</span>      <span class="note"># 31k chars,最大</span><br>
+├── <span class="dir">manager/</span> <span class="note"># 16 个 Manager</span><br>
+│   ├── <span class="file">UserManager.java</span>         <span class="note"># Cookie 验证</span><br>
+│   ├── <span class="file">ProfileManager.java</span>      <span class="note"># 档案</span><br>
+│   ├── <span class="file">CosManager.java</span>          <span class="note"># 腾讯云 COS</span><br>
+│   ├── <span class="file">OcrManager.java</span>          <span class="note"># OCR 识别</span><br>
+│   ├── <span class="file">FaceidManager.java</span>       <span class="note"># 活体识别</span><br>
+│   ├── <span class="file">IDManager.java</span>           <span class="note"># 实名核验</span><br>
+│   └── ... 10 个<br>
+├── <span class="dir">accessor/</span> <span class="note"># 12 个数据访问</span><br>
+├── <span class="dir">helper/</span><br>
+│   └── <span class="file">SessionContext.java</span>      <span class="note"># ⭐ TransmittableThreadLocal</span><br>
+└── <span class="dir">util/</span> <span class="note"># 14 个工具</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="file">AESStringTypeHandler.java</span> <span class="note"># ⭐ 敏感字段透明加密</span>
+  </div>
+
+  <div class="callout callout-warning">
+    <span class="callout-icon">🔍</span>
+    <div class="callout-content">
+      <div class="callout-title">和 Comic Drama Web 对比 3 个关键差异</div>
+      <p>① <strong>Manager 16 个 vs CDW 1 个</strong>：Nova 大量外部调用（OCR/FaceID/COS/ID/Ocr/Bank...）都封装成 Manager。<br>
+      ② <strong>Cookie 名不同</strong>：Nova 用阅文通用 <code>ywguid</code> + <code>ywkey</code>（SSO），CDW 用 <code>MERCHANTRY_SESSIONID</code>（独立 session）。<br>
+      ③ <strong>没有 HMAC 内部鉴权</strong>：Nova 是纯 C 端，只处理 UP 主浏览器/App 请求。</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 1</div>
+    <div class="quiz-title">定位</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. Nova 服务的是谁？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>运营</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>UP 主（内容创作者），纯 C 端</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>分销商</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>平台审核</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>Nova 包名就是 <code>nova</code>，服务阅文漫剧的 UP 主。注册/实名/签约/资产查询都在这里。运营走 Vega，分销商走 Comic Drama Web。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. 为什么 Nova 有 16 个 Manager 而 CDW 只有 1 个？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>Nova 规模大</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>Nova 大量外部调用（OCR/FaceID/COS/ID 等身份核验链路），每个封装成 Manager 隔离</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>代码规范不同</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>历史遗留</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>UP 主注册流程需要：OCR（身份证识别）、FaceID（活体）、ID（实名）、Bank（银行卡）、COS（文件存储）、Enterprise（企业信息）、Contract（合同）等等——每个外部依赖一个 Manager。CDW 的外部调用主要是 TRPC Provider，不需要单独封 Manager。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m2">
+  <div class="module-kicker">Module 02</div>
+  <h1 class="module-title">Filter 链真相</h1>
+  <p class="module-intro">Nova 只有 3 个 Filter：<code>BasicFilter</code>（CORS + Wrapper 切换）、<code>LoginFilter</code>（Cookie 校验 + debug 模式）、<code>APFilter</code>（日志）。本节重点看前两个。</p>
+
+  <h2 class="screen-heading"><span class="emoji">📜</span>BasicFilter 真实代码</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">web/filter/BasicFilter.java</span></div>
+<pre>
+<span class="code-anno">@Component</span>
+<span class="code-keyword">public class</span> <span class="code-class">BasicFilter</span> <span class="code-keyword">implements</span> <span class="code-class">Filter</span> {
+
+    <span class="code-anno">@Value</span>(<span class="code-string">"${access.control.allow.origin}"</span>)
+    <span class="code-class">String</span> accessAllowOrigin;
+
+    <span class="code-anno">@Value</span>(<span class="code-string">"${header.encrypt.open:true}"</span>)
+    <span class="code-keyword">private boolean</span> encryptOpen;
+
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">RequestInitSpec</span> requestInit;
+
+    <span class="code-anno">@Override</span>
+    <span class="code-keyword">public void</span> <span class="code-function">doFilter</span>(<span class="code-class">ServletRequest</span> req, <span class="code-class">ServletResponse</span> res, <span class="code-class">FilterChain</span> chain) {
+        <span class="code-class">HttpServletResponse</span> response = (<span class="code-class">HttpServletResponse</span>) res;
+        <span class="code-class">HttpServletRequest</span> request = (<span class="code-class">HttpServletRequest</span>) req;
+
+        <span class="code-comment">// ① multipart 请求直接放行(不包装,避免破坏文件上传)</span>
+        <span class="code-keyword">if</span> (<span class="code-function">isMultipartRequest</span>(request)) {
+            chain.<span class="code-function">doFilter</span>(request, res);
+            <span class="code-keyword">return</span>;
+        }
+
+        <span class="code-comment">// ② ⭐ 根据环境选择 Wrapper</span>
+        <span class="code-class">HttpServletRequest</span> wrapperRequest;
+        <span class="code-keyword">if</span> (<span class="code-class">Context</span>.<span class="code-function">getEnv</span>() != <span class="code-class">Env</span>.PRODUCT && !encryptOpen) {
+            <span class="code-comment">// 非生产 + 不加密:PostRequestWrapper (仅可重读 body)</span>
+            wrapperRequest = <span class="code-keyword">new</span> <span class="code-class">PostRequestWrapper</span>(request);
+        } <span class="code-keyword">else</span> {
+            <span class="code-comment">// 生产或加密:XssAndSqlHttpServletRequestWrapper (可重读 + XSS/SQL 过滤)</span>
+            wrapperRequest = <span class="code-keyword">new</span> <span class="code-class">XssAndSqlHttpServletRequestWrapper</span>(request);
+        }
+
+        <span class="code-comment">// ③ Peacock 框架初始化 TypicalResolved 请求上下文</span>
+        <span class="code-function">initReq</span>(request);
+
+        <span class="code-comment">// ④ ⭐ CORS 动态 Origin 匹配(不是写死的)</span>
+        <span class="code-class">String</span> allowOrigin = <span class="code-keyword">null</span>;
+        <span class="code-keyword">if</span> (<span class="code-class">StringUtils</span>.<span class="code-function">isNotBlank</span>(accessAllowOrigin)) {
+            <span class="code-class">String</span>[] split = accessAllowOrigin.<span class="code-function">split</span>(<span class="code-string">","</span>);
+            <span class="code-class">String</span> origin = request.<span class="code-function">getHeader</span>(<span class="code-string">"Origin"</span>);
+            allowOrigin = split[<span class="code-number">0</span>]; <span class="code-comment">// 默认第一个</span>
+            <span class="code-keyword">for</span> (<span class="code-class">String</span> s : split) {
+                <span class="code-keyword">if</span> (<span class="code-class">StringUtils</span>.<span class="code-function">isNotEmpty</span>(origin) && origin.<span class="code-function">contains</span>(s)) {
+                    <span class="code-comment">// ⭐ 匹配后缀(防止 evilyuewen.com 伪造)</span>
+                    <span class="code-class">String</span> hostSuffix = origin.<span class="code-function">substring</span>(origin.<span class="code-function">length</span>() - s.<span class="code-function">length</span>());
+                    <span class="code-keyword">if</span> (s.<span class="code-function">equals</span>(hostSuffix)) {
+                        allowOrigin = origin;
+                        <span class="code-keyword">break</span>;
+                    }
+                }
+            }
+        }
+
+        response.<span class="code-function">setHeader</span>(<span class="code-string">"Access-Control-Allow-Credentials"</span>, <span class="code-string">"true"</span>);
+        <span class="code-keyword">if</span> (allowOrigin != <span class="code-keyword">null</span>) {
+            response.<span class="code-function">setHeader</span>(<span class="code-string">"Access-Control-Allow-Origin"</span>, allowOrigin);
+        }
+        response.<span class="code-function">setHeader</span>(<span class="code-string">"Access-Control-Max-Age"</span>, <span class="code-string">"86400"</span>);
+        <span class="code-comment">// ... 其他 CORS headers</span>
+
+        <span class="code-keyword">if</span> (<span class="code-string">"OPTIONS"</span>.<span class="code-function">equalsIgnoreCase</span>(request.<span class="code-function">getMethod</span>())) {
+            response.<span class="code-function">setStatus</span>(<span class="code-class">HttpServletResponse</span>.SC_OK);
+        } <span class="code-keyword">else</span> {
+            chain.<span class="code-function">doFilter</span>(wrapperRequest, res);
+        }
+    }
+}
+</pre>
+  </div>
+
+  <div class="callout callout-accent">
+    <span class="callout-icon">🔑</span>
+    <div class="callout-content">
+      <div class="callout-title">3 个值得注意的细节</div>
+      <p>① <strong>环境 + 开关双条件切换 Wrapper</strong>：生产环境强制 XSS/SQL 过滤，开发环境可以关掉方便调试。<br>
+      ② <strong>CORS 动态匹配 + 后缀校验</strong>：防伪造。配置 <code>yuewen.com,readnovel.com</code>，恶意的 <code>evilyuewen.com</code> 因为后缀不一致被拒。<br>
+      ③ <strong>multipart 请求直接放行</strong>：不包装，避免 <code>MultipartFile</code> 解析被破坏。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🔐</span>LoginFilter 真实代码（含 debug 模式）</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">web/filter/LoginFilter.java（关键片段）</span></div>
+<pre>
+<span class="code-anno">@Slf4j</span>
+<span class="code-anno">@Component</span>
+<span class="code-keyword">public class</span> <span class="code-class">LoginFilter</span> <span class="code-keyword">implements</span> <span class="code-class">Filter</span> {
+
+    <span class="code-anno">@Resource</span> <span class="code-keyword">private</span> <span class="code-class">SkipLoginPathScanner</span> skipLoginPathScanner;
+    <span class="code-anno">@Resource</span> <span class="code-keyword">private</span> <span class="code-class">UserManager</span> userManager;
+    <span class="code-anno">@Resource</span> <span class="code-keyword">private</span> <span class="code-class">ProfileManager</span> profileManager;
+
+    <span class="code-anno">@SneakyThrows</span>
+    <span class="code-anno">@Override</span>
+    <span class="code-keyword">public void</span> <span class="code-function">doFilter</span>(<span class="code-class">ServletRequest</span> request, <span class="code-class">ServletResponse</span> response, <span class="code-class">FilterChain</span> chain) {
+        <span class="code-class">HttpServletRequest</span> httpRequest = (<span class="code-class">HttpServletRequest</span>) request;
+        <span class="code-class">HttpServletResponse</span> httpResponse = (<span class="code-class">HttpServletResponse</span>) response;
+        <span class="code-class">String</span> path = httpRequest.<span class="code-function">getRequestURI</span>();
+
+        <span class="code-comment">// ① 白名单放行(启动时 SkipLoginPathScanner 扫出来的)</span>
+        <span class="code-keyword">if</span> (skipLoginPathScanner.<span class="code-function">getSkipLoginPaths</span>().<span class="code-function">contains</span>(path)) {
+            chain.<span class="code-function">doFilter</span>(request, response);
+            <span class="code-keyword">return</span>;
+        }
+
+        <span class="code-keyword">try</span> {
+            <span class="code-comment">// ② ⭐ 非生产环境的 debug 模式(带 debug header + guid header 可伪装登录)</span>
+            <span class="code-keyword">if</span> (<span class="code-function">allowDebug</span>(httpRequest)) {
+                <span class="code-function">useDebugMode</span>(httpRequest, httpResponse);
+                chain.<span class="code-function">doFilter</span>(request, response);
+                <span class="code-keyword">return</span>;
+            }
+
+            <span class="code-comment">// ③ 检查 ywguid + ywkey Cookie 都在</span>
+            <span class="code-keyword">boolean</span> hasCookie = <span class="code-class">SessionContext</span>.<span class="code-function">checkUserCookie</span>(httpRequest);
+            <span class="code-keyword">if</span> (!hasCookie) {
+                <span class="code-function">setInvalidSessionResponse</span>(httpResponse);
+                <span class="code-keyword">return</span>;
+            }
+
+            <span class="code-comment">// ④ 从 Cookie 取 guid 和 key</span>
+            <span class="code-keyword">long</span> ywGuidFromCookie = <span class="code-class">SessionContext</span>.<span class="code-function">getYwGuidFromCookie</span>(httpRequest);
+            <span class="code-class">String</span> ywKeyFromCookie = <span class="code-class">SessionContext</span>.<span class="code-function">getYwKeyFromCookie</span>(httpRequest);
+
+            <span class="code-comment">// ⑤ 调 UserManager 去阅文账号中心验证</span>
+            <span class="code-keyword">boolean</span> userAuth = userManager.<span class="code-function">userAuth</span>(ywKeyFromCookie, ywGuidFromCookie, httpRequest.<span class="code-function">getRemoteAddr</span>());
+            <span class="code-keyword">if</span> (!userAuth) {
+                <span class="code-function">setInvalidSessionResponse</span>(httpResponse);
+                <span class="code-keyword">return</span>;
+            }
+
+            <span class="code-comment">// ⑥ 查 UP 主档案</span>
+            <span class="code-class">Result</span>&lt;<span class="code-class">UploaderProfile</span>&gt; userInfoResult = profileManager.<span class="code-function">query</span>(ywGuidFromCookie);
+            <span class="code-keyword">if</span> (userInfoResult.<span class="code-function">isFailure</span>()) {
+                <span class="code-function">setInvalidSessionResponse</span>(httpResponse);
+                <span class="code-keyword">return</span>;
+            }
+
+            <span class="code-comment">// ⑦ ⭐ 设置线程上下文 + MDC traceId</span>
+            <span class="code-class">SessionContext</span>.<span class="code-function">setUserLocal</span>(ywGuidFromCookie, userInfoResult.<span class="code-function">dataRequireNonNull</span>());
+            <span class="code-class">MDC</span>.<span class="code-function">put</span>(<span class="code-string">"guid"</span>, <span class="code-class">String</span>.<span class="code-function">valueOf</span>(ywGuidFromCookie));
+
+            chain.<span class="code-function">doFilter</span>(request, response);
+        } <span class="code-keyword">catch</span> (<span class="code-class">Exception</span> e) {
+            <span class="code-function">setInvalidSessionResponse</span>(httpResponse);
+        } <span class="code-keyword">finally</span> {
+            <span class="code-comment">// ⑧ ⭐⭐ 必须清 ThreadLocal,防线程池复用导致上下文串</span>
+            <span class="code-class">SessionContext</span>.<span class="code-function">clear</span>();
+        }
+    }
+
+    <span class="code-keyword">private boolean</span> <span class="code-function">allowDebug</span>(<span class="code-class">HttpServletRequest</span> httpRequest) {
+        <span class="code-class">String</span> debugHeader = httpRequest.<span class="code-function">getHeader</span>(<span class="code-string">"debug"</span>);
+        <span class="code-keyword">return</span> <span class="code-class">Env</span>.<span class="code-function">current</span>() != <span class="code-class">Env</span>.PRODUCT && <span class="code-class">StringUtils</span>.<span class="code-function">isNotEmpty</span>(debugHeader);
+    }
+}
+</pre>
+  </div>
+
+  <div class="callout callout-warning">
+    <span class="callout-icon">⚠️</span>
+    <div class="callout-content">
+      <div class="callout-title">两个细节值得面试追问</div>
+      <p>① <strong>Debug 模式</strong>：非生产环境 + <code>debug</code> header 存在 + <code>guid</code> header 提供用户 ID，可跳过 Cookie 验证直接"登录"。开发/联调神器。<strong>但生产环境强制关闭</strong>（<code>Env.current() != PRODUCT</code> 判断）。<br>
+      ② <strong>finally 里 SessionContext.clear()</strong>：ThreadLocal 必须清，否则<strong>线程池复用</strong>时下一个请求的用户会拿到上一个请求的上下文——严重的信息泄露漏洞。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🧩</span>SkipLoginPathScanner 真实代码</h2>
+  <p>和 Comic Drama Web 几乎一模一样（阅文通用组件）——启动时扫描 <code>@Controller</code> 的方法，收集 <code>@SkipLogin</code> 注解的路径：</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">web/SkipLoginPathScanner.java</span></div>
+<pre>
+<span class="code-anno">@PostConstruct</span>
+<span class="code-keyword">public void</span> <span class="code-function">scanSkipLoginPaths</span>() {
+    <span class="code-class">String</span>[] controllerBeanNames = applicationContext.<span class="code-function">getBeanNamesForAnnotation</span>(<span class="code-class">Controller</span>.<span class="code-keyword">class</span>);
+    <span class="code-keyword">for</span> (<span class="code-class">String</span> beanName : controllerBeanNames) {
+        <span class="code-function">processControllerBean</span>(beanName);
+    }
+}
+
+<span class="code-keyword">private void</span> <span class="code-function">processControllerBean</span>(<span class="code-class">String</span> beanName) {
+    <span class="code-class">Object</span> bean = applicationContext.<span class="code-function">getBean</span>(beanName);
+    <span class="code-comment">// ⭐ 穿透 Spring AOP 代理拿真实类</span>
+    <span class="code-class">Class</span>&lt;?&gt; beanClass = <span class="code-class">AopUtils</span>.<span class="code-function">getTargetClass</span>(bean);
+    <span class="code-class">String</span> baseUrl = <span class="code-function">getBaseUrl</span>(beanClass);
+
+    <span class="code-class">Arrays</span>.<span class="code-function">stream</span>(beanClass.<span class="code-function">getMethods</span>())
+            .<span class="code-function">filter</span>(m -&gt; m.<span class="code-function">isAnnotationPresent</span>(<span class="code-class">SkipLogin</span>.<span class="code-keyword">class</span>))
+            .<span class="code-function">forEach</span>(method -&gt; {
+                <span class="code-class">String</span> methodUrl = <span class="code-function">extractMethodUrl</span>(method);
+                <span class="code-keyword">if</span> (methodUrl != <span class="code-keyword">null</span>) {
+                    skipLoginPaths.<span class="code-function">add</span>(<span class="code-function">normalizeUrl</span>(baseUrl, methodUrl));
+                }
+            });
+}
+</pre>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 2</div>
+    <div class="quiz-title">Filter 链</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. BasicFilter 在什么情况下用 <code>PostRequestWrapper</code> 而不是 <code>XssAndSqlHttpServletRequestWrapper</code>？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>永远用 Xss</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>非生产环境 + <code>header.encrypt.open=false</code> 时用 PostRequestWrapper（方便调试 body）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>multipart 请求</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>随机</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>代码逻辑：<code>if (Context.getEnv() != Env.PRODUCT && !encryptOpen)</code>。开发环境方便查看原始 body 用轻量 Wrapper，生产强制 XSS 过滤。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. CORS Origin 为什么要做"后缀匹配"？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>好玩</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>防 <code>evilyuewen.com</code> 这种伪造域名通过 <code>contains</code> 校验</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>性能</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>标准</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>如果只用 <code>origin.contains("yuewen.com")</code>，<code>https://evilyuewen.com.hack.com</code> 也能通过。加 <code>hostSuffix.equals(s)</code> 做后缀匹配确保域名是"以 yuewen.com 结尾"，而不是"包含 yuewen.com"。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">3. LoginFilter 的 <code>finally { SessionContext.clear(); }</code> 为什么关键？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>好习惯</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>防止线程池复用时，下一请求拿到上一请求的用户上下文（信息泄露漏洞）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>性能</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>Java 语法</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>ThreadLocal 绑定线程，Servlet 容器的线程池会复用线程。如果处理完请求不 clear，下一个请求复用同一线程时可能读到"上一个用户的 user 对象"——严重的安全问题。这是 ThreadLocal 的经典陷阱。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">4. debug 模式的价值？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>后门</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>非生产环境下开发 / 联调时可以模拟任意用户，无需真实登录（生产强制关闭）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>性能测试</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>无用</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>前端联调/测试/开发时，不想每次都走完整 Cookie 登录流程，加 <code>debug: 1</code> + <code>guid: 123456</code> 两个 header 就能"模拟登录"。生产环境 <code>Env.current() != PRODUCT</code> 判断强制关闭这个入口。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m3">
+  <div class="module-kicker">Module 03 · 重点</div>
+  <h1 class="module-title">SessionContext 深度解读</h1>
+  <p class="module-intro">Nova 里最重要的基础类，<strong>14k 字符</strong>。基于 <code>TransmittableThreadLocal</code>，处理用户上下文的存/取/传/清。本节逐函数讲。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🧵</span>完整类结构</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">helper/SessionContext.java（真实）</span></div>
+<pre>
+<span class="code-anno">@Slf4j</span>
+<span class="code-keyword">public final class</span> <span class="code-class">SessionContext</span> {
+    <span class="code-keyword">private</span> <span class="code-class">User</span> user;
+
+    <span class="code-comment">// ⭐ 关键:用 TransmittableThreadLocal,不是 ThreadLocal</span>
+    <span class="code-keyword">private static final</span> <span class="code-class">ThreadLocal</span>&lt;<span class="code-class">SessionContext</span>&gt; SESSION_THREAD_LOCAL
+            = <span class="code-keyword">new</span> <span class="code-class">TransmittableThreadLocal</span>&lt;&gt;();
+
+    <span class="code-comment">// Cookie 名:走阅文 SSO 通用</span>
+    <span class="code-keyword">public static final</span> <span class="code-class">String</span> YW_GUID_COOKIE_NAME = <span class="code-string">"ywguid"</span>;
+    <span class="code-keyword">public static final</span> <span class="code-class">String</span> YW_KEY_COOKIE_NAME  = <span class="code-string">"ywkey"</span>;
+
+    <span class="code-comment">// 离线上下文:Job/定时/自动化场景不走登录,构造一个虚拟 user</span>
+    <span class="code-keyword">public static</span> <span class="code-class">SessionContext</span> <span class="code-function">createOfflineContext</span>() {
+        <span class="code-class">SessionContext</span> ctx = <span class="code-keyword">new</span> <span class="code-class">SessionContext</span>();
+        ctx.user = <span class="code-class">User</span>.<span class="code-function">builder</span>().<span class="code-function">guid</span>(-1L).<span class="code-function">phone</span>(<span class="code-string">""</span>).<span class="code-function">build</span>();
+        SESSION_THREAD_LOCAL.<span class="code-function">set</span>(ctx);
+        <span class="code-keyword">return</span> ctx;
+    }
+
+    <span class="code-comment">// Cookie 检查:两个必须都在</span>
+    <span class="code-keyword">public static boolean</span> <span class="code-function">checkUserCookie</span>(<span class="code-class">HttpServletRequest</span> request) {
+        <span class="code-keyword">if</span> (request == <span class="code-keyword">null</span> || request.<span class="code-function">getCookies</span>() == <span class="code-keyword">null</span>) <span class="code-keyword">return false</span>;
+        <span class="code-keyword">boolean</span> hasGuid = <span class="code-class">Arrays</span>.<span class="code-function">stream</span>(request.<span class="code-function">getCookies</span>())
+                .<span class="code-function">filter</span>(<span class="code-class">Objects</span>::<span class="code-function">nonNull</span>)
+                .<span class="code-function">anyMatch</span>(c -&gt; YW_GUID_COOKIE_NAME.<span class="code-function">equals</span>(c.<span class="code-function">getName</span>()));
+        <span class="code-keyword">boolean</span> hasKey = <span class="code-class">Arrays</span>.<span class="code-function">stream</span>(request.<span class="code-function">getCookies</span>())
+                .<span class="code-function">filter</span>(<span class="code-class">Objects</span>::<span class="code-function">nonNull</span>)
+                .<span class="code-function">anyMatch</span>(c -&gt; YW_KEY_COOKIE_NAME.<span class="code-function">equals</span>(c.<span class="code-function">getName</span>()));
+        <span class="code-keyword">return</span> hasGuid && hasKey;
+    }
+
+    <span class="code-comment">// 设 user(LoginFilter 验证通过后调用)</span>
+    <span class="code-keyword">public static void</span> <span class="code-function">setUserLocal</span>(<span class="code-keyword">long</span> guid, <span class="code-class">UploaderProfile</span> userInfo) {
+        <span class="code-keyword">if</span> (guid &lt;= <span class="code-number">0</span> || userInfo == <span class="code-keyword">null</span>) <span class="code-keyword">return</span>;
+        <span class="code-function">getOrCreateContext</span>().user = <span class="code-class">User</span>.<span class="code-function">builder</span>()
+                .<span class="code-function">guid</span>(guid)
+                .<span class="code-function">phone</span>(userInfo.<span class="code-function">getPhoneNumber</span>())
+                .<span class="code-function">longinTime</span>(<span class="code-class">LocalDateTime</span>.<span class="code-function">now</span>())
+                .<span class="code-function">nickName</span>(userInfo.<span class="code-function">getNickName</span>())
+                .<span class="code-function">douyinAccount</span>(userInfo.<span class="code-function">getDouyinAccount</span>())
+                .<span class="code-function">wechatContact</span>(userInfo.<span class="code-function">getWechatContact</span>())
+                .<span class="code-function">email</span>(userInfo.<span class="code-function">getEmail</span>())
+                .<span class="code-function">verified</span>(userInfo.<span class="code-function">isVerified</span>())
+                .<span class="code-function">orgId</span>(userInfo.<span class="code-function">getOrgId</span>())
+                .<span class="code-function">orgName</span>(userInfo.<span class="code-function">getOrgName</span>())
+                .<span class="code-function">userType</span>(userInfo.<span class="code-function">getUserType</span>())
+                .<span class="code-function">collaboratorType</span>(userInfo.<span class="code-function">getCollaboratorType</span>())
+                .<span class="code-function">build</span>();
+    }
+
+    <span class="code-comment">// 取 user(业务代码高频调用)</span>
+    <span class="code-keyword">public static</span> <span class="code-class">User</span> <span class="code-function">getUserRequired</span>() {
+        <span class="code-class">User</span> user = <span class="code-function">getUser</span>();
+        <span class="code-keyword">if</span> (user == <span class="code-keyword">null</span>) {
+            <span class="code-keyword">throw new</span> <span class="code-class">BusinessException</span>(<span class="code-class">ErrorCode</span>.USER_NOT_FOUND);
+        }
+        <span class="code-keyword">return</span> user;
+    }
+
+    <span class="code-comment">// ⭐⭐ 清理:每次请求结束都要调</span>
+    <span class="code-keyword">public static void</span> <span class="code-function">clear</span>() {
+        SESSION_THREAD_LOCAL.<span class="code-function">remove</span>();
+    }
+}
+</pre>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">💡</span>为什么是 TransmittableThreadLocal</h2>
+
+  <table>
+    <tr><th>对比</th><th>ThreadLocal</th><th>InheritableThreadLocal</th><th>TransmittableThreadLocal</th></tr>
+    <tr><td>父线程→子线程（new Thread）</td><td>❌</td><td>✅</td><td>✅</td></tr>
+    <tr><td>线程池复用（Executor）</td><td>❌</td><td>❌</td><td>✅（需 <code>TtlExecutors.getTtlExecutor</code> 包装）</td></tr>
+    <tr><td>异步任务 <code>CompletableFuture.supplyAsync</code></td><td>❌</td><td>❌</td><td>✅</td></tr>
+    <tr><td>跨 RPC 调用</td><td>❌</td><td>❌</td><td>需额外适配</td></tr>
+  </table>
+
+  <div class="callout callout-warning">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-content">
+      <div class="callout-title">Nova 为啥必用 TTL 而不是普通 ThreadLocal</div>
+      <p>看 <code>MeController.add</code> 方法：<br>
+      <code>Context.current().wrap(asyncPool).execute(() -&gt; userManager.updateUserTagForAnimation(SessionContext.getUserRequired().getGuid(), ...))</code><br><br>
+      异步线程里<strong>必须能拿到主线程的 User</strong>。如果用普通 ThreadLocal，<code>getUserRequired()</code> 会返回 null 抛异常。<code>InheritableThreadLocal</code> 解决 <code>new Thread()</code> 但解决不了线程池（线程池的线程一开始 new 出来时没上下文）。<br><br>
+      <strong>TTL 的原理</strong>：提交任务时快照当前线程 ThreadLocal 值，执行前 set 到目标线程，执行完 remove。需要配合 <code>TtlExecutors.getTtlExecutor(originalExecutor)</code> 包装。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🎤</span>MeController 真实代码（5 个接口全览）</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">web/controller/MeController.java</span></div>
+<pre>
+<span class="code-anno">@RestController</span>
+<span class="code-anno">@RequestMapping</span>(<span class="code-string">"/api/v1/me"</span>)
+<span class="code-keyword">public class</span> <span class="code-class">MeController</span> {
+
+    <span class="code-anno">@Resource</span> <span class="code-keyword">private</span> <span class="code-class">ProfileService</span> profileService;
+    <span class="code-anno">@Resource</span> <span class="code-keyword">private</span> <span class="code-class">UserManager</span> userManager;
+    <span class="code-anno">@Resource</span>(name = <span class="code-string">"asyncPool"</span>)
+    <span class="code-keyword">private</span> <span class="code-class">Executor</span> asyncPool;
+
+    <span class="code-comment">// 查资料</span>
+    <span class="code-anno">@GetMapping</span>(<span class="code-string">"/show"</span>)
+    <span class="code-keyword">public</span> <span class="code-class">Response</span>&lt;<span class="code-class">UserDetailVO</span>&gt; <span class="code-function">show</span>() {
+        <span class="code-keyword">return</span> <span class="code-class">Response</span>.<span class="code-function">success</span>(profileService.<span class="code-function">getUserDetail</span>());
+    }
+
+    <span class="code-comment">// 批量添加(资料 + 作品)</span>
+    <span class="code-anno">@PostMapping</span>(<span class="code-string">"/addwithworks"</span>)
+    <span class="code-anno">@TstPostMock</span>  <span class="code-comment">// 测试环境自动 mock</span>
+    <span class="code-keyword">public</span> <span class="code-class">Response</span>&lt;<span class="code-class">Void</span>&gt; <span class="code-function">addWithWorks</span>(<span class="code-anno">@RequestBody</span> <span class="code-class">ProfileWithWorksAddParam</span> param) {
+        param.<span class="code-function">forceMarkPiracy</span>();
+        profileService.<span class="code-function">addProfileWithWorksForUp</span>(param, <span class="code-class">ProfileWithWorksAddParam</span>::<span class="code-function">checkRequiredWork</span>);
+        <span class="code-keyword">return</span> <span class="code-class">Response</span>.<span class="code-function">success</span>();
+    }
+
+    <span class="code-comment">// 添加(可选作品)+ ⭐ 异步打标签</span>
+    <span class="code-anno">@PostMapping</span>(<span class="code-string">"/add"</span>)
+    <span class="code-anno">@TstPostMock</span>
+    <span class="code-keyword">public</span> <span class="code-class">Response</span>&lt;<span class="code-class">Void</span>&gt; <span class="code-function">add</span>(<span class="code-anno">@RequestBody</span> <span class="code-class">ProfileWithWorksAddParam</span> param) {
+        profileService.<span class="code-function">addProfileWithWorksForUp</span>(param, p -&gt; {
+            <span class="code-keyword">if</span> (<span class="code-class">CollectionUtils</span>.<span class="code-function">isEmpty</span>(p.<span class="code-function">getWorks</span>())) {
+                p.<span class="code-function">checkProfile</span>();
+            } <span class="code-keyword">else</span> {
+                p.<span class="code-function">checkRequiredWork</span>();
+            }
+        });
+
+        <span class="code-comment">// ⭐⭐ 异步执行 + 保留上下文(TTL 传递)</span>
+        <span class="code-class">Context</span>.<span class="code-function">current</span>().<span class="code-function">wrap</span>(asyncPool).<span class="code-function">execute</span>(() -&gt; {
+            userManager.<span class="code-function">updateUserTagForAnimation</span>(
+                <span class="code-class">SessionContext</span>.<span class="code-function">getUserRequired</span>().<span class="code-function">getGuid</span>(),  <span class="code-comment">// 需要 TTL</span>
+                param.<span class="code-function">getCollaboratorType</span>());
+        });
+        <span class="code-keyword">return</span> <span class="code-class">Response</span>.<span class="code-function">success</span>();
+    }
+
+    <span class="code-comment">// 实名认证</span>
+    <span class="code-anno">@PostMapping</span>(<span class="code-string">"/idverify"</span>)
+    <span class="code-anno">@TstPostMock</span>(sleepMin = <span class="code-number">80</span>, sleepMax = <span class="code-number">200</span>)  <span class="code-comment">// 测试环境模拟 80-200ms 耗时</span>
+    <span class="code-keyword">public</span> <span class="code-class">Response</span>&lt;<span class="code-class">Void</span>&gt; <span class="code-function">idVerify</span>(<span class="code-anno">@RequestBody</span> <span class="code-class">IdVerifyParam</span> param) {
+        <span class="code-class">ValueValidator</span>.<span class="code-function">requireNotEmpty</span>(param.<span class="code-function">getName</span>(), <span class="code-string">"name required"</span>);
+        <span class="code-class">ValueValidator</span>.<span class="code-function">requireNotEmpty</span>(param.<span class="code-function">getIdCard</span>(), <span class="code-string">"idCard required"</span>);
+        profileService.<span class="code-function">idVerify</span>(param);
+        <span class="code-keyword">return</span> <span class="code-class">Response</span>.<span class="code-function">success</span>();
+    }
+}
+</pre>
+  </div>
+
+  <div class="callout callout-accent">
+    <span class="callout-icon">✨</span>
+    <div class="callout-content">
+      <div class="callout-title">3 个细节值得聊</div>
+      <p>① <strong><code>@TstPostMock</code> 注解</strong>：Peacock 内部的测试增强，测试环境自动返回 mock 数据。可加 <code>sleepMin/sleepMax</code> 模拟网络延迟。<br>
+      ② <strong><code>Context.current().wrap(asyncPool)</code></strong>：不是直接 <code>asyncPool.execute()</code>，而是先 <code>wrap</code> 再 <code>execute</code>——目的是把当前的 <code>io.opentelemetry.Context</code>（含 TraceId）也传到异步线程，这样异步任务的日志能串联起主链路的 trace。<br>
+      ③ <strong>方法级参数校验</strong>：<code>ValueValidator.requireNotEmpty(..., "name required")</code> 抛 <code>IllegalArgumentException</code>，被 <code>GlobalExceptionHandler</code> 翻译成 <code>PARAM_ERROR</code>。</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 3</div>
+    <div class="quiz-title">SessionContext 与上下文</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. User 对象里有多少个字段？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>3-4 个</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>12 个（guid/phone/longinTime/nickName/douyinAccount/wechatContact/email/verified/orgId/orgName/userType/collaboratorType）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>只有 guid</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>20+ 个</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>从 <code>setUserLocal</code> 的 Builder 可以数出 12 个字段。业务代码里 <code>SessionContext.getUserRequired().getOrgId()</code> 可以直接拿到当前 UP 主的组织 ID——因为登录时就一起拉下来了。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. <code>Context.current().wrap(asyncPool).execute(...)</code> 和 <code>asyncPool.execute(...)</code> 区别？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>一样</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>wrap 版本会把当前 OpenTelemetry Context（含 TraceId）传到异步线程，日志可串联</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>性能更好</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>随机</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong><code>io.opentelemetry.context.Context</code> 负责分布式 trace。异步执行前用 <code>wrap</code> 包一下 Executor，确保异步任务执行时自动恢复上下文。加上 TTL，User 上下文 + Trace 上下文都能传过去。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">3. 线程池里如果不用 TTL，会发生什么？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>什么都不会</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>异步任务 <code>SessionContext.getUserRequired()</code> 抛 <code>USER_NOT_FOUND</code> 异常；或更糟，拿到前一个用户的 User（如果线程复用时没清）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>性能变差</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>什么都正常</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>普通 ThreadLocal 不传递，异步任务里 <code>getUser()</code> 返回 null。如果刚好线程池复用了一个没 clear 的线程，更可怕——会拿到<strong>别人的 User</strong>，发生严重的数据隔离错误。所以 Nova 配合 <code>asyncPool</code> 和 TTL 使用。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m4">
+  <div class="module-kicker">Module 04</div>
+  <h1 class="module-title">外部服务封装</h1>
+  <p class="module-intro">Nova 有 16 个 Manager，每个封装一类外部调用。本节挑 2 个最典型讲：<code>CosManager</code>（腾讯云 COS）和 <code>AESStringTypeHandler</code>（MyBatis 敏感字段加密）。</p>
+
+  <h2 class="screen-heading"><span class="emoji">☁️</span>CosManager 真实代码</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">manager/CosManager.java（真实）</span></div>
+<pre>
+<span class="code-anno">@Component</span>
+<span class="code-keyword">public class</span> <span class="code-class">CosManager</span> {
+
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">CosClient</span> cosClient;      <span class="code-comment">// Peacock 封装的 COS 客户端</span>
+
+    <span class="code-anno">@Value</span>(<span class="code-string">"${cos.expireTime:PT1H}"</span>)
+    <span class="code-keyword">private</span> <span class="code-class">Duration</span> cosExpireTime;  <span class="code-comment">// 预签名有效期,默认 1h</span>
+
+    <span class="code-anno">@Value</span>(<span class="code-string">"${cos.bucket.name:ywopen-private-1252317822}"</span>)
+    <span class="code-keyword">private</span> <span class="code-class">String</span> cosBucketName;  <span class="code-comment">// bucket 名</span>
+
+    <span class="code-anno">@Value</span>(<span class="code-string">"${vega.cosBasePath:mj/contract/}"</span>)
+    <span class="code-keyword">private</span> <span class="code-class">String</span> cosBasePath;
+
+    <span class="code-keyword">public</span> <span class="code-class">String</span> <span class="code-function">generatePreSignedUrl</span>(<span class="code-class">String</span> cosPath) {
+        <span class="code-keyword">return</span> cosClient.<span class="code-function">generatePreSignedUrl</span>(
+            cosBucketName, cosPath, cosExpireTime.<span class="code-function">toMillis</span>());
+    }
+}
+</pre>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">🔑</span>
+    <div class="callout-content">
+      <div class="callout-title">配置可见的真实信息</div>
+      <p>从 <code>@Value</code> 默认值能看出真实部署：<br>
+      • Bucket 名 <code>ywopen-private-1252317822</code>（阅文开放平台私有桶）<br>
+      • 预签名默认 <strong>1 小时</strong>（<code>PT1H</code> 是 ISO 8601 Duration 格式）<br>
+      • base path <code>mj/contract/</code>（<code>mj</code> 是"漫剧"拼音缩写）<br><br>
+      面试答"你项目用什么存文件"时可以说："腾讯云 COS 的 ywopen-private 私有桶，上传后生成 1 小时有效的预签名 URL 给前端，避免直接暴露 AccessKey。"</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🔒</span>AESStringTypeHandler：MyBatis 透明加解密</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">util/AESStringTypeHandler.java（完整真实）</span></div>
+<pre>
+<span class="code-keyword">public class</span> <span class="code-class">AESStringTypeHandler</span> <span class="code-keyword">extends</span> <span class="code-class">BaseTypeHandler</span>&lt;<span class="code-class">String</span>&gt; {
+
+    <span class="code-anno">@Override</span>
+    <span class="code-keyword">public void</span> <span class="code-function">setNonNullParameter</span>(<span class="code-class">PreparedStatement</span> ps, <span class="code-keyword">int</span> i,
+                                    <span class="code-class">String</span> parameter, <span class="code-class">JdbcType</span> jdbcType) <span class="code-keyword">throws</span> <span class="code-class">SQLException</span> {
+        <span class="code-comment">// ⭐ 写入 DB 前加密</span>
+        ps.<span class="code-function">setString</span>(i, <span class="code-class">CommonAES</span>.<span class="code-function">encryptWithBase64</span>(parameter));
+    }
+
+    <span class="code-anno">@Override</span>
+    <span class="code-keyword">public</span> <span class="code-class">String</span> <span class="code-function">getNullableResult</span>(<span class="code-class">ResultSet</span> rs, <span class="code-class">String</span> columnName) <span class="code-keyword">throws</span> <span class="code-class">SQLException</span> {
+        <span class="code-comment">// ⭐ 从 DB 读时解密</span>
+        <span class="code-keyword">return</span> <span class="code-class">CommonAES</span>.<span class="code-function">decryptWithBase64</span>(rs.<span class="code-function">getString</span>(columnName));
+    }
+
+    <span class="code-anno">@Override</span>
+    <span class="code-keyword">public</span> <span class="code-class">String</span> <span class="code-function">getNullableResult</span>(<span class="code-class">ResultSet</span> rs, <span class="code-keyword">int</span> columnIndex) <span class="code-keyword">throws</span> <span class="code-class">SQLException</span> {
+        <span class="code-keyword">return</span> <span class="code-class">CommonAES</span>.<span class="code-function">decryptWithBase64</span>(rs.<span class="code-function">getString</span>(columnIndex));
+    }
+
+    <span class="code-anno">@Override</span>
+    <span class="code-keyword">public</span> <span class="code-class">String</span> <span class="code-function">getNullableResult</span>(<span class="code-class">CallableStatement</span> cs, <span class="code-keyword">int</span> columnIndex) <span class="code-keyword">throws</span> <span class="code-class">SQLException</span> {
+        <span class="code-keyword">return</span> <span class="code-class">CommonAES</span>.<span class="code-function">decryptWithBase64</span>(cs.<span class="code-function">getString</span>(columnIndex));
+    }
+}
+</pre>
+  </div>
+
+  <div class="callout callout-accent">
+    <span class="callout-icon">✨</span>
+    <div class="callout-content">
+      <div class="callout-title">TypeHandler 的 3 个方法为啥都要重写</div>
+      <p><code>BaseTypeHandler&lt;String&gt;</code> 是 MyBatis 的 TypeHandler 基类，必须实现：<br>
+      ① <code>setNonNullParameter</code>：写 DB 时（PreparedStatement.setString）<br>
+      ② <code>getNullableResult(ResultSet, String)</code>：按列名读（<code>SELECT phone FROM ...</code>）<br>
+      ③ <code>getNullableResult(ResultSet, int)</code>：按列索引读（<code>SELECT * FROM ...</code>）<br>
+      ④ <code>getNullableResult(CallableStatement, int)</code>：存储过程返回值<br>
+      少写任何一个，相应场景就会拿到密文。Nova 这个 TypeHandler 写齐了所有情况。<strong>业务代码零感知</strong>，Mapper XML 的 <code>resultMap</code> 声明 <code>typeHandler="AESStringTypeHandler"</code> 即可。</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 4</div>
+    <div class="quiz-title">外部服务 / TypeHandler</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. COS 预签名 URL 默认过期时间？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>30 分钟</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>1 小时（<code>PT1H</code>）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>24 小时</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>永不</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>看 <code>@Value("${cos.expireTime:PT1H}")</code>，ISO-8601 Duration 表示法，<code>PT1H</code> = 1 小时。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. AESStringTypeHandler 重写 4 个方法（一个 set + 三个 get），为啥 4 个都要？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>规范</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>覆盖 MyBatis 的 4 种读写场景（写 PreparedStatement、读列名、读索引、读存储过程），漏一个该场景会拿到密文</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>性能</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>父类要求</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>MyBatis 的 BaseTypeHandler 必须覆盖全部 4 个抽象方法（set 和 3 个 get 重载）。如果只写 <code>getNullableResult(ResultSet, String)</code>，那 <code>SELECT * FROM ...</code> 走列索引路径就会拿到加密字符串。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m5">
+  <div class="module-kicker">Module 05</div>
+  <h1 class="module-title">缓存与安全</h1>
+  <p class="module-intro">Nova 有一个小而精的 <code>RedisCacheHelper</code>（不到 50 行），专门做<strong>批量清缓存</strong>。配合 <code>AESStringTypeHandler</code>，这两个就是 Nova 的"缓存 + 安全"双基建。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🔨</span>RedisCacheHelper：SCAN 批量删</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">helper/RedisCacheHelper.java（完整真实）</span></div>
+<pre>
+<span class="code-anno">@Slf4j</span>
+<span class="code-keyword">public final class</span> <span class="code-class">RedisCacheHelper</span> {
+    <span class="code-keyword">public</span> <span class="code-class">PeacockRedisTemplate</span> redisTemplate;
+
+    <span class="code-comment">// ⭐ 静态工厂 + 私有构造,保证 redisTemplate 必注入</span>
+    <span class="code-keyword">private</span> <span class="code-function">RedisCacheHelper</span>() {}
+
+    <span class="code-keyword">public static</span> <span class="code-class">RedisCacheHelper</span> <span class="code-function">getInstance</span>(<span class="code-class">PeacockRedisTemplate</span> cacheRedisTemplate) {
+        <span class="code-class">RedisCacheHelper</span> instance = <span class="code-keyword">new</span> <span class="code-class">RedisCacheHelper</span>();
+        instance.redisTemplate = cacheRedisTemplate;
+        <span class="code-keyword">return</span> instance;
+    }
+
+    <span class="code-keyword">public int</span> <span class="code-function">deleteAllCacheByPattern</span>(<span class="code-class">String</span> pattern) {
+        <span class="code-keyword">if</span> (<span class="code-keyword">null</span> == redisTemplate) {
+            <span class="code-keyword">throw new</span> <span class="code-class">IllegalStateException</span>(<span class="code-string">"RedisTemplate is not initialized"</span>);
+        }
+        <span class="code-keyword">final</span> <span class="code-class">Set</span>&lt;<span class="code-class">String</span>&gt; keysToDelete = <span class="code-keyword">new</span> <span class="code-class">HashSet</span>&lt;&gt;();
+
+        redisTemplate.<span class="code-function">executeVoid</span>(connection -&gt; {
+            <span class="code-comment">// ⭐ 用 SCAN 而不是 KEYS,避免阻塞 Redis</span>
+            <span class="code-class">ScanOptions</span> options = <span class="code-class">ScanOptions</span>.<span class="code-function">scanOptions</span>()
+                .<span class="code-function">match</span>(pattern)
+                .<span class="code-function">count</span>(<span class="code-number">100</span>)  <span class="code-comment">// 每批扫 100 个</span>
+                .<span class="code-function">build</span>();
+
+            <span class="code-keyword">try</span> (<span class="code-class">Cursor</span>&lt;<span class="code-class">String</span>&gt; cursor = connection.<span class="code-function">scan</span>(options)) {
+                <span class="code-keyword">while</span> (cursor.<span class="code-function">hasNext</span>()) {
+                    keysToDelete.<span class="code-function">add</span>(<span class="code-keyword">new</span> <span class="code-class">String</span>(cursor.<span class="code-function">next</span>().<span class="code-function">getBytes</span>(), <span class="code-class">StandardCharsets</span>.UTF_8));
+                }
+            }
+        });
+
+        <span class="code-keyword">if</span> (!keysToDelete.<span class="code-function">isEmpty</span>()) {
+            redisTemplate.<span class="code-function">executeVoid</span>(tpl -&gt; tpl.<span class="code-function">delete</span>(keysToDelete));
+            log.<span class="code-function">info</span>(<span class="code-string">"已删除匹配[{}]的缓存，共{}个"</span>, pattern, keysToDelete.<span class="code-function">size</span>());
+        } <span class="code-keyword">else</span> {
+            log.<span class="code-function">info</span>(<span class="code-string">"未找到匹配[{}]的缓存"</span>, pattern);
+        }
+        <span class="code-keyword">return</span> keysToDelete.<span class="code-function">size</span>();
+    }
+}
+</pre>
+  </div>
+
+  <div class="callout callout-warning">
+    <span class="callout-icon">🚨</span>
+    <div class="callout-content">
+      <div class="callout-title">KEYS vs SCAN — 血淋淋的教训</div>
+      <p><strong>KEYS 是 O(N) + 阻塞整个 Redis</strong>。Redis 单线程，KEYS 执行期间所有其他请求排队。如果 Redis 里有几百万 key，一次 KEYS 可能让 Redis 卡 3-5 秒——生产环境直接告警。<br><br>
+      <strong>SCAN 是游标增量遍历</strong>，每次只扫一小批（<code>count(100)</code>），不阻塞其他请求。缺点是可能重复扫或漏扫（游标重试场景），但用于"清缓存"完全可接受。<br><br>
+      <strong>面试追问："SCAN 会不会漏 key？"</strong> 答："SCAN 期间新写入的 key 可能扫不到，但这对'清理已有缓存'场景不影响。如果要求严格准确，可以 SCAN + 间隔再 SCAN 一次兜底。"</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🔒</span>敏感字段加密流程</h2>
+  <p>结合上一节的 <code>AESStringTypeHandler</code>，Nova 的敏感数据全流程是：</p>
+
+  <div class="flow-container">
+    <div class="flow-actors">
+      <div class="flow-actor"><div class="flow-actor-icon">📱</div><div class="flow-actor-name">App 传手机号</div><div class="flow-actor-role">HTTP POST</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">📥</div><div class="flow-actor-name">Controller</div><div class="flow-actor-role">明文 VO</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">💾</div><div class="flow-actor-name">TypeHandler</div><div class="flow-actor-role">加密</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🗄️</div><div class="flow-actor-name">MySQL</div><div class="flow-actor-role">密文存储</div></div>
+    </div>
+  </div>
+  <div class="flow-container">
+    <div class="flow-actors">
+      <div class="flow-actor"><div class="flow-actor-icon">🗄️</div><div class="flow-actor-name">MySQL</div><div class="flow-actor-role">密文</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">💾</div><div class="flow-actor-name">TypeHandler</div><div class="flow-actor-role">解密</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🧠</div><div class="flow-actor-name">Service</div><div class="flow-actor-role">明文对象</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">📤</div><div class="flow-actor-name">Response</div><div class="flow-actor-role">脱敏后返回</div></div>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 5</div>
+    <div class="quiz-title">缓存与安全</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. 线上清 Redis 的 <code>user:*</code> 系列缓存，用什么？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>KEYS 后循环 DEL</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>SCAN 游标遍历，分批 DEL</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>FLUSHDB</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>删不了</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>KEYS 阻塞；FLUSHDB 清整库太暴力；SCAN 是唯一安全做法。Nova 的 <code>RedisCacheHelper.deleteAllCacheByPattern(pattern)</code> 就是这套逻辑。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. 如果 DB 里手机号字段要换算法（AES → SM4），改几处？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>所有 Service</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">B.</span>所有 Controller</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">C.</span>一个文件（改 <code>CommonAES</code> 实现或新写 <code>SM4StringTypeHandler</code> 替换 XML 里的 typeHandler）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>DB 结构</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 C。</strong>TypeHandler 把加解密做成了框架层切面，业务代码零感知。这是"关注点分离"的威力。换算法只需改一个类，或写新类在 XML 里替换 typeHandler 属性。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m6">
+  <div class="module-kicker">Module 06</div>
+  <h1 class="module-title">全局异常处理</h1>
+  <p class="module-intro">只有 <strong>1 个类、4 个 handler</strong>，但哲学值得讲。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🛡️</span>真实 GlobalExceptionHandler</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">web/GlobalExceptionHandler.java（完整真实）</span></div>
+<pre>
+<span class="code-anno">@Slf4j</span>
+<span class="code-anno">@ControllerAdvice</span>
+<span class="code-keyword">public class</span> <span class="code-class">GlobalExceptionHandler</span> {
+
+    <span class="code-comment">// 1. 兜底:所有未捕获异常</span>
+    <span class="code-anno">@ExceptionHandler</span>(<span class="code-class">Exception</span>.<span class="code-keyword">class</span>)
+    <span class="code-anno">@ResponseBody</span>
+    <span class="code-keyword">public</span> <span class="code-class">String</span> <span class="code-function">handleException</span>(<span class="code-class">Exception</span> e) {
+        <span class="code-comment">// ⭐ 注意:这里是 log.info 不是 error</span>
+        log.<span class="code-function">info</span>(<span class="code-string">"found exception, msg={}"</span>, e.<span class="code-function">getMessage</span>(), e);
+        <span class="code-keyword">return</span> <span class="code-class">JSONObject</span>.<span class="code-function">toJSONString</span>(<span class="code-class">Response</span>.<span class="code-function">fail</span>(<span class="code-class">ErrorCode</span>.INNER_EXCEPTION));
+    }
+
+    <span class="code-comment">// 2. 参数非法(业务主动抛 IllegalArgumentException)</span>
+    <span class="code-anno">@ExceptionHandler</span>(<span class="code-class">IllegalArgumentException</span>.<span class="code-keyword">class</span>)
+    <span class="code-anno">@ResponseBody</span>
+    <span class="code-keyword">public</span> <span class="code-class">String</span> <span class="code-function">handleIllegalArgumentException</span>(<span class="code-class">Exception</span> e) {
+        log.<span class="code-function">error</span>(<span class="code-string">"found IllegalArgument exception, msg={}"</span>, e.<span class="code-function">getMessage</span>(), e);
+        <span class="code-keyword">return</span> <span class="code-class">JSONObject</span>.<span class="code-function">toJSONString</span>(
+            <span class="code-class">Response</span>.<span class="code-function">fail</span>(<span class="code-class">ErrorCode</span>.PARAM_ERROR.<span class="code-function">getCode</span>(), e.<span class="code-function">getMessage</span>()));
+    }
+
+    <span class="code-comment">// 3. Spring 的参数缺失异常(比如 @RequestParam 没传)</span>
+    <span class="code-anno">@ExceptionHandler</span>(<span class="code-class">MissingRequestValueException</span>.<span class="code-keyword">class</span>)
+    <span class="code-anno">@ResponseBody</span>
+    <span class="code-keyword">public</span> <span class="code-class">String</span> <span class="code-function">handleMissingRequestValueException</span>(<span class="code-class">MissingRequestValueException</span> e) {
+        log.<span class="code-function">info</span>(<span class="code-string">"found MissingRequestValueException, msg={}"</span>, e.<span class="code-function">getMessage</span>());
+        <span class="code-keyword">return</span> <span class="code-class">JSONObject</span>.<span class="code-function">toJSONString</span>(
+            <span class="code-class">Response</span>.<span class="code-function">fail</span>(<span class="code-class">ErrorCode</span>.PARAM_ERROR.<span class="code-function">getCode</span>(), e.<span class="code-function">getMessage</span>()));
+    }
+
+    <span class="code-comment">// 4. 业务异常:带自定义错误码</span>
+    <span class="code-anno">@ExceptionHandler</span>(<span class="code-class">BusinessException</span>.<span class="code-keyword">class</span>)
+    <span class="code-anno">@ResponseBody</span>
+    <span class="code-keyword">public</span> <span class="code-class">String</span> <span class="code-function">handleBusinessExceptionException</span>(<span class="code-class">BusinessException</span> e) {
+        log.<span class="code-function">info</span>(<span class="code-string">"found BusinessException, msg={}"</span>, e.<span class="code-function">getMessage</span>());
+        <span class="code-keyword">return</span> <span class="code-class">JSONObject</span>.<span class="code-function">toJSONString</span>(<span class="code-class">Response</span>.<span class="code-function">fail</span>(e.<span class="code-function">getCode</span>(), e.<span class="code-function">getMessage</span>()));
+    }
+}
+</pre>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🎓</span>日志级别的哲学</h2>
+
+  <table>
+    <tr><th>异常类型</th><th>日志级别</th><th>原因</th></tr>
+    <tr><td><code>BusinessException</code></td><td><code>log.info</code></td><td>业务正常分支（用户没权限/数据不存在），日志量大，不需要告警</td></tr>
+    <tr><td><code>MissingRequestValueException</code></td><td><code>log.info</code></td><td>前端没传参，多半是客户端 bug，不是我们的问题</td></tr>
+    <tr><td><code>IllegalArgumentException</code></td><td><code>log.error</code></td><td>服务端自己抛的参数非法，应该告警</td></tr>
+    <tr><td><code>Exception</code>（兜底）</td><td><code>log.info</code></td><td>包含 stack trace，但意外是小概率事件</td></tr>
+  </table>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-content">
+      <div class="callout-title">为啥 BusinessException 不打 error</div>
+      <p>一个常见误区：把所有异常都打 error。但<strong>业务异常是"预期内"的东西</strong>——用户未登录、数据不存在、订单状态不对——每天发生几十万次。如果打 error，告警平台会被淹没；真正的系统故障（DB 断连）反而看不见。<br><br>
+      <strong>分级原则</strong>：<br>
+      • <code>error</code>：需要立即人工介入的事<br>
+      • <code>info</code>：记录但不告警<br>
+      • <code>debug</code>：仅开发查看</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 6</div>
+    <div class="quiz-title">异常处理</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. Nova 的 BusinessException 为啥打 info 不打 error？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>性能</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>业务异常是预期分支，不需告警占用运维注意力</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>info 更详细</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>Slf4j 限制</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>业务异常每天发生几十万次（用户无权限、找不到数据、状态不对），打 error 会淹没真正的系统故障告警。这是工业级日志分级的核心原则。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. 为啥 <code>IllegalArgumentException</code> 打 error 但 <code>MissingRequestValueException</code> 打 info？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>随便</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>IllegalArgumentException 是服务端自己抛的（可能有 bug），Missing 是前端没传（不是我们的问题）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>反过来了</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>一样</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>Spring 的 <code>MissingRequestValueException</code> 是前端没传必填字段——多半是客户端问题，服务端没法修。<code>IllegalArgumentException</code> 则常是服务端 <code>ValueValidator.requireNotEmpty(...)</code> 抛出——可能是我们的业务代码校验太松导致传了空值，值得告警。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m7">
+  <div class="module-kicker">Module 07</div>
+  <h1 class="module-title">全局架构鸟瞰</h1>
+  <p class="module-intro">最后一站，把所有模块串起来。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🌍</span>Nova 全景图</h2>
+
+  <div class="flow-container">
+    <div class="flow-actors">
+      <div class="flow-actor"><div class="flow-actor-icon">📱</div><div class="flow-actor-name">App/浏览器</div><div class="flow-actor-role">Cookie 登录</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🛡️</div><div class="flow-actor-name">Basic+Login</div><div class="flow-actor-role">2 个 Filter</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🎤</div><div class="flow-actor-name">Controller</div><div class="flow-actor-role">14 个</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🧠</div><div class="flow-actor-name">Service</div><div class="flow-actor-role">26 个</div></div>
+    </div>
+  </div>
+
+  <div class="flow-container">
+    <div class="flow-actors">
+      <div class="flow-actor"><div class="flow-actor-icon">📞</div><div class="flow-actor-name">Manager</div><div class="flow-actor-role">16 个外部</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">☁️</div><div class="flow-actor-name">COS / OCR</div><div class="flow-actor-role">文件/识别</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">👤</div><div class="flow-actor-name">阅文账号中心</div><div class="flow-actor-role">SSO</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🚗</div><div class="flow-actor-name">Peacock Driver</div><div class="flow-actor-role">共享数据层</div></div>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🎯</span>Nova 的 5 个关键抽象</h2>
+  <ol>
+    <li><strong>SessionContext + TransmittableThreadLocal</strong> — 含 User 12 字段、离线 Context、异步传递</li>
+    <li><strong>BasicFilter 双 Wrapper 切换 + CORS 后缀匹配</strong> — 生产/开发不同处理，防伪造</li>
+    <li><strong>LoginFilter debug 模式 + try-finally clear()</strong> — 开发便利 + 线程安全</li>
+    <li><strong>SkipLoginPathScanner + @SkipLogin</strong> — 注解驱动免登录</li>
+    <li><strong>AESStringTypeHandler</strong> — MyBatis 透明加密，业务零感知</li>
+  </ol>
+
+  <h2 class="screen-heading"><span class="emoji">🎓</span>面试开场（15 秒版）</h2>
+  <div class="chat-window">
+    <div class="chat-message">
+      <div class="chat-avatar">👨‍💻</div>
+      <div>
+        <div class="chat-sender">你</div>
+        <div class="chat-bubble">"Nova 是阅文漫剧 UP 主端（C 端）后端，224 个源文件。核心是 <strong>3 个东西</strong>：<br>
+        ① <code>SessionContext</code> + TransmittableThreadLocal 处理线程上下文，12 个 User 字段从 Cookie 登录时一次注入；<br>
+        ② <code>BasicFilter</code> 的双 Wrapper 切换——生产用 XSS+SQL 过滤，开发用可重读 Wrapper；CORS 做后缀匹配防伪造；<br>
+        ③ <code>AESStringTypeHandler</code> MyBatis 透明加解密，手机号/身份证号业务代码零感知。<br><br>
+        另外 16 个 Manager 封装腾讯云 COS、OCR、FaceID、实名等外部依赖，Service 只管业务编排。"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 7</div>
+    <div class="quiz-title">综合</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. 面试官问"最有技术含量的一块"，你选哪个？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>Controller 分层</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>SessionContext + TTL 的异步上下文传递 + try-finally clear() 防泄露</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>Spring Boot 配置</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>Mapper XML</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>这一块覆盖 ThreadLocal/TransmittableThreadLocal 原理、线程池陷阱、信息泄露漏洞、异步 Context wrap 等多层知识点。面试能讲 10-15 分钟，大厂高分题。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. Nova 和 Comic Drama Web 共用什么底层？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>完全独立</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>通过 TRPC 调用同一套 Peacock Driver Uploader</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>共享代码库</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>直连同一个 DB</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>Nova、Vega、Comic Drama Web 是独立应用，通过 TRPC 调用同一套 Peacock Driver Uploader 共享业务数据。这样避免"两端直连同一 DB"的耦合，底层有独立的演进生命周期。</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>📘 <strong>Nova 交互式代码课程 · 深度真实代码版 v2</strong> · 完结撒花 🎉</p>
+  <p>7 个模块刷完，面试讲 Nova 信心满满。</p>
+  <p style="margin-top: 14px; font-size: 12px; color: var(--color-text-muted);">基于 repomix 真实源码生成 · Claude Opus 4.7 1M · v2 深度版</p>
+</footer>
+
+</div>
+
+<script>
+// Quiz 交互
+document.querySelectorAll('.quiz-q').forEach(q => {
+  const options = q.querySelectorAll('.quiz-option');
+  const explanation = q.querySelector('.quiz-explanation');
+  options.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (q.dataset.answered) return;
+      q.dataset.answered = '1';
+      const isCorrect = opt.dataset.correct === 'true';
+      opt.classList.add(isCorrect ? 'correct' : 'wrong');
+      if (!isCorrect) {
+        const right = q.querySelector('.quiz-option[data-correct="true"]');
+        if (right) right.classList.add('correct');
+      }
+      if (explanation) explanation.classList.add('visible');
+    });
+  });
+});
+
+// 导航高亮
+const sections = document.querySelectorAll('.module');
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.offsetTop - 100;
+    if (window.scrollY >= top) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// 平滑滚动
+navLinks.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) window.scrollTo({ top: target.offsetTop - 60, behavior: 'smooth' });
+  });
+});
+
+// 入场动画(IntersectionObserver 触发)
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('animate-in');
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.callout, .flow-container, .code-block, .file-tree, .chat-window, .quiz, table').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>

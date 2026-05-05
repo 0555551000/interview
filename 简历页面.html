@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>彭冲 · Java 后端工程师(5 年)</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --bg: #0f1419;
+    --surface: #1a1f2e;
+    --surface-2: #242938;
+    --text: #e4e6eb;
+    --text-dim: #8b95a7;
+    --primary: #5b9fff;
+    --accent: #ff6b6b;
+    --success: #5ddf8b;
+    --warning: #ffb84d;
+    --border: #2d3446;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+/* 背景动画 */
+.bg-animation {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(91, 159, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 107, 107, 0.08) 0%, transparent 50%),
+        var(--bg);
+}
+
+/* 导航条 */
+nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(15, 20, 25, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 16px 0;
+}
+
+nav .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav .logo {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--primary);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 32px;
+}
+
+nav a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+nav a:hover { color: var(--text); }
+
+/* 主容器 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+section {
+    padding: 100px 0 60px;
+    min-height: 80vh;
+}
+
+/* Hero 首屏 */
+#hero {
+    padding-top: 140px;
+    text-align: left;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-content {
+    animation: fadeInUp 1s ease-out;
+}
+
+.hero-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    background: rgba(91, 159, 255, 0.15);
+    color: var(--primary);
+    border-radius: 100px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(91, 159, 255, 0.3);
+}
+
+.hero-title {
+    font-size: 56px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 0%, #8b95a7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 22px;
+    color: var(--text-dim);
+    margin-bottom: 32px;
+    font-weight: 400;
+}
+
+.hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 48px;
+}
+
+.stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s;
+    cursor: default;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 40px rgba(91, 159, 255, 0.2);
+}
+
+.stat-number {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 6px;
+    font-variant-numeric: tabular-nums;
+}
+
+.stat-label {
+    color: var(--text-dim);
+    font-size: 14px;
+}
+
+/* Section 通用 */
+.section-header {
+    margin-bottom: 48px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s;
+}
+
+.section-header.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.section-number {
+    color: var(--primary);
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.section-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.section-desc {
+    color: var(--text-dim);
+    font-size: 16px;
+    max-width: 600px;
+}
+
+/* 项目总览 */
+#project {
+    background: linear-gradient(180deg, transparent, rgba(91, 159, 255, 0.03), transparent);
+}
+
+.project-overview {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    margin-bottom: 48px;
+}
+
+.project-overview h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--text);
+}
+
+.project-overview p {
+    color: var(--text-dim);
+    margin-bottom: 12px;
+}
+
+.project-overview .highlight {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.project-modules {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.module-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    transition: all 0.3s;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.module-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.module-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-4px);
+}
+
+.module-card .role {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(93, 223, 139, 0.15);
+    color: var(--success);
+    border-radius: 100px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.module-card .role.co-dev {
+    background: rgba(255, 184, 77, 0.15);
+    color: var(--warning);
+}
+
+.module-card h4 {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+.module-card p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.module-highlights {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.module-highlights li {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-bottom: 6px;
+    padding-left: 16px;
+    position: relative;
+    list-style: none;
+}
+
+.module-highlights li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+}
+
+/* 核心产出 */
+.highlights-timeline {
+    position: relative;
+    padding-left: 40px;
+}
+
+.highlights-timeline::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--primary), transparent);
+}
+
+.highlight-item {
+    position: relative;
+    margin-bottom: 32px;
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: all 0.6s;
+}
+
+.highlight-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.highlight-item::before {
+    content: "";
+    position: absolute;
+    left: -32px;
+    top: 8px;
+    width: 14px;
+    height: 14px;
+    background: var(--primary);
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(91, 159, 255, 0.2);
+}
+
+.highlight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.highlight-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 10px 40px rgba(91, 159, 255, 0.1);
+}
+
+.highlight-card .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(91, 159, 255, 0.15);
+    color: var(--primary);
+    border-radius: 100px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.highlight-card h4 {
+    font-size: 20px;
+    margin-bottom: 12px;
+}
+
+.highlight-card .problem {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.highlight-card .solution {
+    color: var(--text);
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.highlight-card .metric {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: rgba(93, 223, 139, 0.15);
+    color: var(--success);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 8px;
+    font-variant-numeric: tabular-nums;
+}
+
+.highlight-card .metric .arrow {
+    color: var(--text-dim);
+}
+
+.highlight-card .detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-out;
+}
+
+.highlight-card.expanded .detail {
+    max-height: 2000px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.highlight-card .detail pre {
+    background: var(--bg);
+    padding: 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: "SF Mono", Menlo, monospace;
+    font-size: 13px;
+    color: #d0d7e4;
+    margin: 12px 0;
+    border: 1px solid var(--border);
+}
+
+.highlight-card .detail code {
+    color: var(--primary);
+}
+
+.highlight-card .click-hint {
+    color: var(--primary);
+    font-size: 12px;
+    margin-top: 12px;
+    display: block;
+}
+
+/* 线上治理 */
+#treatment .treatment-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.treatment-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.3s;
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+.treatment-card.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.treatment-card:hover {
+    border-left-color: var(--success);
+    transform: translateY(-4px);
+}
+
+.treatment-card h4 {
+    margin-bottom: 12px;
+    color: var(--text);
+    font-size: 18px;
+}
+
+.treatment-card .label {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(255, 107, 107, 0.15);
+    color: var(--accent);
+    border-radius: 100px;
+    font-size: 12px;
+    margin-bottom: 12px;
+}
+
+.treatment-card p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.treatment-card .result {
+    color: var(--success);
+    font-size: 13px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+/* 技术栈 */
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.tech-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    text-align: center;
+    transition: all 0.3s;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.tech-item.visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.tech-item:hover {
+    border-color: var(--primary);
+    background: rgba(91, 159, 255, 0.05);
+}
+
+.tech-item .name {
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: var(--text);
+}
+
+.tech-item .category {
+    font-size: 12px;
+    color: var(--text-dim);
+}
+
+/* 关键指标墙 */
+.metrics-wall {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 32px;
+}
+
+.metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.3s;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.metric-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.metric-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-4px) scale(1.02);
+}
+
+.metric-card .from {
+    font-size: 14px;
+    color: var(--accent);
+    text-decoration: line-through;
+    text-decoration-color: rgba(255, 107, 107, 0.5);
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+}
+
+.metric-card .arrow-down {
+    color: var(--text-dim);
+    font-size: 18px;
+    margin: 4px 0;
+}
+
+.metric-card .to {
+    font-size: 28px;
+    color: var(--success);
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+}
+
+.metric-card .desc {
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+/* Footer */
+footer {
+    padding: 60px 0 40px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 14px;
+}
+
+/* 动画 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .hero-title { font-size: 36px; }
+    .hero-subtitle { font-size: 18px; }
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .project-modules { grid-template-columns: 1fr; }
+    #treatment .treatment-grid { grid-template-columns: 1fr; }
+    .section-title { font-size: 28px; }
+    nav ul { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="bg-animation"></div>
+
+<nav>
+    <div class="container">
+        <div class="logo">PC</div>
+        <ul>
+            <li><a href="#hero">首页</a></li>
+            <li><a href="#project">项目</a></li>
+            <li><a href="#highlights">产出</a></li>
+            <li><a href="#treatment">治理</a></li>
+            <li><a href="#metrics">指标</a></li>
+            <li><a href="#tech">技术栈</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+    <div class="container">
+        <div class="hero-content">
+            <span class="hero-tag">Java 后端工程师 · 5 年经验</span>
+            <h1 class="hero-title">彭冲</h1>
+            <p class="hero-subtitle">
+                阅文漫剧分销平台 · 签约 / 结算 / IP 中台 全链路开发
+            </p>
+
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number" data-target="10000" data-suffix="+">0</div>
+                    <div class="stat-label">万级 UP 主</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="1000" data-suffix="+">0</div>
+                    <div class="stat-label">千级机构 MCN</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="300" data-suffix="+">0</div>
+                    <div class="stat-label">月均签约单数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" data-target="1000" data-suffix="万级">0</div>
+                    <div class="stat-label">年结算金额</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 项目总览 -->
+<section id="project">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">01</div>
+            <h2 class="section-title">核心项目</h2>
+            <p class="section-desc">阅文集团漫剧业务线的核心后端系统,基于 Peacock 脚手架 + 6+ 集团中台</p>
+        </div>
+
+        <div class="project-overview">
+            <h3>阅文漫剧分销与签约平台</h3>
+            <p>
+                服务于<span class="highlight">万级 UP 主 + 千级机构 MCN</span>,
+                覆盖从入驻、签约、分发、结算的全业务闭环。
+            </p>
+            <p>
+                对接 <span class="highlight">6+ 集团中台</span> — 合同中心、分润系统、机构主数据、敏感数据中心、文件服务、内容中心。
+            </p>
+            <p>
+                我负责<span class="highlight">分销签约、结算分润、IP 中台内容</span> 3 个核心模块的开发,其中分销签约和结算分润是 Owner。
+            </p>
+        </div>
+
+        <div class="project-modules">
+            <div class="module-card">
+                <span class="role">Owner</span>
+                <h4>分销签约模块</h4>
+                <p>日均处理签约请求 200+,支持 5 种合同类型</p>
+                <ul class="module-highlights">
+                    <li>策略+模板方法签约框架</li>
+                    <li>过期状态动态计算</li>
+                    <li>泛型上下文容器</li>
+                </ul>
+            </div>
+
+            <div class="module-card">
+                <span class="role">Owner</span>
+                <h4>结算分润模块</h4>
+                <p>月均处理结算单千余条,结算金额百万级</p>
+                <ul class="module-highlights">
+                    <li>N+1 查询优化(HashMap 方法缓存)</li>
+                    <li>新旧机构 ID 双向映射</li>
+                    <li>OrgManager 数据聚合层</li>
+                </ul>
+            </div>
+
+            <div class="module-card">
+                <span class="role co-dev">核心开发者</span>
+                <h4>IP 中台内容模块</h4>
+                <p>管理上万部漫剧内容资产</p>
+                <ul class="module-highlights">
+                    <li>成品处理器工厂模式</li>
+                    <li>机构批量创建(500 条/次)</li>
+                    <li>CAMS 批量绑定</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 核心产出 -->
+<section id="highlights">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">02</div>
+            <h2 class="section-title">核心技术产出</h2>
+            <p class="section-desc">点击卡片查看详细方案和代码片段</p>
+        </div>
+
+        <div class="highlights-timeline">
+            <div class="highlight-item">
+                <div class="highlight-card">
+                    <span class="tag">设计模式 · 扩展性</span>
+                    <h4>签约框架重构:5 种合同类型统一管控</h4>
+                    <p class="problem">
+                        <strong>问题</strong> · 每新增一种合同类型需改 3-5 处代码,开发周期 3-5 天
+                    </p>
+                    <p class="solution">
+                        <strong>方案</strong> · 策略模式抽象 ContractInvoker + 模板方法封装 CreateContractHandler 标准流程 + 泛型上下文容器自动装配
+                    </p>
+                    <div class="metric">
+                        <span class="from-metric">5 天</span>
+                        <span class="arrow">→</span>
+                        <span>1 天</span>
+                        <span style="color: var(--text-dim); margin-left: 8px;">· 代码量 -40%</span>
+                    </div>
+                    <span class="click-hint">点击展开详细设计 ↓</span>
+                    <div class="detail">
+                        <pre><code>public abstract class CreateContractHandler implements ContractInvoker {
+    public final ContractResult invoke(CreateContractContext ctx) {
+        idempotentCheck(ctx);       // 幂等校验(所有合同共用)
+        validateParams(ctx);         // 参数验证(所有合同共用)
+        Contract c = doCreate(ctx);  // 合同创建(子类实现)
+        afterCreate(c, ctx);         // 后置回调(所有合同共用)
+        return ContractResult.success(c);
+    }
+    protected abstract Contract doCreate(CreateContractContext ctx);
+}</code></pre>
+                        <p style="color: var(--text-dim); font-size: 13px;">
+                            核心:execute 用 final 锁死防止子类破坏流程,doCreate 让子类实现个性化创建逻辑。
+                            CreateContractContext 是泛型 Map 容器,个人装 8 项(身份/银行卡/人脸),机构装 15 项(企业资质/对公账户)。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-item">
+                <div class="highlight-card">
+                    <span class="tag">性能优化 · 必讲亮点</span>
+                    <h4>N+1 查询优化:HashMap 方法内缓存</h4>
+                    <p class="problem">
+                        <strong>问题</strong> · 结算列表 200 条记录循环调用户 RPC,最差 200 次调用,接口 3-5 秒
+                    </p>
+                    <p class="solution">
+                        <strong>方案</strong> · 导出一周操作日志发现 operatorId 重复度 85%+,方法内 HashMap + computeIfAbsent 做请求级缓存
+                    </p>
+                    <div class="metric">
+                        <span>3-5 秒</span>
+                        <span class="arrow">→</span>
+                        <span>500ms</span>
+                        <span style="color: var(--text-dim); margin-left: 8px;">· RPC -90%</span>
+                    </div>
+                    <span class="click-hint">点击展开详细设计 ↓</span>
+                    <div class="detail">
+                        <pre><code>Map&lt;Long, UserDTO&gt; userCache = new HashMap&lt;&gt;();
+return list.stream().map(s -&gt; {
+    UserDTO operator = userCache.computeIfAbsent(
+        s.getOperatorId(),
+        uid -&gt; userService.getByUserId(uid)   // 只执行一次
+    );
+    vo.setOperatorName(operator.getName());
+    return vo;
+}).collect(toList());</code></pre>
+                        <p style="color: var(--text-dim); font-size: 13px;">
+                            关键点:HashMap 是方法内局部变量,不跨线程不用 ConcurrentHashMap。
+                            computeIfAbsent 同 key 只执行一次 lambda,第二次开始从 Map 取。
+                            生产监控命中率稳定 85%+。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-item">
+                <div class="highlight-card">
+                    <span class="tag">架构 · 新旧系统兼容</span>
+                    <h4>organization_mapping 新旧 ID 双向转换</h4>
+                    <p class="problem">
+                        <strong>问题</strong> · 老分润系统(千万级数据,几十个业务线在用)改不动,新机构主数据系统不能被污染
+                    </p>
+                    <p class="solution">
+                        <strong>方案</strong> · 独立映射表 + Service 层统一翻译,前端用新 ID,调分润系统自动翻译老 ID,返回再翻译回新 ID
+                    </p>
+                    <div class="metric">
+                        <span>千级机构平滑过渡</span>
+                        <span class="arrow">·</span>
+                        <span>零侵入新业务</span>
+                    </div>
+                    <span class="click-hint">点击展开详细设计 ↓</span>
+                    <div class="detail">
+                        <pre><code>CREATE TABLE organization_mapping (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    org_id VARCHAR(64) NOT NULL,
+    old_system_id VARCHAR(64) NOT NULL,
+    status TINYINT DEFAULT 1,
+    UNIQUE KEY uk_org_id (org_id),
+    UNIQUE KEY uk_old_system_id (old_system_id)
+);</code></pre>
+                        <p style="color: var(--text-dim); font-size: 13px;">
+                            核心字段只要 3 个:新 ID、老 ID、status。两边都加唯一索引,双向查询 O(1)。
+                            Service 层提供单次 + 批量两个接口,批量走 IN 查询减少 DB 调用。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-item">
+                <div class="highlight-card">
+                    <span class="tag">架构思维 · 反直觉</span>
+                    <h4>过期状态动态计算:消除定时任务依赖</h4>
+                    <p class="problem">
+                        <strong>问题</strong> · 合同过期状态靠定时任务扫表更新,延迟最长 1 小时,Job 挂了状态永远错
+                    </p>
+                    <p class="solution">
+                        <strong>方案</strong> · 数据库只存 2 种基础状态(已生效/已终止),"已过期"用 SQL CASE WHEN 实时计算
+                    </p>
+                    <div class="metric">
+                        <span>1 小时延迟</span>
+                        <span class="arrow">→</span>
+                        <span>实时</span>
+                        <span style="color: var(--text-dim); margin-left: 8px;">· 消除定时任务</span>
+                    </div>
+                    <span class="click-hint">点击展开详细设计 ↓</span>
+                    <div class="detail">
+                        <pre><code>SELECT id, contract_number,
+       CASE
+           WHEN status = 1 AND cooperation_end_time &lt; NOW() THEN 2
+           WHEN status = 1 THEN 1
+           WHEN status = 9 THEN 9
+       END AS status_view
+FROM contract;</code></pre>
+                        <p style="color: var(--text-dim); font-size: 13px;">
+                            设计原则:事实存库(已生效、已终止 — 有发生时间点),推导值动态算(已过期 — 时间到自动变)。
+                            组合索引 (status, cooperation_end_time) 走最左前缀。
+                            未来加"临期"状态同样 CASE WHEN,不改表不加 Job。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-item">
+                <div class="highlight-card">
+                    <span class="tag">工厂模式 · 扩展性</span>
+                    <h4>ArtifactHandlerFactory 成品处理器工厂</h4>
+                    <p class="problem">
+                        <strong>问题</strong> · 3 种内容类型(剧本/剧集/成品)差异大,if/else 满天飞,新增类型改 4-6 处
+                    </p>
+                    <p class="solution">
+                        <strong>方案</strong> · 工厂模式 + 统一 ArtifactHandler 接口,Spring 启动 List 注入自动装 Map
+                    </p>
+                    <div class="metric">
+                        <span>3 天</span>
+                        <span class="arrow">→</span>
+                        <span>0.5 天</span>
+                        <span style="color: var(--text-dim); margin-left: 8px;">· 支撑 4 种类型</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-item">
+                <div class="highlight-card">
+                    <span class="tag">批量处理 · ID 映射</span>
+                    <h4>batchCreateContentScriptForOrg 批量创建</h4>
+                    <p class="problem">
+                        <strong>问题</strong> · 机构合作一次要批量上线 50-500 个剧本,涉及跨服务双 ID 映射、数据去重、分批调用
+                    </p>
+                    <p class="solution">
+                        <strong>方案</strong> · 5 步流程 — 解析 JSON → 三维度去重 → 分批 50 条调内容中心 → 反向组装 ID 映射 → 幂等落库
+                    </p>
+                    <div class="metric">
+                        <span>单次 500 条</span>
+                        <span class="arrow">·</span>
+                        <span>去重准确率 100%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 线上治理 -->
+<section id="treatment">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">03</div>
+            <h2 class="section-title">线上问题治理</h2>
+            <p class="section-desc">真实踩过的坑,根因分析 + 系统化修复</p>
+        </div>
+
+        <div class="treatment-grid">
+            <div class="treatment-card">
+                <span class="label">线上事故</span>
+                <h4>合同号重复导致分账错乱</h4>
+                <p>机构合作场景合同号被重复创建,下游重复生成剧本,分账金额被重复统计,影响 10+ 笔分账</p>
+                <p><strong>方案</strong> · 三层防御 — DB 唯一索引 + 代码前置校验 + 下游幂等</p>
+                <div class="result">
+                    上线后 3 个月零次复发 · 分账准确率 100%
+                </div>
+            </div>
+
+            <div class="treatment-card">
+                <span class="label">数据一致性</span>
+                <h4>合同中台回调状态不同步</h4>
+                <p>中台已回调"已签署",本地 contract_status 没更新。排查发现回调某分支漏写 setContractStatus</p>
+                <p><strong>方案</strong> · 重构成 STATUS_MAP 枚举映射,根治类似低级错误</p>
+                <div class="result">
+                    根因级修复 · 防止未来漏 set
+                </div>
+            </div>
+
+            <div class="treatment-card">
+                <span class="label">业务规则</span>
+                <h4>双合同场景展示状态错误</h4>
+                <p>作品同时关联版权合同 + 侵权合同,老代码只判断一个合同,页面误显示"已生效"</p>
+                <p><strong>方案</strong> · existTwoContract 判断,双合同场景要求两份都签完</p>
+                <div class="result">
+                    业务合规 · 解决运营投诉
+                </div>
+            </div>
+
+            <div class="treatment-card">
+                <span class="label">稳定性</span>
+                <h4>批量定时任务锁冲突</h4>
+                <p>夜间批量任务周均失败 1-2 次,数据库锁冲突</p>
+                <p><strong>方案</strong> · 分片 50 条/批 + update_task_id 幂等标记 + 3 次重试 + 告警</p>
+                <div class="result">
+                    月均 0 次失败 · 锁冲突减 80%
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 关键指标 -->
+<section id="metrics">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">04</div>
+            <h2 class="section-title">关键指标对比</h2>
+            <p class="section-desc">可量化的工程价值 · 数据来自生产监控</p>
+        </div>
+
+        <div class="metrics-wall">
+            <div class="metric-card">
+                <div class="from">5 天</div>
+                <div class="arrow-down">↓</div>
+                <div class="to">1 天</div>
+                <div class="desc">合同类型接入周期</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="from">3-5 秒</div>
+                <div class="arrow-down">↓</div>
+                <div class="to">500ms</div>
+                <div class="desc">结算列表接口 P99</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="from">1 小时</div>
+                <div class="arrow-down">↓</div>
+                <div class="to">实时</div>
+                <div class="desc">合同状态延迟</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="from">3 天</div>
+                <div class="arrow-down">↓</div>
+                <div class="to">0.5 天</div>
+                <div class="desc">新增内容形态接入</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="from">周 1-2 次</div>
+                <div class="arrow-down">↓</div>
+                <div class="to">月 0 次</div>
+                <div class="desc">批量任务失败告警</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="from">300 行</div>
+                <div class="arrow-down">↓</div>
+                <div class="to">-40%</div>
+                <div class="desc">签约接口代码量</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="from">15+ 接口</div>
+                <div class="arrow-down">↓</div>
+                <div class="to">-60%</div>
+                <div class="desc">后台查询代码量</div>
+            </div>
+
+            <div class="metric-card">
+                <div class="from">重复创建</div>
+                <div class="arrow-down">↓</div>
+                <div class="to">3 月零次</div>
+                <div class="desc">合同号重复治理</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 技术栈 -->
+<section id="tech">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-number">05</div>
+            <h2 class="section-title">技术栈</h2>
+            <p class="section-desc">真实使用的技术,括号里是对应的开源版</p>
+        </div>
+
+        <h3 style="margin: 32px 0 16px; color: var(--text-dim); font-size: 14px;">语言与框架</h3>
+        <div class="tech-grid">
+            <div class="tech-item"><div class="name">Java 8 / 21</div><div class="category">语言</div></div>
+            <div class="tech-item"><div class="name">Spring Boot</div><div class="category">主框架</div></div>
+            <div class="tech-item"><div class="name">MyBatis</div><div class="category">ORM</div></div>
+            <div class="tech-item"><div class="name">Spring Security</div><div class="category">安全</div></div>
+            <div class="tech-item"><div class="name">Peacock 脚手架</div><div class="category">阅文 ≈ SB 封装</div></div>
+        </div>
+
+        <h3 style="margin: 32px 0 16px; color: var(--text-dim); font-size: 14px;">中间件</h3>
+        <div class="tech-grid">
+            <div class="tech-item"><div class="name">MySQL</div><div class="category">关系数据库</div></div>
+            <div class="tech-item"><div class="name">Redis</div><div class="category">缓存 / 分布式锁</div></div>
+            <div class="tech-item"><div class="name">TRPC</div><div class="category">RPC ≈ Dubbo</div></div>
+            <div class="tech-item"><div class="name">Polaris</div><div class="category">服务发现 ≈ Nacos</div></div>
+            <div class="tech-item"><div class="name">Apollo</div><div class="category">配置中心</div></div>
+            <div class="tech-item"><div class="name">TDMQ / CMQ</div><div class="category">消息 ≈ RocketMQ</div></div>
+            <div class="tech-item"><div class="name">XXL-Job</div><div class="category">分布式调度</div></div>
+        </div>
+
+        <h3 style="margin: 32px 0 16px; color: var(--text-dim); font-size: 14px;">基础设施</h3>
+        <div class="tech-grid">
+            <div class="tech-item"><div class="name">腾讯云 COS</div><div class="category">对象存储</div></div>
+            <div class="tech-item"><div class="name">EasyExcel</div><div class="category">Excel 流式处理</div></div>
+            <div class="tech-item"><div class="name">QLExpress</div><div class="category">规则引擎</div></div>
+            <div class="tech-item"><div class="name">Logback</div><div class="category">日志</div></div>
+            <div class="tech-item"><div class="name">Arthas</div><div class="category">线上诊断</div></div>
+        </div>
+
+        <h3 style="margin: 32px 0 16px; color: var(--text-dim); font-size: 14px;">对接的集团中台(6+)</h3>
+        <div class="tech-grid">
+            <div class="tech-item"><div class="name">合同中心</div><div class="category">OA + 电子签</div></div>
+            <div class="tech-item"><div class="name">分润系统</div><div class="category">老 ID 体系</div></div>
+            <div class="tech-item"><div class="name">机构主数据</div><div class="category">新 ID 体系</div></div>
+            <div class="tech-item"><div class="name">敏感数据中心</div><div class="category">加密 / 脱敏</div></div>
+            <div class="tech-item"><div class="name">文件服务</div><div class="category">上传 / 下载</div></div>
+            <div class="tech-item"><div class="name">内容中心</div><div class="category">剧本 / 剧集</div></div>
+            <div class="tech-item"><div class="name">CAMS</div><div class="category">集团财务</div></div>
+            <div class="tech-item"><div class="name">天网 IP 中台</div><div class="category">IP 项目管理</div></div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>5 年 Java 后端开发经验 · 熟悉分布式系统设计 · 有复杂业务场景治理经验</p>
+        <p style="margin-top: 8px; color: var(--primary);">Crafted with code · 阅文漫剧业务线</p>
+    </div>
+</footer>
+
+<script>
+// 数字滚动动画
+function animateNumber(el) {
+    const target = parseInt(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const duration = 2000;
+    const frames = 60;
+    const increment = target / frames;
+    let current = 0;
+
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        // 格式化数字
+        let displayNum;
+        if (target >= 10000) {
+            displayNum = (Math.floor(current) / 10000).toFixed(1) + '万';
+        } else {
+            displayNum = Math.floor(current).toLocaleString();
+        }
+        el.textContent = displayNum + suffix;
+    }, duration / frames);
+}
+
+// 滚动监听
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+
+            // 数字动画
+            if (entry.target.classList.contains('stat-card')) {
+                const numEl = entry.target.querySelector('.stat-number');
+                if (numEl && !numEl.dataset.animated) {
+                    numEl.dataset.animated = 'true';
+                    animateNumber(numEl);
+                }
+            }
+        }
+    });
+}, { threshold: 0.1 });
+
+// 观察所有需要动画的元素
+document.querySelectorAll(
+    '.section-header, .module-card, .highlight-item, .treatment-card, .tech-item, .metric-card, .stat-card'
+).forEach(el => observer.observe(el));
+
+// Hero 数字立即动画
+window.addEventListener('load', () => {
+    document.querySelectorAll('#hero .stat-number').forEach(el => {
+        if (!el.dataset.animated) {
+            el.dataset.animated = 'true';
+            animateNumber(el);
+        }
+    });
+});
+
+// 卡片点击展开
+document.querySelectorAll('.highlight-card').forEach(card => {
+    if (card.querySelector('.detail')) {
+        card.addEventListener('click', () => {
+            card.classList.toggle('expanded');
+            const hint = card.querySelector('.click-hint');
+            if (hint) {
+                hint.textContent = card.classList.contains('expanded')
+                    ? '点击收起 ↑'
+                    : '点击展开详细设计 ↓';
+            }
+        });
+    }
+});
+
+// 模块卡片延迟显示(错开动画)
+document.querySelectorAll('.module-card').forEach((card, i) => {
+    card.style.transitionDelay = `${i * 0.1}s`;
+});
+
+document.querySelectorAll('.highlight-item').forEach((item, i) => {
+    item.style.transitionDelay = `${i * 0.15}s`;
+});
+
+document.querySelectorAll('.treatment-card').forEach((card, i) => {
+    card.style.transitionDelay = `${i * 0.1}s`;
+});
+
+document.querySelectorAll('.tech-item').forEach((item, i) => {
+    item.style.transitionDelay = `${i * 0.03}s`;
+});
+
+document.querySelectorAll('.metric-card').forEach((card, i) => {
+    card.style.transitionDelay = `${i * 0.08}s`;
+});
+
+// 导航高亮
+const sections = document.querySelectorAll('section');
+const navLinks = document.querySelectorAll('nav a');
+
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop - 100;
+        if (window.scrollY >= sectionTop) {
+            current = section.getAttribute('id');
+        }
+    });
+
+    navLinks.forEach(link => {
+        link.style.color = 'var(--text-dim)';
+        if (link.getAttribute('href') === `#${current}`) {
+            link.style.color = 'var(--primary)';
+        }
+    });
+});
+</script>
+</body>
+</html>

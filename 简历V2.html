@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>彭冲 · Java 后端工程师 · 简历</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+    background: #f4f5f7;
+    color: #2c3e50;
+    line-height: 1.55;
+    font-size: 12.5px;
+    padding: 20px 0;
+}
+
+.page {
+    max-width: 794px; /* A4 宽度 */
+    margin: 0 auto;
+    background: #fff;
+    padding: 32px 42px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border-radius: 4px;
+}
+
+/* 头部 */
+header {
+    border-bottom: 2px solid #2c3e50;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+}
+
+header h1 {
+    font-size: 24px;
+    color: #1a2733;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+header .subtitle {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #5a6878;
+    font-weight: 500;
+}
+
+header .contact {
+    margin-top: 6px;
+    font-size: 11.5px;
+    color: #7a8898;
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+}
+
+header .contact span::before {
+    margin-right: 4px;
+}
+
+/* 章节通用 */
+section {
+    margin-bottom: 14px;
+}
+
+h2 {
+    font-size: 14px;
+    color: #2c3e50;
+    font-weight: 700;
+    border-left: 3px solid #3498db;
+    padding-left: 8px;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+h3 {
+    font-size: 12.5px;
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 4px;
+    margin-top: 8px;
+}
+
+p { margin-bottom: 4px; }
+
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+li {
+    position: relative;
+    padding-left: 12px;
+    margin-bottom: 3px;
+    line-height: 1.55;
+}
+
+li::before {
+    content: "·";
+    position: absolute;
+    left: 0;
+    color: #3498db;
+    font-weight: 700;
+}
+
+strong, b {
+    color: #1a2733;
+    font-weight: 600;
+}
+
+.highlight {
+    background: linear-gradient(180deg, transparent 60%, #fff3a3 60%);
+    padding: 0 1px;
+    font-weight: 600;
+    color: #1a2733;
+}
+
+/* 关于我 */
+.about {
+    color: #4a5868;
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+/* 技术栈 */
+.tech-stack {
+    font-size: 11.8px;
+}
+.tech-stack li {
+    padding-left: 0;
+    margin-bottom: 2px;
+}
+.tech-stack li::before { content: ""; }
+.tech-stack .label {
+    display: inline-block;
+    min-width: 88px;
+    color: #3498db;
+    font-weight: 600;
+}
+
+/* 工作经历 / 项目 头部 */
+.exp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+}
+.exp-head .left {
+    font-weight: 700;
+    color: #1a2733;
+    font-size: 13px;
+}
+.exp-head .right {
+    color: #7a8898;
+    font-size: 11.5px;
+}
+.exp-meta {
+    color: #5a6878;
+    font-size: 11.5px;
+    margin-bottom: 6px;
+}
+
+.intro-line {
+    color: #4a5868;
+    font-size: 11.8px;
+    margin-bottom: 6px;
+}
+
+/* 项目核心产出 */
+.project-item {
+    margin-bottom: 6px;
+}
+.project-item .title {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+.project-item .desc {
+    font-size: 11.8px;
+    color: #4a5868;
+    padding-left: 12px;
+    position: relative;
+}
+.project-item .desc::before {
+    content: "·";
+    position: absolute;
+    left: 0;
+    color: #3498db;
+    font-weight: 700;
+}
+.project-item .impact {
+    font-size: 11.8px;
+    padding-left: 12px;
+    color: #2c3e50;
+    margin-top: 2px;
+    position: relative;
+}
+.project-item .impact::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: #27ae60;
+    font-weight: 700;
+}
+
+/* 辅助项目 紧凑 */
+.aux-project { margin-bottom: 6px; }
+.aux-project h3 { margin-top: 4px; }
+
+/* 教育 */
+.edu {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 12px;
+}
+
+/* 打印 */
+@media print {
+    body {
+        background: #fff;
+        padding: 0;
+        font-size: 10px;
+        line-height: 1.45;
+    }
+    .page {
+        max-width: 100%;
+        box-shadow: none;
+        padding: 14px 20px;
+        border-radius: 0;
+    }
+    header { padding-bottom: 8px; margin-bottom: 10px; }
+    header h1 { font-size: 20px; }
+    header .subtitle { font-size: 11px; margin-top: 2px; }
+    header .contact { font-size: 10px; margin-top: 4px; gap: 14px; }
+    section { margin-bottom: 9px; }
+    h2 { font-size: 12px; margin-bottom: 5px; padding-left: 6px; }
+    h3 { font-size: 11px; margin-top: 5px; margin-bottom: 2px; }
+    .about { font-size: 10px; line-height: 1.5; }
+    .tech-stack { font-size: 10px; }
+    .tech-stack li { margin-bottom: 1px; }
+    .tech-stack .label { min-width: 78px; }
+    .exp-head .left { font-size: 11px; }
+    .exp-head .right { font-size: 9.5px; }
+    .exp-meta { font-size: 9.5px; margin-bottom: 4px; }
+    .intro-line { font-size: 10px; margin-bottom: 4px; }
+    .project-item { margin-bottom: 4px; }
+    .project-item .title { font-size: 10px; margin-bottom: 1px; }
+    .project-item .desc, .project-item .impact { font-size: 9.8px; }
+    li { font-size: 9.8px; margin-bottom: 2px; line-height: 1.5; }
+    .aux-project { margin-bottom: 4px; }
+    .edu { font-size: 10px; }
+    .highlight {
+        background: linear-gradient(180deg, transparent 60%, #ffe98a 60%);
+    }
+    @page {
+        size: A4;
+        margin: 8mm 10mm;
+    }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+    <h1>彭 冲</h1>
+    <div class="subtitle">Java 后端工程师 · 4.5 年经验 · 阅文集团 · 现居上海</div>
+    <div class="contact">
+        <span>📧 1539112470@qq.com</span>
+        <span>📱 17344035687</span>
+        <span>🎯 期望岗位：Java 后端开发（中厂自研）</span>
+    </div>
+</header>
+
+<section>
+    <h2>关于我</h2>
+    <p class="about">
+        4.5 年 Java 后端，擅长从业务场景抽象出可扩展的工程框架（策略 / 工厂 / 编排器），做过 N+1 优化、跨系统一致性、分布式事务补偿、批量任务稳定性治理等场景。追求"用简单方案解决复杂问题"，适合业务快速迭代 + 技术深度并重的团队。
+    </p>
+</section>
+
+<section>
+    <h2>技术栈</h2>
+    <ul class="tech-stack">
+        <li><span class="label">语言与框架</span>Java 8/21、Spring Boot 2.3/2.7、MyBatis、Spring Security、Lombok</li>
+        <li><span class="label">存储</span>MySQL（分区表 / 组合索引 / 分库分表）、Redis（分布式锁 / 本地缓存）、腾讯云 COS</li>
+        <li><span class="label">中间件</span>TDMQ-CMQ、XXL-Job、七彩石配置中心</li>
+        <li><span class="label">微服务</span>TRPC、Polaris 服务注册、Peacock 脚手架</li>
+        <li><span class="label">工程能力</span>分布式事务补偿、N+1 优化、EasyExcel 流式处理、AES/HMAC 加解密、MDC 链路追踪</li>
+    </ul>
+</section>
+
+<section>
+    <h2>工作经历</h2>
+    <div class="exp-head">
+        <div class="left">阅文集团 · 漫剧业务线</div>
+        <div class="right">2023.03 - 至今 · Java 后端工程师</div>
+    </div>
+    <p class="intro-line">
+        负责漫剧分销与签约平台核心后端，服务<span class="highlight">万级 UP 主 + 千级机构 MCN</span>，月均签约 300+ 单，年结算金额千万级。独立 Owner 3 个核心模块（分销签约 / 结算分润 / IP 中台内容），深度对接集团 6+ 中台服务。
+    </p>
+
+    <div class="exp-head" style="margin-top:10px;">
+        <div class="left">北京宇信科技集团股份有限公司 上海分公司（外派富邦华一银行）</div>
+        <div class="right">2021.09 - 2023.02 · Java 开发工程师</div>
+    </div>
+    <p class="intro-line">
+        参与<strong>富邦华一银行普惠信贷管理系统</strong>开发，覆盖授信、客户管理、合同、贷后、还款等核心模块。技术栈 Spring Cloud + Feign + MyBatis + Redis + Liteflow + XXL-Job。
+    </p>
+    <ul style="font-size:11.8px;">
+        <li><strong>授信模块员工持股融资业务：</strong>实现授信申请 → 押品（抵质押率 / 押品估值）→ 多岗位审批 → 合同额度校验 → 放款的完整链路</li>
+        <li><strong>批量任务开发：</strong>基于 XXL-Job 实现贷后还款定时扫描、利息计算、逾期判定</li>
+        <li><strong>审批流编排：</strong>基于 Liteflow 抽象多岗位审批节点，支持流程动态配置</li>
+    </ul>
+</section>
+
+<section>
+    <h2>项目一：阅文漫剧分销与签约平台（主力 · 3 模块 Owner）</h2>
+    <div class="exp-meta">2023.03 - 至今 · Spring Boot · MyBatis · TRPC · 七彩石 · 腾讯云 COS</div>
+
+    <div class="project-item">
+        <div class="title">1. 签约框架抽象（策略 + 模板方法）</div>
+        <div class="desc">基于 <code>ContractInvoker</code> + <code>CreateContractHandler</code> 封装签约标准流程（幂等 → 校验 → 创建 → 回调），泛型 <code>CreateContractContext</code> 自动装配个人 8 项 / 机构 15 项数据</div>
+        <div class="impact">新合同类型接入 <span class="highlight">5 天 → 1 天</span>，签约接口代码量 <span class="highlight">-40%</span>，已支撑 5 种合同类型稳定运行</div>
+    </div>
+
+    <div class="project-item">
+        <div class="title">2. 结算接口 N+1 优化</div>
+        <div class="desc">定位结算列表循环调用 RPC 的 N+1 问题（单次 200 次 RPC），用方法内 HashMap + <code>computeIfAbsent</code> 做请求级缓存</div>
+        <div class="impact">RPC <span class="highlight">200 次 → 10~20 次</span>，接口响应 <span class="highlight">3~5s → 500ms</span></div>
+    </div>
+
+    <div class="project-item">
+        <div class="title">3. 新旧机构 ID 双向映射（跨系统兼容）</div>
+        <div class="desc">阅文老分润系统千万级历史数据 + 几十个业务线在用，无法切换。设计 <code>organization_mapping</code> 表 + Service 层统一 ID 翻译</div>
+        <div class="impact">千级机构平滑过渡，零侵入新业务代码，<span class="highlight">结算零差错</span></div>
+    </div>
+
+    <div class="project-item">
+        <div class="title">4. 内容处理器工厂（工厂模式 + 本地缓存）</div>
+        <div class="desc">基于 <code>ArtifactHandlerFactory</code> 统一成品处理接口（<code>create</code> / <code>bindCams</code> / <code>syncStatus</code>），List 注入 + Map 自动注册</div>
+        <div class="impact">新增内容形态 <span class="highlight">3 天 → 0.5 天</span>，支撑 4 种内容类型稳定运行</div>
+    </div>
+
+    <div class="project-item">
+        <div class="title">5. 机构批量创建剧本（跨服务 ID 映射 + 幂等）</div>
+        <div class="desc">五步流程：解析扩展字段 → 名称/书籍ID/作品类型三维度去重 → 分批调用内容中心（每批 50 条）→ 临时 ID → 正式 ID 反向映射 → 落库幂等</div>
+        <div class="impact">单次支撑 <span class="highlight">500 条批量上线</span>，去重准确率 100%，跨服务 ID 映射零错乱</div>
+    </div>
+
+    <h3 style="margin-top:10px;">线上问题治理（代表性事故）</h3>
+    <ul>
+        <li><strong>合同号重复导致分账错乱：</strong>SQL 多表联查定位脏数据 → 接口前置幂等 → DB 唯一索引 → 业务层关联计数。<span class="highlight">上线后 3 个月零重复</span>，修复 10+ 历史脏数据</li>
+        <li><strong>夜间批量定时任务失败：</strong>分片（每批 50 条）+ 幂等标记 + 3 次重试 + 全链路日志。<span class="highlight">周均 1~2 次告警 → 月均 0 次</span>，DB 锁冲突 -80%</li>
+        <li><strong>多环境配置差异：</strong>硬编码改七彩石动态管理。<span class="highlight">发版数据对齐 2 小时 → 10 分钟</span></li>
+    </ul>
+</section>
+
+<section>
+    <div class="aux-project">
+        <h2>项目二：漫剧运营后台 vega（辅助 · Spring Boot 2.7 + Java 21）</h2>
+        <ul>
+            <li><strong>帖子批量 Excel 导入：</strong>EasyExcel 流式解析，单条失败跳过不中断整批</li>
+            <li><strong>合约 URL 存活监控：</strong>XXL-Job 定时探活 + Redis 频控（1 小时最多 1 次告警）</li>
+        </ul>
+    </div>
+
+    <div class="aux-project">
+        <h2>项目三：创作者入驻端 nova（辅助 · Undertow + MyBatis-Plus）</h2>
+        <ul>
+            <li><strong>机构创建 6 步 Orchestrator 编排：</strong>参数校验 → OCR → 机审 → 落库 → 用户绑定 → 业务派发，策略 + 校验器链插拔</li>
+            <li><strong>敏感数据透明加解密：</strong><code>AESStringTypeHandler</code> + DCL 单例从 Spring 拿密钥，DB 字段声明级自动加解密</li>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <h2>教育背景</h2>
+    <div class="edu">
+        <span><strong>安徽理工大学</strong> · 机械设计制造及其自动化 · 本科</span>
+        <span style="color:#7a8898;">2017.09 - 2021.06</span>
+    </div>
+</section>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vega 漫剧内容创作平台 — 交互式代码课程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400;1,9..40,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --color-bg: #FAF7F2;
+  --color-bg-warm: #F5F0E8;
+  --color-bg-code: #1E1E2E;
+  --color-text: #2C2A28;
+  --color-text-secondary: #6B6560;
+  --color-text-muted: #9E9790;
+  --color-border: #E5DFD6;
+  --color-border-light: #EEEBE5;
+  --color-surface: #FFFFFF;
+  --color-surface-warm: #FDF9F3;
+  --color-accent: #D94F30;
+  --color-accent-hover: #C4432A;
+  --color-accent-light: #FDEEE9;
+  --color-accent-muted: #E8836C;
+  --color-success: #2D8B55;
+  --color-success-light: #E8F5EE;
+  --color-error: #C93B3B;
+  --color-error-light: #FDE8E8;
+  --color-info: #2A7B9B;
+  --color-info-light: #E4F2F7;
+  --color-actor-1: #D94F30;
+  --color-actor-2: #2A7B9B;
+  --color-actor-3: #7B6DAA;
+  --color-actor-4: #D4A843;
+  --color-actor-5: #2D8B55;
+  --font-display: 'Bricolage Grotesque', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  --radius: 8px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px rgba(44,42,40,0.06);
+  --shadow: 0 4px 12px rgba(44,42,40,0.08);
+  --shadow-lg: 0 10px 32px rgba(44,42,40,0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-body); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+body { padding: 0; }
+
+/* ---- 顶部 Hero ---- */
+.hero {
+  background: linear-gradient(180deg, var(--color-bg-warm) 0%, var(--color-bg) 100%);
+  padding: 80px 24px 60px;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+  position: relative;
+}
+.hero-kicker {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  padding: 5px 12px;
+  border: 1px solid var(--color-accent);
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(38px, 6vw, 68px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--color-text);
+  margin-bottom: 20px;
+}
+.hero-title em {
+  color: var(--color-accent);
+  font-style: normal;
+}
+.hero-sub {
+  font-size: 17px;
+  color: var(--color-text-secondary);
+  max-width: 640px;
+  margin: 0 auto 30px;
+  line-height: 1.7;
+}
+.hero-meta {
+  display: inline-flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+}
+.hero-meta span::before { content: '· '; color: var(--color-border); }
+.hero-meta span:first-child::before { content: ''; }
+
+/* ---- 导航 ---- */
+.nav {
+  position: sticky;
+  top: 0;
+  background: rgba(250, 247, 242, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--color-border);
+  z-index: 100;
+  padding: 12px 0;
+}
+.nav-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav a {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  padding: 7px 13px;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.nav a:hover { background: var(--color-accent-light); color: var(--color-accent); }
+.nav a.active { background: var(--color-accent); color: #fff; }
+
+/* ---- 主体布局 ---- */
+.main { max-width: 860px; margin: 0 auto; padding: 30px 24px 80px; }
+.module {
+  margin-bottom: 80px;
+  padding-top: 30px;
+}
+.module-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 8px;
+}
+.module-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--color-text);
+  margin-bottom: 18px;
+}
+.module-intro {
+  font-size: 16.5px;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+  margin-bottom: 32px;
+  max-width: 720px;
+}
+.screen-heading {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+  margin: 44px 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.screen-heading::before {
+  content: '';
+  display: block;
+  width: 4px;
+  height: 22px;
+  background: var(--color-accent);
+  border-radius: 2px;
+}
+.screen-heading span.emoji { font-size: 22px; }
+
+p { margin: 0 0 14px; font-size: 15.5px; color: var(--color-text); line-height: 1.8; }
+p strong { font-weight: 600; color: var(--color-text); }
+em { color: var(--color-accent); font-style: normal; font-weight: 500; }
+
+ul, ol { margin: 0 0 16px 24px; font-size: 15.5px; line-height: 1.85; }
+li { margin-bottom: 5px; }
+
+/* ---- Callout ---- */
+.callout {
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  margin: 20px 0;
+  border-left: 3px solid;
+  background: var(--color-surface-warm);
+}
+.callout-icon { font-size: 20px; flex-shrink: 0; line-height: 1.4; }
+.callout-content { flex: 1; }
+.callout-title { font-weight: 600; margin-bottom: 4px; font-family: var(--font-display); font-size: 15px; }
+.callout-content p:last-child { margin-bottom: 0; font-size: 14.5px; }
+.callout.callout-info { border-left-color: var(--color-info); background: var(--color-info-light); }
+.callout.callout-info .callout-title { color: var(--color-info); }
+.callout.callout-warning { border-left-color: var(--color-actor-4); background: #FBF5E2; }
+.callout.callout-warning .callout-title { color: #8B6914; }
+.callout.callout-accent { border-left-color: var(--color-accent); background: var(--color-accent-light); }
+.callout.callout-accent .callout-title { color: var(--color-accent); }
+.callout.callout-success { border-left-color: var(--color-success); background: var(--color-success-light); }
+.callout.callout-success .callout-title { color: var(--color-success); }
+
+/* ---- 代码块 ---- */
+.code-block {
+  background: var(--color-bg-code);
+  border-radius: var(--radius);
+  margin: 16px 0;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.02em;
+}
+.code-header .code-lang {
+  font-weight: 600;
+  color: var(--color-accent-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10.5px;
+}
+.code-header .code-file {
+  color: rgba(255,255,255,0.5);
+  font-size: 11px;
+}
+.code-block pre {
+  padding: 14px 18px;
+  overflow-x: auto;
+  color: #D4D4D4;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  white-space: pre;
+}
+.code-keyword { color: #C586C0; }
+.code-function { color: #DCDCAA; }
+.code-string { color: #CE9178; }
+.code-number { color: #B5CEA8; }
+.code-class { color: #4EC9B0; }
+.code-comment { color: #6A9955; font-style: italic; }
+.code-anno { color: #DCDCAA; font-weight: 500; }
+.code-type { color: #4FC1FF; }
+.code-field { color: #9CDCFE; }
+
+/* ---- 徽章 ---- */
+.badge-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.badge-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+}
+.badge-item.primary { background: var(--color-accent-light); border-color: var(--color-accent); color: var(--color-accent); }
+.badge-item.code {
+  font-family: var(--font-mono);
+  background: var(--color-bg-code);
+  color: #DCDCAA;
+  border-color: transparent;
+  font-size: 12px;
+}
+
+/* ---- 文件树 ---- */
+.file-tree {
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 18px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--color-text);
+}
+.file-tree .dir { color: var(--color-accent); font-weight: 600; }
+.file-tree .file { color: var(--color-text-secondary); }
+.file-tree .note { color: var(--color-text-muted); font-style: italic; }
+
+/* ---- 流程图(演员) ---- */
+.flow-container {
+  background: var(--color-surface-warm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  margin: 24px 0;
+  overflow-x: auto;
+}
+.flow-actors {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  min-width: fit-content;
+}
+.flow-actor {
+  flex: 0 0 auto;
+  min-width: 110px;
+  padding: 16px 14px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+.flow-actor-icon { font-size: 24px; margin-bottom: 6px; }
+.flow-actor-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.flow-actor-role {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 3px;
+}
+.flow-arrow {
+  color: var(--color-accent);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.flow-actor:nth-child(1) { border-color: var(--color-actor-1); }
+.flow-actor:nth-child(3) { border-color: var(--color-actor-2); }
+.flow-actor:nth-child(5) { border-color: var(--color-actor-3); }
+.flow-actor:nth-child(7) { border-color: var(--color-actor-4); }
+.flow-actor:nth-child(9) { border-color: var(--color-actor-5); }
+
+/* ---- 对话气泡 ---- */
+.chat-window {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: var(--shadow-sm);
+}
+.chat-message {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+  align-items: flex-start;
+}
+.chat-avatar {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--color-accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.chat-bubble {
+  flex: 1;
+  background: var(--color-bg-warm);
+  padding: 10px 14px;
+  border-radius: 4px 14px 14px 14px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+.chat-sender {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-accent);
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* ---- Quiz 小测 ---- */
+.quiz {
+  background: var(--color-surface-warm);
+  border: 2px dashed var(--color-accent-muted);
+  border-radius: var(--radius-lg);
+  padding: 24px 26px;
+  margin: 32px 0 20px;
+}
+.quiz-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+.quiz-kicker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.quiz-q {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--color-border);
+}
+.quiz-q:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+.quiz-question {
+  font-size: 15.5px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 10px;
+  line-height: 1.6;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  display: flex;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14.5px;
+  transition: all 0.15s;
+}
+.quiz-option:hover { border-color: var(--color-accent-muted); background: #fff; }
+.quiz-option.selected { border-color: var(--color-accent); background: var(--color-accent-light); }
+.quiz-option.correct { border-color: var(--color-success); background: var(--color-success-light); }
+.quiz-option.wrong { border-color: var(--color-error); background: var(--color-error-light); }
+.quiz-option-marker {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  width: 22px;
+}
+.quiz-option.correct .quiz-option-marker { color: var(--color-success); }
+.quiz-option.wrong .quiz-option-marker { color: var(--color-error); }
+.quiz-explanation {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: var(--color-info-light);
+  border-left: 3px solid var(--color-info);
+  border-radius: 4px;
+  font-size: 13.5px;
+  color: var(--color-text);
+  line-height: 1.65;
+  display: none;
+}
+.quiz-explanation.visible { display: block; }
+.quiz-explanation strong { color: var(--color-info); font-weight: 600; }
+
+/* ---- 表格 ---- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: 14px;
+}
+th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--color-border-light); }
+th { background: var(--color-bg-warm); font-weight: 600; color: var(--color-accent); font-size: 13px; letter-spacing: 0.02em; }
+tr:last-child td { border-bottom: none; }
+td code { font-family: var(--font-mono); font-size: 12.5px; background: var(--color-bg-warm); padding: 1px 6px; border-radius: 4px; }
+
+/* ---- footer ---- */
+.footer {
+  max-width: 860px;
+  margin: 40px auto 0;
+  padding: 40px 24px 60px;
+  text-align: center;
+  border-top: 1px solid var(--color-border);
+  font-size: 13.5px;
+  color: var(--color-text-muted);
+}
+.footer strong { color: var(--color-accent); font-weight: 600; }
+
+/* ---- 动画 ---- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeUp 0.5s ease-out both; }
+.stagger-children > * { animation: fadeUp 0.5s ease-out both; }
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.20s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.30s; }
+
+/* ---- 响应式 ---- */
+@media (max-width: 600px) {
+  .hero { padding: 60px 20px 40px; }
+  .main { padding: 24px 18px 60px; }
+  .flow-actor { min-width: 90px; padding: 12px 10px; }
+  .code-block pre { font-size: 12px; padding: 12px 14px; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-kicker">📘 交互式代码课程 · 深度真实代码版</div>
+  <h1 class="hero-title">Vega <em>阅文漫剧内容创作平台</em></h1>
+  <p class="hero-sub">584 源文件、21 Controller、50 Service、39 Manager、11 Job——运营 B 端后台。<strong>所有代码片段 100% 来自真实源码</strong>。</p>
+  <div class="hero-meta">
+    <span>Spring Boot + Security</span>
+    <span>Peacock + XXL-Job</span>
+    <span>TRPC 驱动</span>
+    <span>Excel 文件流水线</span>
+    <span>584 源文件</span>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#m1">1 · Vega 定位</a>
+    <a href="#m2">2 · Filter + 权限</a>
+    <a href="#m3">3 · 合同回调签名</a>
+    <a href="#m4">4 · 文件任务流水线</a>
+    <a href="#m5">5 · XXL-Job 天团</a>
+    <a href="#m6">6 · 告警 + 监控</a>
+    <a href="#m7">7 · 全局架构</a>
+  </div>
+</nav>
+
+<div class="main">
+
+<section class="module" id="m1">
+  <div class="module-kicker">Module 01</div>
+  <h1 class="module-title">Vega 是什么</h1>
+  <p class="module-intro">包名 <code>com.yuewen.openplatform.vega</code>，是阅文漫剧<strong>运营 B 端后台</strong>。和 Nova（UP 主 C 端）、Comic Drama Web（分销商 B 端）构成漫剧业务三端。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🎬</span>运营小张的一天</h2>
+  <ul>
+    <li>早上 9 点 → 打开 Vega 后台 → 看 <code>ContractMonitorJob</code> 凌晨跑的"超时未签合同"报告</li>
+    <li>10 点 → 上游推来批量脚本 Excel → <code>FileTaskJob</code> 自动解析 → 审核</li>
+    <li>下午 → 审核非标视频（<code>NonStandardVideoService</code>）→ 打上 CAMS 标签</li>
+    <li>傍晚 → 合同 OA 回调过来 → <code>ContractController.callback</code> 验签 → 更新状态</li>
+  </ul>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-content">
+      <div class="callout-title">Vega 的特征（和 Nova 对比）</div>
+      <p>• <strong>50 Service、39 Manager、11 Job</strong>：体量大，业务逻辑复杂。<br>
+      • <strong>Spring Security + 角色权限</strong>：B 端运营人员多，需精细权限控制。<br>
+      • <strong>XXL-Job 定时任务</strong>：大量后台批处理（合同监控、文件处理、全量同步）。<br>
+      • <strong>Excel 文件流水线</strong>：结算单/数据采集都要解析 Excel。<br>
+      • <strong>合同 OA 回调 + HMAC 签名</strong>：外部合同系统回调验签。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">📂</span>真实目录结构</h2>
+  <div class="file-tree">
+<span class="dir">vega/solution_vega/src/main/java/com/yuewen/openplatform/vega/</span><br>
+├── <span class="dir">web/controller/</span> <span class="note"># 21 个 Controller</span><br>
+│   ├── <span class="file">ContractController.java</span>        <span class="note"># 合同 + OA 回调</span><br>
+│   ├── <span class="file">ArtifactScriptController.java</span>  <span class="note"># 脚本</span><br>
+│   ├── <span class="file">NonStandardVideoController.java</span> <span class="note"># 非标视频</span><br>
+│   ├── <span class="file">DataAcquisitionController.java</span> <span class="note"># 数据采集</span><br>
+│   └── ... 17 个<br>
+├── <span class="dir">web/filter/</span> <span class="note"># 2 个 Filter</span><br>
+│   ├── <span class="file">BasicFilter.java</span>    <span class="note"># 和 Nova 一样（CORS + Wrapper）</span><br>
+│   └── <span class="file">InitialFilter.java</span>  <span class="note"># 3 行代码,建 SessionContext</span><br>
+├── <span class="dir">service/</span> <span class="note"># 50 个 Service</span><br>
+│   ├── <span class="file">ContractServiceV2.java</span>     <span class="note"># 22k chars</span><br>
+│   ├── <span class="file">NonStandardVideoService.java</span><br>
+│   ├── <span class="file">CustomUserDetailsService.java</span> <span class="note"># Spring Security</span><br>
+│   └── ... 47 个<br>
+├── <span class="dir">manager/</span> <span class="note"># 39 个 Manager</span><br>
+│   ├── <span class="file">CallbackManager.java</span>     <span class="note"># 55k chars,最大!</span><br>
+│   ├── <span class="file">AuthorizationManager.java</span><br>
+│   ├── <span class="file">AlerterHelper.java</span>       <span class="note"># 告警</span><br>
+│   └── ... 36 个<br>
+├── <span class="dir">job/</span> <span class="note"># 11 个 XXL-Job</span><br>
+│   ├── <span class="file">ContractMonitorJob.java</span>     <span class="note"># 合同监控</span><br>
+│   ├── <span class="file">ContractSignedJob.java</span>      <span class="note"># 签约流程</span><br>
+│   ├── <span class="file">FileTaskJob.java</span>            <span class="note"># 文件任务超时扫描</span><br>
+│   ├── <span class="file">DataAcquisitionJob.java</span>     <span class="note"># 数据采集</span><br>
+│   └── ... 7 个<br>
+├── <span class="dir">config/</span> <span class="note"># 35 个配置类!</span><br>
+│   ├── <span class="file">AutoRefreshContractCodeConfig.java</span><br>
+│   ├── <span class="file">AutoRefreshContractFixedInfoConfig.java</span><br>
+│   └── ... 33 个（大量 AutoRefresh 开头的热更新配置）<br>
+└── <span class="dir">service/fileresolver/</span> <span class="note"># Excel 解析</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="file">SettlementExcelFileResolver.java</span> <span class="note"># 47k chars</span>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 1</div>
+    <div class="quiz-title">Vega 定位</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. Vega 最大的类是哪个？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>ContractServiceV2</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span><code>CallbackManager</code>（55k chars）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>FileTaskJob</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>BasicFilter</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>CallbackManager 是 Vega 最大的类。为啥？因为它处理所有外部系统回调（合同 OA、计费、版权等），每种回调的业务逻辑都要内聚。54894 字符，折合约 1800 行代码。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. Vega 有多少个 AutoRefresh 开头的配置？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>2-3 个</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">B.</span>10 个</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">C.</span>十几个（config 目录 35 个总配置里大部分）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>没有</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 C。</strong>大量 <code>AutoRefreshContractCodeConfig</code>、<code>AutoRefreshOrgContractTemplateMappingConfig</code> 等，说明 Vega 里很多配置是<strong>热更新的</strong>——改配置不用重启应用。这是 B 端后台的重要特征，因为运营改规则的频率很高。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m2">
+  <div class="module-kicker">Module 02</div>
+  <h1 class="module-title">Filter + Spring Security 权限</h1>
+  <p class="module-intro">Vega 的 BasicFilter 和 Nova 一模一样（阅文框架共用），这里重点看 <strong>Spring Security 的 UserDetailsService 接入</strong>。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🔐</span>CustomUserDetailsService 真实代码</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">service/CustomUserDetailsService.java（完整）</span></div>
+<pre>
+<span class="code-anno">@Service</span>
+<span class="code-keyword">public class</span> <span class="code-class">CustomUserDetailsService</span> <span class="code-keyword">implements</span> <span class="code-class">UserDetailsService</span> {
+
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">AuthorizationManager</span> authorizationManager;
+
+    <span class="code-anno">@Override</span>
+    <span class="code-keyword">public</span> <span class="code-class">UserDetails</span> <span class="code-function">loadUserByUsername</span>(<span class="code-class">String</span> username) {
+        <span class="code-comment">// ⭐ 注意:username 参数实际不用,用的是 SessionContext 里的 userId</span>
+        <span class="code-keyword">long</span> userId = <span class="code-class">SessionContext</span>.<span class="code-function">getSessionValueOrException</span>(<span class="code-class">SessionContext</span>::<span class="code-function">getUserId</span>);
+
+        <span class="code-class">User</span> userInfo = authorizationManager.<span class="code-function">getUserInfo</span>(userId);
+        <span class="code-keyword">if</span> (userInfo == <span class="code-keyword">null</span>) {
+            <span class="code-keyword">throw new</span> <span class="code-class">BusinessException</span>(<span class="code-class">ErrorCode</span>.USER_NOT_EXIST);
+        }
+
+        <span class="code-comment">// 拉取角色 + 细粒度权限(多对多)</span>
+        <span class="code-class">List</span>&lt;<span class="code-class">PermissionDO</span>&gt; userAuthorities = authorizationManager.<span class="code-function">getUserAuthorities</span>(userInfo.<span class="code-function">getUserId</span>());
+
+        <span class="code-class">List</span>&lt;<span class="code-class">GrantedAuthority</span>&gt; authorities = <span class="code-keyword">new</span> <span class="code-class">ArrayList</span>&lt;&gt;();
+
+        <span class="code-comment">// ⭐ 角色必须加 ROLE_ 前缀（Spring Security 约定）</span>
+        userInfo.<span class="code-function">getRoles</span>().<span class="code-function">forEach</span>(role -&gt; {
+            authorities.<span class="code-function">add</span>(<span class="code-keyword">new</span> <span class="code-class">SimpleGrantedAuthority</span>(<span class="code-string">"ROLE_"</span> + role.<span class="code-function">getTag</span>()));
+        });
+
+        <span class="code-comment">// ⭐ 细粒度权限不加前缀(直接用 identifier)</span>
+        userAuthorities.<span class="code-function">forEach</span>(auth -&gt; {
+            authorities.<span class="code-function">add</span>(<span class="code-keyword">new</span> <span class="code-class">SimpleGrantedAuthority</span>(auth.<span class="code-function">getIdentifier</span>()));
+        });
+
+        <span class="code-keyword">return new</span> org.springframework.security.core.userdetails.<span class="code-class">User</span>(
+                userInfo.<span class="code-function">getEmail</span>(),
+                <span class="code-string">""</span>,           <span class="code-comment">// 密码为空(Vega 不验密码,靠 SSO Cookie)</span>
+                authorities);
+    }
+}
+</pre>
+  </div>
+
+  <div class="callout callout-warning">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-content">
+      <div class="callout-title">两个细节值得面试追问</div>
+      <p>① <strong>角色 <code>ROLE_</code> 前缀必加</strong>：Spring Security 的 <code>hasRole('ADMIN')</code> 内部会自动加 <code>ROLE_</code> 前缀匹配 <code>ROLE_ADMIN</code>。如果你存权限时没加前缀，<code>hasRole</code> 检查永远不通过。这是经典坑点。<br>
+      ② <strong>权限（Permission）不加前缀</strong>：用 <code>hasAuthority('contract:create')</code> 检查细粒度权限。这套分层让"角色 = 粗粒度组"、"权限 = 细粒度操作"语义清晰。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">📜</span>InitialFilter（超短）</h2>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">web/filter/InitialFilter.java（完整）</span></div>
+<pre>
+<span class="code-anno">@Component</span>
+<span class="code-keyword">public class</span> <span class="code-class">InitialFilter</span> <span class="code-keyword">implements</span> <span class="code-class">Filter</span> {
+    <span class="code-anno">@Override</span>
+    <span class="code-keyword">public void</span> <span class="code-function">doFilter</span>(<span class="code-class">ServletRequest</span> request, <span class="code-class">ServletResponse</span> response, <span class="code-class">FilterChain</span> chain) {
+        <span class="code-class">HttpServletRequest</span> httpRequest = (<span class="code-class">HttpServletRequest</span>) request;
+        <span class="code-class">SessionContext</span>.<span class="code-function">initRequestInfo</span>(httpRequest);  <span class="code-comment">// 一行搞定</span>
+        chain.<span class="code-function">doFilter</span>(request, response);
+    }
+}
+</pre>
+  </div>
+
+  <p>Vega 的 InitialFilter 只干一件事：<strong>把 request 信息塞进 SessionContext</strong>（URL、IP、UA 等），方便后续 Service 层拿。具体登录态由 Spring Security 处理。</p>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 2</div>
+    <div class="quiz-title">Filter + Security</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. 角色为啥要加 <code>ROLE_</code> 前缀？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>好看</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>Spring Security 的 <code>hasRole('ADMIN')</code> 内部加 <code>ROLE_</code> 匹配，不加就永远过不了</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>规范</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>防冲突</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>Spring Security 内置约定：<code>hasRole</code> 匹配 <code>ROLE_xxx</code>，<code>hasAuthority</code> 匹配原始字符串。<strong>这是经典坑点</strong>——第一次用 Spring Security 的人大多栽在这。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. <code>loadUserByUsername(username)</code> 里 username 参数实际没用，用的是 <code>SessionContext.getUserId()</code>，为啥？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>bug</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>Vega 是 SSO 登录，用户 ID 在 SessionContext 里已经有，username 参数只是接口约束</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>历史遗留</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>随意</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>Spring Security 接口定义了 <code>loadUserByUsername(String)</code>。Vega 实际用 SSO（用户 ID 从 Cookie 或 Request 带来存入 SessionContext），不需要用 username 参数。这是一种常见的"接口不动，实现换"模式。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m3">
+  <div class="module-kicker">Module 03 · 重点</div>
+  <h1 class="module-title">合同回调：@SkipLogin + HMAC 签名</h1>
+  <p class="module-intro">Vega 里最典型的"外部回调"场景——<strong>外部合同 OA 系统签完合同后 HTTP 回调 Vega</strong>。这条链路用 <code>@SkipLogin</code> 跳过登录 + <code>validSign</code> 做 HMAC 签名验证，外加 <code>Alerter</code> 告警。</p>
+
+  <h2 class="screen-heading"><span class="emoji">📜</span>ContractController 真实代码</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">web/controller/ContractController.java（真实）</span></div>
+<pre>
+<span class="code-anno">@RestController</span>
+<span class="code-anno">@RequestMapping</span>(<span class="code-string">"/api/v1/contract"</span>)
+<span class="code-keyword">public class</span> <span class="code-class">ContractController</span> {
+
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">ContractServiceV2</span> contractServiceV2;
+
+    <span class="code-anno">@Value</span>(<span class="code-string">"${oa.callback.secret:0723123456}"</span>)  <span class="code-comment">// ⭐ OA 系统共享密钥</span>
+    <span class="code-keyword">private</span> <span class="code-class">String</span> secret;
+
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">PeacockRedisTemplate</span> peacockRedisTemplate;
+
+    <span class="code-anno">@Value</span>(<span class="code-string">"${contract.create.lock.duration:PT2M}"</span>)  <span class="code-comment">// 分布式锁 2 分钟</span>
+    <span class="code-keyword">private</span> <span class="code-class">Duration</span> contractCreateLockDuration;
+
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">AlerterHelper</span> alerterHelper;
+
+    <span class="code-comment">// ⭐⭐ 合同回调:免登录 + 签名校验 + 告警 + 测试 mock</span>
+    <span class="code-anno">@PostMapping</span>(<span class="code-string">"/callback"</span>)
+    <span class="code-anno">@SkipLogin</span>                        <span class="code-comment">// 免登录(SkipLoginPathScanner 扫这个)</span>
+    <span class="code-anno">@TstPostMock</span>(sleepMin = <span class="code-number">30</span>)        <span class="code-comment">// 测试环境模拟 30ms 耗时</span>
+    <span class="code-keyword">public</span> <span class="code-class">Response</span>&lt;<span class="code-class">String</span>&gt; <span class="code-function">callback</span>(<span class="code-anno">@RequestBody</span> <span class="code-class">ContractCallbackParam</span> param) {
+        <span class="code-keyword">try</span> {
+            <span class="code-class">ValueValidator</span>.<span class="code-function">requireNotNull</span>(param, <span class="code-string">"合同回调参数不能为空"</span>);
+            <span class="code-class">ValueValidator</span>.<span class="code-function">requireNotNull</span>(param.<span class="code-function">getVendorId</span>(), <span class="code-string">"厂商ID不能为空"</span>);
+            <span class="code-class">ValueValidator</span>.<span class="code-function">require</span>(param.<span class="code-function">getVendorId</span>(), <span class="code-string">"oaContract"</span>::<span class="code-function">equals</span>, <span class="code-string">"厂商ID不合法"</span>);
+
+            <span class="code-comment">// ⭐ 用密钥验签(param 对象级别的 validSign 方法)</span>
+            <span class="code-class">ContractCallbackParam</span>.<span class="code-function">validSign</span>(param, secret);
+
+            <span class="code-comment">// 调 ServiceV2 处理</span>
+            contractServiceV2.<span class="code-function">callback</span>(param);
+            <span class="code-keyword">return</span> <span class="code-class">Response</span>.<span class="code-function">success</span>();
+        } <span class="code-keyword">catch</span> (<span class="code-class">BusinessException</span> e) {
+            <span class="code-comment">// ⭐⭐ Peacock Alerter:失败立即告警到钉钉/企微</span>
+            <span class="code-class">Alerter</span>.<span class="code-function">markdown</span>(
+                <span class="code-keyword">new</span> <span class="code-class">MarkdownText</span>(<span class="code-string">"合同回调失败"</span>, <span class="code-class">MarkdownText</span>.<span class="code-class">Color</span>.RED),
+                e.<span class="code-function">getMessage</span>(),
+                <span class="code-class">AlertScene</span>.<span class="code-function">direct</span>(<span class="code-keyword">new</span> <span class="code-class">SceneID</span>(alerterHelper.<span class="code-function">getDefaultSceneId</span>())));
+
+            <span class="code-class">Logs</span>.<span class="code-function">error</span>(<span class="code-string">"合同回调失败, param: {}, error: {}"</span>,
+                    <span class="code-class">JSONObject</span>.<span class="code-function">toJSONString</span>(param), e.<span class="code-function">getMessage</span>(), e);
+
+            <span class="code-comment">// ⭐ 关键:参数错误原样返回,其他异常抛出让框架处理</span>
+            <span class="code-keyword">if</span> (e.<span class="code-function">getCode</span>() == <span class="code-class">ErrorCode</span>.PARAM_ERROR.<span class="code-function">getCode</span>()) {
+                <span class="code-keyword">return</span> <span class="code-class">Response</span>.<span class="code-function">fail</span>(e.<span class="code-function">getCode</span>(), e.<span class="code-function">getMessage</span>());
+            }
+            <span class="code-keyword">throw</span> e;
+        }
+    }
+}
+</pre>
+  </div>
+
+  <div class="callout callout-accent">
+    <span class="callout-icon">🔑</span>
+    <div class="callout-content">
+      <div class="callout-title">这个方法值得讲 5 个点</div>
+      <p>① <strong><code>@SkipLogin</code></strong>：注解驱动免登录（外部系统哪来的 Cookie）。<code>SkipLoginPathScanner</code> 启动时扫描所有带此注解的方法收集路径。<br>
+      ② <strong>vendorId 白名单</strong>：<code>require(vendorId, "oaContract"::equals, ...)</code> 三参版 <code>require</code>，断言 vendorId 必须是 <code>"oaContract"</code>。Stream::Predicate 风格校验，比 if-else 优雅。<br>
+      ③ <strong>签名校验</strong>：<code>ContractCallbackParam.validSign(param, secret)</code> 是 POJO 对象的静态方法，内部做 HMAC 验证。<br>
+      ④ <strong>Peacock Alerter 告警</strong>：<code>Alerter.markdown(...)</code> 直接发 Markdown 格式告警到钉钉/企微群。<code>Color.RED</code> 强调严重。<br>
+      ⑤ <strong>错误分级处理</strong>：参数错误（PARAM_ERROR）返回业务失败；其他业务异常抛出让 OA 系统重试。</p>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">⏱️</span>配置中的 Duration 风格</h2>
+  <p><code>@Value("${contract.create.lock.duration:PT2M}")</code>——ISO 8601 时长格式：</p>
+
+  <table>
+    <tr><th>Duration 字符串</th><th>含义</th></tr>
+    <tr><td><code>PT30S</code></td><td>30 秒</td></tr>
+    <tr><td><code>PT2M</code></td><td>2 分钟</td></tr>
+    <tr><td><code>PT1H</code></td><td>1 小时</td></tr>
+    <tr><td><code>PT24H</code> 或 <code>P1D</code></td><td>1 天</td></tr>
+    <tr><td><code>PT10M30S</code></td><td>10 分 30 秒</td></tr>
+  </table>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-content">
+      <div class="callout-title">为啥用 Duration 而不是 long？</div>
+      <p>用 <code>long timeoutMs = 120000</code> 和用 <code>Duration timeout = Duration.ofMillis(120000)</code> 区别：<br>
+      ① 配置里写 <code>PT2M</code> 比 <code>120000</code> 可读 10 倍；<br>
+      ② 运维改配置时一眼知道是 2 分钟；<br>
+      ③ 运算安全：<code>timeout.plus(Duration.ofSeconds(30))</code> 不会搞错单位；<br>
+      ④ 容易转换：<code>.toMillis() / .toSeconds() / .toMinutes()</code> 一键切换。</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 3</div>
+    <div class="quiz-title">回调 + 签名</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. <code>@SkipLogin</code> 的作用？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>没啥</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>标注该方法跳过登录校验，启动时由 <code>SkipLoginPathScanner</code> 扫出来加入白名单</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>跳过所有 Filter</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>允许游客访问</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>运行时 LoginFilter 检查请求路径是否在 <code>SkipLoginPathScanner.getSkipLoginPaths()</code> 集合里，在就放行。<strong>其他 Filter 照常执行</strong>（比如 BasicFilter 的 CORS、签名校验等）。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. <code>@Value("${contract.create.lock.duration:PT2M}")</code> 的 PT2M 是啥？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>自定义字符串</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>ISO 8601 标准时长格式，= 2 分钟</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>Peacock 特殊语法</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>无意义</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>ISO 8601 时长：P = Period, T = Time, M = Minutes。<code>PT2M</code> = 2 分钟。Spring 原生支持 <code>Duration</code> 类型的 <code>@Value</code> 自动解析。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">3. 回调方法为啥要在 catch 里 <code>throw e</code>？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>随意</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>参数错返回业务失败(OA 不会重试)，其他业务异常让 OA 识别为失败好重试</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>必须抛</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>Java 要求</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>巧妙的错误分级：<br>• 参数非法 → 再重试也没用（数据本来就错） → 返回 200 + fail，OA 不重试。<br>• 其他业务异常 → 可能瞬时性问题 → 抛异常，框架返回 500，OA 会重试。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m4">
+  <div class="module-kicker">Module 04</div>
+  <h1 class="module-title">文件任务流水线</h1>
+  <p class="module-intro">Vega 处理大量 Excel 上传（结算单、数据采集）。核心流程：<strong>前端上传 → COS → 任务表 → XXL-Job 扫描 → Resolver 解析 → 入库</strong>。</p>
+
+  <h2 class="screen-heading"><span class="emoji">📂</span>文件任务状态机</h2>
+
+  <div class="flow-container">
+    <div class="flow-actors">
+      <div class="flow-actor"><div class="flow-actor-icon">📤</div><div class="flow-actor-name">QUEUED</div><div class="flow-actor-role">排队中</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">⬇️</div><div class="flow-actor-name">DOWNLOADING</div><div class="flow-actor-role">下载中</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">⚙️</div><div class="flow-actor-name">PROCESSING</div><div class="flow-actor-role">处理中</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">✅</div><div class="flow-actor-name">SUCCESS</div><div class="flow-actor-role">成功</div></div>
+    </div>
+  </div>
+  <div class="flow-container">
+    <div class="flow-actors">
+      <div class="flow-actor"><div class="flow-actor-icon">❌</div><div class="flow-actor-name">FAILED</div><div class="flow-actor-role">失败</div></div>
+      <div class="flow-arrow">|</div>
+      <div class="flow-actor"><div class="flow-actor-icon">⏰</div><div class="flow-actor-name">TIMEOUT</div><div class="flow-actor-role">超时</div></div>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🔧</span>FileTaskJob：扫描超时任务</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">job/FileTaskJob.java（真实）</span></div>
+<pre>
+<span class="code-anno">@Slf4j</span>
+<span class="code-anno">@Component</span>
+<span class="code-keyword">public class</span> <span class="code-class">FileTaskJob</span> {
+
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">FileTaskManager</span> fileTaskManager;
+
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">FileTaskConfig</span> fileTaskConfig;
+
+    <span class="code-anno">@Value</span>(<span class="code-string">"${file-upload.task.timeout:PT10M}"</span>)  <span class="code-comment">// 任务超时 10 分钟</span>
+    <span class="code-keyword">private</span> <span class="code-class">Duration</span> taskTimeout;
+
+    <span class="code-anno">@Value</span>(<span class="code-string">"${file-upload.temp-file.expire:PT24H}"</span>)  <span class="code-comment">// 临时文件保留 24h</span>
+    <span class="code-keyword">private</span> <span class="code-class">Duration</span> tempFileExpire;
+
+    <span class="code-comment">// ⭐ 用 XXL-Job 不是 @Scheduled</span>
+    <span class="code-anno">@XxlJob</span>(<span class="code-string">"fileUploadTaskTimeoutJob"</span>)
+    <span class="code-keyword">public void</span> <span class="code-function">scanAndHandleTimeoutTasks</span>() {
+        <span class="code-keyword">try</span> {
+            log.<span class="code-function">info</span>(<span class="code-string">"FileUploadTaskJob scanAndHandleTimeoutTasks start"</span>);
+
+            <span class="code-comment">// 3 种"未完结"状态</span>
+            <span class="code-class">List</span>&lt;<span class="code-class">Integer</span>&gt; processingStatusList = <span class="code-class">Arrays</span>.<span class="code-function">asList</span>(
+                    <span class="code-class">FileTaskStatusEnum</span>.QUEUED.<span class="code-function">getStatus</span>(),
+                    <span class="code-class">FileTaskStatusEnum</span>.DOWNLOADING.<span class="code-function">getStatus</span>(),
+                    <span class="code-class">FileTaskStatusEnum</span>.PROCESSING.<span class="code-function">getStatus</span>()
+            );
+            <span class="code-class">List</span>&lt;<span class="code-class">FileUploadTaskDO</span>&gt; processingTasks = fileTaskManager.<span class="code-function">getTaskByStatus</span>(processingStatusList);
+
+            <span class="code-keyword">if</span> (<span class="code-class">CollectionUtils</span>.<span class="code-function">isEmpty</span>(processingTasks)) {
+                <span class="code-keyword">return</span>;
+            }
+
+            <span class="code-keyword">int</span> timeoutCount = <span class="code-number">0</span>;
+            <span class="code-keyword">for</span> (<span class="code-class">FileUploadTaskDO</span> task : processingTasks) {
+                <span class="code-keyword">if</span> (fileTaskManager.<span class="code-function">isTimeout</span>(task, taskTimeout.<span class="code-function">toMinutes</span>())) {
+                    <span class="code-function">handleTimeoutTask</span>(task);
+                    timeoutCount++;
+                }
+            }
+        } <span class="code-keyword">catch</span> (<span class="code-class">Exception</span> e) {
+            log.<span class="code-function">error</span>(<span class="code-string">"FileUploadTaskJob error"</span>, e);
+        }
+    }
+}
+</pre>
+  </div>
+
+  <div class="callout callout-warning">
+    <span class="callout-icon">🚨</span>
+    <div class="callout-content">
+      <div class="callout-title">XXL-Job vs Spring @Scheduled</div>
+      <p>Vega 用 XXL-Job 而不是 Spring 原生 <code>@Scheduled</code>——为啥？<br>
+      ① <strong>集中调度</strong>：所有 Job 在 XXL-Job 控制台可视化管理，手动触发、失败重试、执行历史一目了然。<br>
+      ② <strong>分布式协调</strong>：多实例部署时 XXL-Job 负责只让一个实例跑，不需要自己写分布式锁。<br>
+      ③ <strong>动态调度</strong>：改执行时间不用改代码/重启（@Scheduled 必须重启）。<br>
+      ④ <strong>依赖编排</strong>：支持 Job 依赖链（A 跑完再跑 B）。<br>
+      这是大厂 B 端常见架构。Nova 是 C 端用 @Scheduled 就够，Vega 是 B 端批处理多必须上 XXL-Job。</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 4</div>
+    <div class="quiz-title">文件任务</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. 为啥 FileTaskJob 扫 3 个状态（QUEUED/DOWNLOADING/PROCESSING）？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>代码冗余</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>这 3 个都是"未完结"中间态，任务可能卡在任一阶段</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>数据库规范</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>性能</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>任务生命周期：QUEUED（刚创建）→ DOWNLOADING（从 COS 拉）→ PROCESSING（解析入库）→ SUCCESS/FAILED。<strong>任一中间态如果实例崩溃都可能卡住</strong>。Job 把 3 个中间态都扫，超过 10 分钟还没完结的标记为 TIMEOUT 并发告警。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. Vega 为啥选 XXL-Job 而不是 Spring @Scheduled？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>性能</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>集中调度 + 分布式协调 + 动态调度 + 依赖编排</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>团队偏好</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>历史遗留</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>B 端 11 个 Job 需要集中管理、多实例协调、动态改时间——@Scheduled 这些都不支持。XXL-Job 有可视化控制台，这在运维侧是巨大加分项。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m5">
+  <div class="module-kicker">Module 05</div>
+  <h1 class="module-title">XXL-Job 定时任务天团</h1>
+  <p class="module-intro">11 个 Job，每个干一类活。最典型的 <code>ContractMonitorJob</code>（11k chars）扫描超时合同。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🗂️</span>11 位天团成员</h2>
+  <table>
+    <tr><th>Job</th><th>职责</th></tr>
+    <tr><td><code>ContractMonitorJob</code></td><td>合同监控：扫描超时未签合同 + 数据一致性巡检</td></tr>
+    <tr><td><code>ContractSignedJob</code></td><td>签约流程驱动：推送给下游</td></tr>
+    <tr><td><code>FileTaskJob</code></td><td>文件任务超时扫描</td></tr>
+    <tr><td><code>DataAcquisitionJob</code></td><td>数据采集：定期拉取外部数据</td></tr>
+    <tr><td><code>BookSelectJob</code></td><td>选书数据同步</td></tr>
+    <tr><td><code>StatisticUpManJob</code></td><td>统计 UP 主数据</td></tr>
+    <tr><td><code>VideoNameFullSyncJob</code></td><td>视频名全量同步刷缓存</td></tr>
+    <tr><td><code>ArtifactProcessor</code> 系列</td><td>作品处理流水线</td></tr>
+  </table>
+
+  <h2 class="screen-heading"><span class="emoji">🔧</span>ContractMonitorJob 真实代码</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">job/ContractMonitorJob.java（片段）</span></div>
+<pre>
+<span class="code-anno">@Component</span>
+<span class="code-keyword">public class</span> <span class="code-class">ContractMonitorJob</span> {
+
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">UploaderWorksDriver</span> uploaderWorksDriver;   <span class="code-comment">// TRPC 驱动</span>
+
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">OrgCoopApplyDriver</span> orgCoopApplyDriver;      <span class="code-comment">// TRPC 驱动</span>
+
+    <span class="code-anno">@Resource</span>(name = <span class="code-string">"cacheRedisTemplate"</span>)
+    <span class="code-keyword">private</span> <span class="code-class">PeacockRedisTemplate</span> cacheRedisTemplate;
+
+    <span class="code-comment">// ⭐ 配置由 Peacock 热更新</span>
+    <span class="code-anno">@Resource</span>
+    <span class="code-keyword">private</span> <span class="code-class">ContractMonitorTemplate</span> contractMonitorTemplate;
+
+    <span class="code-anno">@XxlJob</span>(<span class="code-string">"contractMonitorJob"</span>)
+    <span class="code-keyword">public void</span> <span class="code-function">monitor</span>() {
+        <span class="code-comment">// ⭐ 从 XxlJobHelper 拿调度参数</span>
+        <span class="code-class">String</span> param = <span class="code-class">XxlJobHelper</span>.<span class="code-function">getJobParam</span>();
+        <span class="code-keyword">try</span> {
+            <span class="code-comment">// 1. 查最近一批合同</span>
+            <span class="code-class">WorksListQuery</span> query = <span class="code-keyword">new</span> <span class="code-class">WorksListQuery</span>();
+            query.<span class="code-function">setStatusList</span>(<span class="code-class">Arrays</span>.<span class="code-function">asList</span>(<span class="code-class">ContractStatus</span>.SIGNING));
+            <span class="code-class">PagedData</span>&lt;<span class="code-class">UploaderWorksDO</span>&gt; pagedData = uploaderWorksDriver.<span class="code-function">listByQuery</span>(query);
+
+            <span class="code-comment">// 2. 过滤"超过 N 天未签"的</span>
+            <span class="code-class">List</span>&lt;<span class="code-class">UploaderWorksDO</span>&gt; timeoutWorks = <span class="code-keyword">new</span> <span class="code-class">ArrayList</span>&lt;&gt;();
+            <span class="code-keyword">for</span> (<span class="code-class">UploaderWorksDO</span> work : pagedData.<span class="code-function">getData</span>()) {
+                <span class="code-keyword">if</span> (<span class="code-function">isOverDue</span>(work.<span class="code-function">getCreateTime</span>(), <span class="code-number">7</span>)) {
+                    timeoutWorks.<span class="code-function">add</span>(work);
+                }
+            }
+
+            <span class="code-comment">// 3. 用 StringSubstitutor 格式化告警内容</span>
+            <span class="code-class">Map</span>&lt;<span class="code-class">String</span>, <span class="code-class">String</span>&gt; vars = <span class="code-keyword">new</span> <span class="code-class">HashMap</span>&lt;&gt;();
+            vars.<span class="code-function">put</span>(<span class="code-string">"count"</span>, <span class="code-class">String</span>.<span class="code-function">valueOf</span>(timeoutWorks.<span class="code-function">size</span>()));
+            <span class="code-class">String</span> msg = <span class="code-class">StringSubstitutor</span>.<span class="code-function">replace</span>(contractMonitorTemplate.<span class="code-function">getTemplate</span>(), vars);
+
+            <span class="code-comment">// 4. 发 Peacock Alerter 告警</span>
+            <span class="code-class">Alerter</span>.<span class="code-function">markdown</span>(
+                <span class="code-keyword">new</span> <span class="code-class">MarkdownText</span>(<span class="code-string">"合同超时监控"</span>, <span class="code-class">MarkdownText</span>.<span class="code-class">Color</span>.WARNING),
+                msg, <span class="code-class">AlertScene</span>.<span class="code-function">direct</span>(<span class="code-keyword">new</span> <span class="code-class">SceneID</span>(<span class="code-string">"contract-alert"</span>)));
+        } <span class="code-keyword">catch</span> (<span class="code-class">Exception</span> e) {
+            <span class="code-class">Logs</span>.<span class="code-function">error</span>(<span class="code-string">"ContractMonitorJob error"</span>, e);
+            <span class="code-class">XxlJobHelper</span>.<span class="code-function">handleFail</span>(<span class="code-class">ExceptionAid</span>.<span class="code-function">getStackTrace</span>(e));
+        }
+    }
+}
+</pre>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-content">
+      <div class="callout-title">XxlJobHelper.getJobParam() 的妙用</div>
+      <p>XXL-Job 控制台可以给 Job 传参数，代码里用 <code>XxlJobHelper.getJobParam()</code> 拿到。用途：<br>
+      ① <strong>灰度启动</strong>：参数传 <code>dryRun=true</code>，只扫不告警，验证逻辑正确性。<br>
+      ② <strong>指定范围</strong>：参数传 <code>orgId=123</code>，只处理特定机构的数据。<br>
+      ③ <strong>手动触发</strong>：运营平台触发时传 <code>force=true</code> 跳过 Redis 缓存强制从 DB 拉。<br>
+      这种"参数化任务"比 @Scheduled 灵活很多。</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 5</div>
+    <div class="quiz-title">XXL-Job</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. ContractMonitorJob 用 <code>XxlJobHelper.getJobParam()</code> 是为了啥？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>没啥用</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>从调度控制台拿运行时参数（灰度/范围/手动触发特殊模式）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>获取 Job ID</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>性能</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>XXL-Job 控制台可以给任务传字符串参数。代码 <code>XxlJobHelper.getJobParam()</code> 拿到后 parse 用来控制行为。<strong>让 Job 支持"参数化运行"</strong>，这是比 @Scheduled 强大的地方。</div>
+    </div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">2. <code>XxlJobHelper.handleFail(stackTrace)</code> 干嘛？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>打日志</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>告诉 XXL-Job 调度器这次执行失败（控制台会显示失败，支持自动重试）</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>终止 JVM</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>发邮件</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>如果方法抛异常 XXL-Job 可能识别为成功，调 <code>handleFail</code> 显式标记失败，控制台能看到红色状态，也触发重试/告警机制。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m6">
+  <div class="module-kicker">Module 06</div>
+  <h1 class="module-title">告警 + 监控</h1>
+  <p class="module-intro">Vega 到处用 <code>Alerter.markdown()</code> 发告警——这是 Peacock 框架自带的告警 API，直接推送到钉钉/企微。</p>
+
+  <h2 class="screen-heading"><span class="emoji">🚨</span>Alerter 用法模板</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Java</span><span class="code-file">标准告警模板</span></div>
+<pre>
+<span class="code-comment">// 3 种颜色对应 3 种严重级别</span>
+<span class="code-class">Alerter</span>.<span class="code-function">markdown</span>(
+    <span class="code-keyword">new</span> <span class="code-class">MarkdownText</span>(<span class="code-string">"合同回调失败"</span>, <span class="code-class">MarkdownText</span>.<span class="code-class">Color</span>.RED),       <span class="code-comment">// 红:严重</span>
+    e.<span class="code-function">getMessage</span>(),
+    <span class="code-class">AlertScene</span>.<span class="code-function">direct</span>(<span class="code-keyword">new</span> <span class="code-class">SceneID</span>(alerterHelper.<span class="code-function">getDefaultSceneId</span>())));
+
+<span class="code-class">Alerter</span>.<span class="code-function">markdown</span>(
+    <span class="code-keyword">new</span> <span class="code-class">MarkdownText</span>(<span class="code-string">"合同超时监控"</span>, <span class="code-class">MarkdownText</span>.<span class="code-class">Color</span>.WARNING),   <span class="code-comment">// 黄:警告</span>
+    msg, <span class="code-class">AlertScene</span>.<span class="code-function">direct</span>(<span class="code-keyword">new</span> <span class="code-class">SceneID</span>(<span class="code-string">"contract-alert"</span>)));
+
+<span class="code-class">Alerter</span>.<span class="code-function">markdown</span>(
+    <span class="code-keyword">new</span> <span class="code-class">MarkdownText</span>(<span class="code-string">"今日签约统计"</span>, <span class="code-class">MarkdownText</span>.<span class="code-class">Color</span>.INFO),      <span class="code-comment">// 蓝:信息</span>
+    statsText, <span class="code-class">AlertScene</span>.<span class="code-function">direct</span>(...));
+</pre>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🎯</span>AlertScene 的设计</h2>
+  <p><code>AlertScene</code> 决定告警<strong>发到哪个群</strong>、<strong>发给谁</strong>、<strong>按什么策略聚合</strong>。这是运维侧治理告警的关键抽象。</p>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-content">
+      <div class="callout-title">告警治理原则</div>
+      <p>① <strong>分场景</strong>：合同相关告警发"合同群"，结算告警发"财务群"——<code>SceneID</code> 区分。<br>
+      ② <strong>分级别</strong>：RED/WARNING/INFO 三色对应不同群或不同 @ 范围。<br>
+      ③ <strong>聚合防骚扰</strong>：同一告警 1 分钟内只发 1 次（通过 SceneID 聚合）。<br>
+      ④ <strong>告警即日志</strong>：所有告警自动写入日志，可追溯。<br>
+      这是大厂级告警体系的最佳实践，远好于"全部 @all"式的告警。</p>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 6</div>
+    <div class="quiz-title">告警</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. 为啥要用 <code>AlertScene</code> 而不是直接发到所有群？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>性能</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>分场景治理：不同业务发不同群、不同严重度 @ 不同人、同场景自动聚合防骚扰</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>好玩</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>强制要求</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>经验之谈——项目大了后"全员告警"就是噪音灾难。SceneID 抽象让每类告警有专门群 + 聚合策略。</div>
+    </div>
+  </div>
+</section>
+
+<section class="module" id="m7">
+  <div class="module-kicker">Module 07</div>
+  <h1 class="module-title">全局架构鸟瞰</h1>
+
+  <h2 class="screen-heading"><span class="emoji">🌐</span>Vega 全景</h2>
+
+  <div class="flow-container">
+    <div class="flow-actors">
+      <div class="flow-actor"><div class="flow-actor-icon">👨‍💼</div><div class="flow-actor-name">运营</div><div class="flow-actor-role">Web UI</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🛡️</div><div class="flow-actor-name">Security</div><div class="flow-actor-role">角色+权限</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🎤</div><div class="flow-actor-name">Controller</div><div class="flow-actor-role">21 个</div></div>
+    </div>
+  </div>
+
+  <div class="flow-container">
+    <div class="flow-actors">
+      <div class="flow-actor"><div class="flow-actor-icon">⏰</div><div class="flow-actor-name">XXL-Job</div><div class="flow-actor-role">11 个 Job</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🔧</div><div class="flow-actor-name">Service+Mgr</div><div class="flow-actor-role">50+39</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🚗</div><div class="flow-actor-name">Peacock Driver</div><div class="flow-actor-role">TRPC 共享层</div></div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-actor"><div class="flow-actor-icon">🚨</div><div class="flow-actor-name">Alerter</div><div class="flow-actor-role">钉钉/企微</div></div>
+    </div>
+  </div>
+
+  <h2 class="screen-heading"><span class="emoji">🎯</span>Vega 的 5 个关键抽象</h2>
+  <ol>
+    <li><strong>Spring Security + CustomUserDetailsService</strong> — 角色（ROLE_ 前缀）+ 细粒度权限分层</li>
+    <li><strong>ContractController @SkipLogin + HMAC</strong> — 外部回调免登录 + 签名校验 + 错误分级</li>
+    <li><strong>FileTaskJob 三状态超时扫描</strong> — QUEUED/DOWNLOADING/PROCESSING 都可能卡住</li>
+    <li><strong>XXL-Job @XxlJob + XxlJobHelper</strong> — 集中调度 + 参数化 + 失败显式标记</li>
+    <li><strong>Peacock Alerter + SceneID</strong> — 告警分场景治理</li>
+  </ol>
+
+  <h2 class="screen-heading"><span class="emoji">🎓</span>面试开场</h2>
+  <div class="chat-window">
+    <div class="chat-message">
+      <div class="chat-avatar">👨‍💻</div>
+      <div>
+        <div class="chat-sender">你</div>
+        <div class="chat-bubble">"Vega 是阅文漫剧运营 B 端后台，584 个源文件，比 Nova 规模大 2 倍。<br><br>
+        <strong>最有技术含量</strong>的三块：<br>
+        ① 合同 OA 回调：<code>@SkipLogin</code> 免登录 + HMAC 签名 + Alerter 告警 + 错误分级<br>
+        ② 文件任务流水线：QUEUED→DOWNLOADING→PROCESSING 三状态 + XXL-Job 超时扫描<br>
+        ③ Spring Security 角色+权限分层：ROLE_ 前缀、细粒度 authority、<code>@PreAuthorize</code><br><br>
+        另外有 11 个 XXL-Job + 告警体系（Peacock Alerter + SceneID 分场景）。"</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz">
+    <div class="quiz-kicker">🧪 检验理解 · Module 7</div>
+    <div class="quiz-title">综合</div>
+
+    <div class="quiz-q">
+      <div class="quiz-question">1. Vega 和 Nova 最大的差异是什么？</div>
+      <div class="quiz-options">
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">A.</span>编程语言</div>
+        <div class="quiz-option" data-correct="true"><span class="quiz-option-marker">B.</span>面向 B 端 vs C 端：Vega 有大量 XXL-Job 批处理、Spring Security 权限、告警体系</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">C.</span>技术栈</div>
+        <div class="quiz-option" data-correct="false"><span class="quiz-option-marker">D.</span>没区别</div>
+      </div>
+      <div class="quiz-explanation"><strong>答案 B。</strong>Nova 是 C 端面向 UP 主（简单权限、少批处理），Vega 是 B 端面向运营（复杂权限、多批处理、需告警）。"B 端多 Job"、"C 端多 API"是通用规律。</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>📘 <strong>Vega 交互式代码课程 · 深度真实代码版 v2</strong> · 完结撒花 🎉</p>
+  <p>7 个模块刷完，面试讲 B 端后台不虚。</p>
+  <p style="margin-top: 14px; font-size: 12px; color: var(--color-text-muted);">基于 repomix 真实源码生成 · Claude Opus 4.7 1M · v2 深度版</p>
+</footer>
+
+</div>
+
+<script>
+// Quiz 交互
+document.querySelectorAll('.quiz-q').forEach(q => {
+  const options = q.querySelectorAll('.quiz-option');
+  const explanation = q.querySelector('.quiz-explanation');
+  options.forEach(opt => {
+    opt.addEventListener('click', () => {
+      if (q.dataset.answered) return;
+      q.dataset.answered = '1';
+      const isCorrect = opt.dataset.correct === 'true';
+      opt.classList.add(isCorrect ? 'correct' : 'wrong');
+      if (!isCorrect) {
+        const right = q.querySelector('.quiz-option[data-correct="true"]');
+        if (right) right.classList.add('correct');
+      }
+      if (explanation) explanation.classList.add('visible');
+    });
+  });
+});
+
+// 导航高亮
+const sections = document.querySelectorAll('.module');
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.offsetTop - 100;
+    if (window.scrollY >= top) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// 平滑滚动
+navLinks.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) window.scrollTo({ top: target.offsetTop - 60, behavior: 'smooth' });
+  });
+});
+
+// 入场动画(IntersectionObserver 触发)
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('animate-in');
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.callout, .flow-container, .code-block, .file-tree, .chat-window, .quiz, table').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
