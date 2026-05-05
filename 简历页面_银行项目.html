@@ -1154,7 +1154,7 @@ footer a {
                     <div class="content">
                         基于 <code>Liteflow</code> 抽象审批流的节点定义（<code>NodeComponent</code>），不同岗位的审批逻辑通过 SPI 注册；
                         使用 <code>策略模式</code> 区分股权 / 不动产 / 应收账款等不同押品类型的估值算法；
-                        授信额度的<strong>幂等校验</strong>用 Redis 分布式锁 + DB 唯一索引双保险，防止并发申请导致超额。
+                        授信额度的<strong>幂等校验</strong>用 DB 唯一索引（<code>uk_cust_ent_active</code>）兜底，并发申请时让 DB 抛 <code>DuplicateKeyException</code>，应用层捕获转成业务异常返回。
                     </div>
                 </div>
 
@@ -1353,7 +1353,7 @@ footer a {
 }</pre>
                         </div>
 
-                        <h5>2. 授信申请提交（幂等校验 + 分布式锁）</h5>
+                        <h5>2. 授信申请提交（幂等校验 + DB 唯一索引兜底）</h5>
                         <div class="code-block">
                             <span class="lang-tag">Java</span>
 <pre><span class="ano">@Service</span>
@@ -1361,38 +1361,34 @@ footer a {
 
     <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">EsopCreditApplyMapper</span> applyMapper;
     <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">CollateralEvaluatorFactory</span> evaluatorFactory;
-    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">RedisLockClient</span> lockClient;
-    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">LiteflowEngine</span> liteflowEngine;
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">FlowExecutor</span> flowExecutor;
 
     <span class="ano">@Transactional</span>(rollbackFor = <span class="typ">Exception</span>.<span class="kw">class</span>)
     <span class="kw">public</span> <span class="typ">ApplyResult</span> <span class="fn">submit</span>(<span class="typ">EsopApplyRequest</span> req) {
-        <span class="com">// 1. 分布式锁：同客户同企业并发提交防重</span>
-        <span class="typ">String</span> lockKey = <span class="str">"esop:apply:"</span> + req.<span class="fn">getCustomerId</span>() + <span class="str">":"</span> + req.<span class="fn">getEnterpriseId</span>();
-        <span class="kw">return</span> lockClient.<span class="fn">execute</span>(lockKey, <span class="num">10</span>, <span class="typ">TimeUnit</span>.<span class="var">SECONDS</span>, () -&gt; {
+        <span class="com">// 1. 幂等校验：同客户同企业进行中的申请最多 1 条（DB 唯一索引兜底）</span>
+        <span class="typ">EsopCreditApply</span> existing = applyMapper.<span class="fn">selectActiveByCustomerEnterprise</span>(
+            req.<span class="fn">getCustomerId</span>(), req.<span class="fn">getEnterpriseId</span>());
+        <span class="kw">if</span> (existing != <span class="kw">null</span>) {
+            <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"已有进行中的申请: "</span> + existing.<span class="fn">getApplyNo</span>());
+        }
 
-            <span class="com">// 2. DB 唯一索引兜底：同客户同企业进行中的申请最多 1 条</span>
-            <span class="typ">EsopCreditApply</span> existing = applyMapper.<span class="fn">selectActiveByCustomerEnterprise</span>(
-                req.<span class="fn">getCustomerId</span>(), req.<span class="fn">getEnterpriseId</span>());
-            <span class="kw">if</span> (existing != <span class="kw">null</span>) {
-                <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"已有进行中的申请: "</span> + existing.<span class="fn">getApplyNo</span>());
-            }
+        <span class="com">// 2. 押品估值（策略路由）</span>
+        <span class="typ">CollateralEvaluator</span> evaluator = evaluatorFactory.<span class="fn">get</span>(req.<span class="fn">getCollateralType</span>());
+        <span class="typ">EvaluationResult</span> eval = evaluator.<span class="fn">evaluate</span>(req.<span class="fn">toEvalInput</span>());
 
-            <span class="com">// 3. 押品估值（策略路由）</span>
-            <span class="typ">CollateralEvaluator</span> evaluator = evaluatorFactory.<span class="fn">get</span>(req.<span class="fn">getCollateralType</span>());
-            <span class="typ">EvaluationResult</span> eval = evaluator.<span class="fn">evaluate</span>(req.<span class="fn">toEvalInput</span>());
+        <span class="com">// 3. 申请金额校验：不能超过押品可贷金额</span>
+        <span class="kw">if</span> (req.<span class="fn">getApplyAmount</span>().<span class="fn">compareTo</span>(eval.<span class="fn">getCreditValue</span>()) &gt; <span class="num">0</span>) {
+            <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"申请金额超过押品可贷金额"</span>);
+        }
 
-            <span class="com">// 4. 申请金额校验：不能超过押品可贷金额</span>
-            <span class="kw">if</span> (req.<span class="fn">getApplyAmount</span>().<span class="fn">compareTo</span>(eval.<span class="fn">getCreditValue</span>()) &gt; <span class="num">0</span>) {
-                <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"申请金额超过押品可贷金额"</span>);
-            }
+        <span class="com">// 4. 关联授信合并：同客户在本行所有授信合计不能超 200 万</span>
+        <span class="typ">BigDecimal</span> totalCredit = applyMapper.<span class="fn">sumActiveCreditByCustomer</span>(req.<span class="fn">getCustomerId</span>());
+        <span class="kw">if</span> (totalCredit.<span class="fn">add</span>(req.<span class="fn">getApplyAmount</span>()).<span class="fn">compareTo</span>(<span class="typ">SINGLE_LIMIT</span>) &gt; <span class="num">0</span>) {
+            <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"超过单户授信上限 200 万"</span>);
+        }
 
-            <span class="com">// 5. 关联授信合并：同客户在本行所有授信合计不能超 200 万</span>
-            <span class="typ">BigDecimal</span> totalCredit = applyMapper.<span class="fn">sumActiveCreditByCustomer</span>(req.<span class="fn">getCustomerId</span>());
-            <span class="kw">if</span> (totalCredit.<span class="fn">add</span>(req.<span class="fn">getApplyAmount</span>()).<span class="fn">compareTo</span>(<span class="typ">SINGLE_LIMIT</span>) &gt; <span class="num">0</span>) {
-                <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"超过单户授信上限 200 万"</span>);
-            }
-
-            <span class="com">// 6. 落库申请</span>
+        <span class="kw">try</span> {
+            <span class="com">// 5. 落库申请（DB 唯一索引 uk_cust_ent_active 是真正的并发兜底）</span>
             <span class="typ">EsopCreditApply</span> apply = <span class="typ">EsopCreditApply</span>.<span class="fn">builder</span>()
                 .<span class="fn">applyNo</span>(<span class="fn">generateApplyNo</span>())
                 .<span class="fn">customerId</span>(req.<span class="fn">getCustomerId</span>())
@@ -1404,11 +1400,15 @@ footer a {
                 .<span class="fn">build</span>();
             applyMapper.<span class="fn">insert</span>(apply);
 
-            <span class="com">// 7. 启动审批流（异步）</span>
-            liteflowEngine.<span class="fn">execute2Future</span>(<span class="str">"esopApprovalChain"</span>, apply.<span class="fn">getId</span>());
+            <span class="com">// 6. 启动审批流</span>
+            flowExecutor.<span class="fn">execute2Resp</span>(<span class="str">"esopApprovalChain"</span>, apply.<span class="fn">getId</span>());
 
             <span class="kw">return</span> <span class="typ">ApplyResult</span>.<span class="fn">success</span>(apply.<span class="fn">getApplyNo</span>());
-        });
+
+        } <span class="kw">catch</span> (<span class="typ">DuplicateKeyException</span> e) {
+            <span class="com">// 唯一索引冲突：高并发下两个事务同时通过了第 1 步校验，DB 兜底拦下来</span>
+            <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"并发提交冲突，请刷新后重试"</span>);
+        }
     }
 }</pre>
                         </div>
@@ -1524,13 +1524,6 @@ footer a {
                             <li><code>uk_cust_ent_active (customer_id, enterprise_id, status)</code>：幂等约束，DB 层兜底</li>
                             <li><code>idx_apply_time (apply_id, action_time)</code>：审批流水按申请单 + 时间正序展示</li>
                         </ul>
-
-                        <h5>主从分离 + 读写比</h5>
-                        <p>查询多写少的报表场景走从库（最终一致），授信申请这种强一致走主库。配置在 MyBatis-Plus DataSource 多数据源里：</p>
-                        <ul>
-                            <li>主库：授信提交、审批操作、放款（强一致写）</li>
-                            <li>从库：审批待办列表、报表查询（容忍秒级延迟）</li>
-                        </ul>
                     </div>
 
                     <div class="detail-panel" id="db-config">
@@ -1585,10 +1578,9 @@ footer a {
                             <span class="lang-tag">application-sit.yml</span>
 <pre><span class="kw">spring:</span>
   <span class="kw">datasource:</span>
-    <span class="kw">master:</span>
-      <span class="kw">url:</span> <span class="str">jdbc:mysql://10.10.1.50:3306/esop_sit</span>
-      <span class="kw">username:</span> <span class="str">esop_app</span>
-      <span class="com"># 密码不写在文件里！通过启动参数注入</span>
+    <span class="kw">url:</span> <span class="str">jdbc:mysql://10.10.1.50:3306/esop_sit</span>
+    <span class="kw">username:</span> <span class="str">esop_app</span>
+    <span class="com"># 密码不写在文件里！通过启动参数注入</span>
 
 <span class="com"># 核心账务系统对接（SIT 是测试环境地址）</span>
 <span class="kw">core-banking:</span>
@@ -1611,8 +1603,7 @@ footer a {
                             <span class="lang-tag">application.yml 占位</span>
 <pre><span class="kw">spring:</span>
   <span class="kw">datasource:</span>
-    <span class="kw">master:</span>
-      <span class="kw">password:</span> <span class="str">${DB_PASSWORD}</span>      <span class="com"># 启动时从 -D 参数读</span>
+    <span class="kw">password:</span> <span class="str">${DB_PASSWORD}</span>      <span class="com"># 启动时从 -D 参数读</span>
 
 <span class="kw">core-banking:</span>
   <span class="kw">api-key:</span> <span class="str">${CORE_API_KEY}</span></pre>
@@ -1677,67 +1668,7 @@ footer a {
                     </div>
 
                     <div class="detail-panel" id="db-code">
-                        <h5>1. MyBatis 多数据源（主从分离）</h5>
-                        <div class="code-block">
-                            <span class="lang-tag">Java</span>
-<pre><span class="ano">@Configuration</span>
-<span class="kw">public class</span> <span class="typ">DataSourceConfig</span> {
-
-    <span class="ano">@Bean</span>
-    <span class="ano">@ConfigurationProperties</span>(<span class="str">"spring.datasource.master"</span>)
-    <span class="kw">public</span> <span class="typ">DataSource</span> <span class="fn">masterDataSource</span>() {
-        <span class="kw">return</span> <span class="typ">DataSourceBuilder</span>.<span class="fn">create</span>().<span class="fn">build</span>();
-    }
-
-    <span class="ano">@Bean</span>
-    <span class="ano">@ConfigurationProperties</span>(<span class="str">"spring.datasource.slave"</span>)
-    <span class="kw">public</span> <span class="typ">DataSource</span> <span class="fn">slaveDataSource</span>() {
-        <span class="kw">return</span> <span class="typ">DataSourceBuilder</span>.<span class="fn">create</span>().<span class="fn">build</span>();
-    }
-
-    <span class="ano">@Bean</span>
-    <span class="kw">public</span> <span class="typ">DataSource</span> <span class="fn">routingDataSource</span>(<span class="ano">@Qualifier</span>(<span class="str">"masterDataSource"</span>) <span class="typ">DataSource</span> master,
-                                            <span class="ano">@Qualifier</span>(<span class="str">"slaveDataSource"</span>) <span class="typ">DataSource</span> slave) {
-        <span class="typ">DynamicDataSource</span> ds = <span class="kw">new</span> <span class="typ">DynamicDataSource</span>();
-        <span class="typ">Map</span>&lt;<span class="typ">Object</span>, <span class="typ">Object</span>&gt; map = <span class="kw">new</span> <span class="typ">HashMap</span>&lt;&gt;();
-        map.<span class="fn">put</span>(<span class="str">"master"</span>, master);
-        map.<span class="fn">put</span>(<span class="str">"slave"</span>, slave);
-        ds.<span class="fn">setTargetDataSources</span>(map);
-        ds.<span class="fn">setDefaultTargetDataSource</span>(master);
-        <span class="kw">return</span> ds;
-    }
-}
-
-<span class="com">/** 注解切换数据源 */</span>
-<span class="ano">@Target</span>({<span class="typ">ElementType</span>.<span class="var">METHOD</span>})
-<span class="ano">@Retention</span>(<span class="typ">RetentionPolicy</span>.<span class="var">RUNTIME</span>)
-<span class="kw">public @interface</span> <span class="typ">DataSourceType</span> {
-    <span class="typ">String</span> <span class="fn">value</span>() <span class="kw">default</span> <span class="str">"master"</span>;
-}
-
-<span class="com">/** AOP 切换 */</span>
-<span class="ano">@Aspect</span>
-<span class="ano">@Component</span>
-<span class="kw">public class</span> <span class="typ">DataSourceAspect</span> {
-    <span class="ano">@Around</span>(<span class="str">"@annotation(dst)"</span>)
-    <span class="kw">public</span> <span class="typ">Object</span> <span class="fn">around</span>(<span class="typ">ProceedingJoinPoint</span> pjp, <span class="typ">DataSourceType</span> dst) <span class="kw">throws</span> <span class="typ">Throwable</span> {
-        <span class="kw">try</span> {
-            <span class="typ">DynamicDataSource</span>.<span class="fn">setKey</span>(dst.<span class="fn">value</span>());
-            <span class="kw">return</span> pjp.<span class="fn">proceed</span>();
-        } <span class="kw">finally</span> {
-            <span class="typ">DynamicDataSource</span>.<span class="fn">clear</span>();
-        }
-    }
-}
-
-<span class="com">// 使用</span>
-<span class="ano">@DataSourceType</span>(<span class="str">"slave"</span>)
-<span class="kw">public</span> <span class="typ">List</span>&lt;<span class="typ">EsopApplyDTO</span>&gt; <span class="fn">queryApprovalList</span>(<span class="typ">QueryParam</span> param) {
-    <span class="kw">return</span> applyMapper.<span class="fn">selectByCondition</span>(param);   <span class="com">// 走从库</span>
-}</pre>
-                        </div>
-
-                        <h5>2. 资金流水的乐观锁更新</h5>
+                        <h5>1. 资金流水的乐观锁更新</h5>
                         <div class="code-block">
                             <span class="lang-tag">Java</span>
 <pre><span class="ano">@Service</span>
@@ -2146,7 +2077,7 @@ footer a {
                         基于 <code>Liteflow</code> 抽象审批流：<br>
                         <strong>节点定义</strong>：每个审批节点封装为 <code>NodeComponent</code>，节点内部封装"通过 / 拒绝 / 退回 / 加签"4 种行为；<br>
                         <strong>流程配置</strong>：审批流定义放在项目 <code>resources/flow/</code> 目录下的 XML 文件里，<strong>调整审批顺序需要走发版流程</strong>（银行管控严格，配置变更视为发版）；<br>
-                        <strong>动态分派</strong>：基于规则引擎（QLExpress）实现"金额 < 100w 跳过总行审批"等动态分派；<br>
+                        <strong>动态分派</strong>：通过<strong>金额阈值的硬编码判断 + 配置化阈值</strong>实现"金额 < 100w 跳过总行审批"等动态分派；<br>
                         <strong>审计追溯</strong>：每个节点的审批结果、审批人、审批时间、备注全部入 <code>approval_history</code> 表，<strong>满足银监会审计要求</strong>。
                     </div>
                 </div>
@@ -2180,7 +2111,7 @@ footer a {
                             <li><strong>ADJUST 改额</strong>：调整批准金额（不能高于申请金额）</li>
                         </ul>
 
-                        <h5>动态分派规则（QLExpress）</h5>
+                        <h5>动态分派规则（按金额阈值硬编码）</h5>
                         <p>金额 + 客户级别 + 产品类型 联合决定走哪些节点：</p>
                         <ul>
                             <li>金额 &lt; 30 万 + 优质客户：CM → HQ_RISK（直跳总行）</li>
@@ -2377,46 +2308,37 @@ footer a {
 }</pre>
                         </div>
 
-                        <h5>3. 动态路由选择器（SWITCH）</h5>
+                        <h5>3. 动态路由选择器（按金额阈值 if-else）</h5>
                         <div class="code-block">
                             <span class="lang-tag">Java</span>
 <pre><span class="ano">@LiteflowComponent</span>(<span class="str">"approvalRouteSelector"</span>)
 <span class="kw">public class</span> <span class="typ">ApprovalRouteSelector</span> <span class="kw">extends</span> <span class="typ">NodeSwitchComponent</span> {
 
     <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">EsopBusinessConfig</span> config;
-    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">QlExpressEngine</span> qlEngine;
+    <span class="ano">@Resource</span> <span class="kw">private</span> <span class="typ">EsopCreditApplyMapper</span> applyMapper;
 
     <span class="ano">@Override</span>
     <span class="kw">public</span> <span class="typ">String</span> <span class="fn">processSwitch</span>() <span class="kw">throws</span> <span class="typ">Exception</span> {
         <span class="typ">Long</span> applyId = <span class="kw">this</span>.<span class="fn">getRequestData</span>();
         <span class="typ">EsopCreditApply</span> apply = applyMapper.<span class="fn">selectById</span>(applyId);
+        <span class="typ">BigDecimal</span> amount = apply.<span class="fn">getApplyAmount</span>();
 
-        <span class="com">// 取动态规则配置（properties 加载）</span>
-        <span class="typ">String</span> ruleExpr = config.<span class="fn">getRouteRuleExpression</span>();
-        <span class="com">// 例: "amount &lt; 300000 ? 'small' :</span>
-        <span class="com">//      amount &lt; 1000000 ? 'mid' :</span>
-        <span class="com">//      amount &lt; 2000000 ? 'large' : 'ultra'"</span>
-
-        <span class="typ">Map</span>&lt;<span class="typ">String</span>, <span class="typ">Object</span>&gt; ctx = <span class="kw">new</span> <span class="typ">HashMap</span>&lt;&gt;();
-        ctx.<span class="fn">put</span>(<span class="str">"amount"</span>, apply.<span class="fn">getApplyAmount</span>());
-        ctx.<span class="fn">put</span>(<span class="str">"customerLevel"</span>, apply.<span class="fn">getCustomerLevel</span>());
-        ctx.<span class="fn">put</span>(<span class="str">"collateralType"</span>, apply.<span class="fn">getCollateralType</span>());
-        ctx.<span class="fn">put</span>(<span class="str">"isRestricted"</span>, apply.<span class="fn">isRestrictedCollateral</span>());
-
-        <span class="typ">String</span> route = (<span class="typ">String</span>) qlEngine.<span class="fn">execute</span>(ruleExpr, ctx);
-
-        <span class="com">// 强制规则：禁售期股权押品强制走信贷委</span>
-        <span class="kw">if</span> (apply.<span class="fn">isRestrictedCollateral</span>() &amp;&amp; <span class="str">"small"</span>.<span class="fn">equals</span>(route)) {
-            route = <span class="str">"large"</span>;
+        <span class="com">// 强制规则：禁售期股权押品强制走信贷委审批</span>
+        <span class="kw">if</span> (apply.<span class="fn">isRestrictedCollateral</span>()) {
+            <span class="kw">return</span> <span class="str">"largeAmountChain"</span>;
         }
 
-        <span class="kw">switch</span> (route) {
-            <span class="kw">case</span> <span class="str">"small"</span>:  <span class="kw">return</span> <span class="str">"smallAmountChain"</span>;
-            <span class="kw">case</span> <span class="str">"mid"</span>:    <span class="kw">return</span> <span class="str">"midAmountChain"</span>;
-            <span class="kw">case</span> <span class="str">"large"</span>:  <span class="kw">return</span> <span class="str">"largeAmountChain"</span>;
-            <span class="kw">case</span> <span class="str">"ultra"</span>:  <span class="kw">return</span> <span class="str">"ultraAmountChain"</span>;
-            <span class="kw">default</span>: <span class="kw">throw new</span> <span class="typ">BizException</span>(<span class="str">"未知路由: "</span> + route);
+        <span class="com">// 按金额阈值路由（阈值从 properties 取，便于调整）</span>
+        <span class="kw">if</span> (amount.<span class="fn">compareTo</span>(config.<span class="fn">getSmallThreshold</span>()) &lt; <span class="num">0</span>) {
+            <span class="kw">return</span> <span class="str">"smallAmountChain"</span>;        <span class="com">// &lt; 30 万</span>
         }
+        <span class="kw">if</span> (amount.<span class="fn">compareTo</span>(config.<span class="fn">getMidThreshold</span>()) &lt; <span class="num">0</span>) {
+            <span class="kw">return</span> <span class="str">"midAmountChain"</span>;          <span class="com">// 30 万 ~ 100 万</span>
+        }
+        <span class="kw">if</span> (amount.<span class="fn">compareTo</span>(config.<span class="fn">getLargeThreshold</span>()) &lt; <span class="num">0</span>) {
+            <span class="kw">return</span> <span class="str">"largeAmountChain"</span>;        <span class="com">// 100 万 ~ 200 万</span>
+        }
+        <span class="kw">return</span> <span class="str">"ultraAmountChain"</span>;            <span class="com">// &gt; 200 万</span>
     }
 }</pre>
                         </div>
@@ -2564,12 +2486,12 @@ footer a {
 
         <div class="tech-grid">
             <div class="tech-card">
-                <div class="tech-name">Spring Cloud</div>
-                <div class="tech-role">微服务框架</div>
+                <div class="tech-name">Spring Boot</div>
+                <div class="tech-role">2.x 单体应用</div>
             </div>
             <div class="tech-card">
                 <div class="tech-name">Feign</div>
-                <div class="tech-role">声明式 RPC</div>
+                <div class="tech-role">声明式 HTTP 客户端</div>
             </div>
             <div class="tech-card">
                 <div class="tech-name">MySQL</div>
@@ -2581,7 +2503,7 @@ footer a {
             </div>
             <div class="tech-card">
                 <div class="tech-name">Redis</div>
-                <div class="tech-role">分布式锁 · 缓存</div>
+                <div class="tech-role">缓存 · 频控</div>
             </div>
             <div class="tech-card">
                 <div class="tech-name">Liteflow</div>
@@ -2594,10 +2516,6 @@ footer a {
             <div class="tech-card">
                 <div class="tech-name">Spring Profile</div>
                 <div class="tech-role">多环境 properties</div>
-            </div>
-            <div class="tech-card">
-                <div class="tech-name">QLExpress</div>
-                <div class="tech-role">规则引擎</div>
             </div>
             <div class="tech-card">
                 <div class="tech-name">BigDecimal</div>
@@ -2772,10 +2690,26 @@ footer a {
 
         </div>
 
+        <!-- 主动 FAQ：把面试官的疑问先答了 -->
+        <div class="transfer-intro" style="margin-top:36px; border-color:var(--primary);">
+            <h3>🙋 主动 FAQ：你可能想问的几个问题</h3>
+            <p style="margin-top:14px;"><strong style="color:var(--primary);">Q1：你们没用 Spring Cloud 全家桶吗？</strong></p>
+            <p>没用。普惠信贷系统是<strong>Spring Boot 单体</strong>，<strong>只单独引入了 Feign 做声明式 HTTP 客户端</strong>调下游（核心账务 / 押品估值），没有用 Eureka / Ribbon / Hystrix / Gateway。原因：① 行内服务地址固定，配在 properties 里直接调，不需要服务发现；② 流量都在内网，没有公网网关需求；③ 银行新组件引入要走 3~6 个月技术评审，老业务系统倾向于"能用就行"。</p>
+
+            <p style="margin-top:14px;"><strong style="color:var(--primary);">Q2：所以你不会 Spring Cloud？</strong></p>
+            <p>实事求是说，<strong>Eureka / Hystrix / Gateway 这些组件我没在生产环境用过</strong>，只是看过原理。我能讲清楚 Feign 的<strong>声明式接口、拦截器、自定义编码器</strong>这部分，因为是真的在用；但如果问到 Eureka 的 Renew 机制 / Hystrix 线程隔离 / Gateway 过滤器链这种细节，我会如实说"没在项目里用过"。</p>
+
+            <p style="margin-top:14px;"><strong style="color:var(--primary);">Q3：那你们怎么做服务治理？</strong></p>
+            <p>银行老项目<strong>不太需要"治理"</strong>——服务列表是<strong>稳定的、固定的、可枚举的</strong>（核心账务 1 个、押品估值 1 个、CRM 1 个）。超时重试是写在 Feign 配置里的，熔断降级是<strong>业务层做兜底</strong>（下游挂了走"人工补录"分支）。这跟互联网"几百个服务实例动态注册发现"是<strong>两种世界</strong>。</p>
+
+            <p style="margin-top:14px;"><strong style="color:var(--primary);">Q4：到阅文之后接触到什么新东西？</strong></p>
+            <p>阅文用的是<strong>腾讯集团栈</strong>：TRPC（替代 Feign）+ Polaris（替代 Eureka，集团内部的服务注册/治理）+ 七彩石（配置中心，银行没用过）+ 123 平台（容器，类似 K8s）。这些都是入职后<strong>从零学起来的</strong>，集团有完整的脚手架（Peacock）封装好了，上手不算难。</p>
+        </div>
+
         <!-- 总结升华 -->
         <div class="transfer-summary">
             <h4>💡 这一节的潜台词（讲给面试官听）</h4>
-            <p>"我在银行 1.5 年学到的不是 Spring Cloud 怎么用，而是<strong>怎么写一个不出事故的系统</strong>："</p>
+            <p>"我在银行 1.5 年学到的不是花哨的微服务框架，而是<strong>怎么写一个不出事故的系统</strong>："</p>
             <p>① <strong>资金安全的偏执</strong>：永远 BigDecimal、永远 setScale、永远 DB 唯一索引兜底。</p>
             <p>② <strong>流程优先于代码</strong>：任何审批/编排都先想"步骤是什么"，再想"代码怎么写"。</p>
             <p>③ <strong>配置即契约</strong>：变更配置 = 变更行为，必须有审计、灰度、回滚三件套。</p>
